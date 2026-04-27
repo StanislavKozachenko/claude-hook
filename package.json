@@ -1,0 +1,36 @@
+{
+  "name": "claude-hook",
+  "version": "0.1.0",
+  "description": "TypeScript middleware framework for Claude Code command hooks",
+  "keywords": ["claude", "claude-code", "hooks", "middleware", "anthropic"],
+  "license": "MIT",
+  "author": "Stanislav Kozachenko",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/stankozachenko/claude-hook.git"
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsup src/index.ts --format esm,cjs --dts --clean",
+    "test": "jest",
+    "lint": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.14",
+    "@types/node": "^22.0.0",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.2.0",
+    "tsup": "^8.0.0",
+    "typescript": "^5.7.0"
+  }
+}
