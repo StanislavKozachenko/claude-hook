@@ -59,7 +59,7 @@ describe('PreToolUseContext', () => {
   test('toolName and input accessors', () => {
     const ctx = new PreToolUseContext(preToolEvent)
     expect(ctx.toolName).toBe('Bash')
-    expect((ctx.input as { command: string }).command).toBe('rm -rf /tmp/foo')
+    expect(ctx.input.command).toBe('rm -rf /tmp/foo')
   })
 })
 
