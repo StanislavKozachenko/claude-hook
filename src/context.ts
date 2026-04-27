@@ -101,7 +101,7 @@ export class UserPromptSubmitContext extends BaseContext {
 
   constructor(event: UserPromptSubmitEvent) { super(event) }
 
-  get prompt(): string { return this.event.user_message }
+  get prompt(): string { return this.event.prompt }
 
   block(reason: string): void {
     this._blocked = true

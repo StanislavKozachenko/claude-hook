@@ -90,7 +90,7 @@ export interface PostToolUseFailureEvent extends BaseEvent {
 
 export interface UserPromptSubmitEvent extends BaseEvent {
   hook_event_name: 'UserPromptSubmit'
-  user_message: string
+  prompt: string
 }
 
 export interface UserPromptExpansionEvent extends BaseEvent {

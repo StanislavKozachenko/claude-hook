@@ -27,7 +27,7 @@ const postToolEvent: PostToolUseEvent = {
 const promptEvent: UserPromptSubmitEvent = {
   ...baseEvent,
   hook_event_name: 'UserPromptSubmit',
-  user_message: 'DROP TABLE users',
+  prompt: 'DROP TABLE users',
 }
 
 describe('PreToolUseContext', () => {
