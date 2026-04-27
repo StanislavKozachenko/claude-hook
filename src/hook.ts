@@ -14,6 +14,10 @@ import type {
   FileChangedEvent,
   CwdChangedEvent,
   ElicitationEvent,
+  BashToolInput,
+  EditToolInput,
+  WriteToolInput,
+  ReadToolInput,
 } from './types.js'
 import {
   BaseContext,
@@ -71,7 +75,15 @@ function createContext(event: AnyEvent): BaseContext {
 export class HookHandler {
   private registrations: Registration[] = []
 
-  on(eventName: 'PreToolUse', matcher: string, handler: Handler<PreToolUseContext>): this
+  on(eventName: 'PreToolUse', matcher: 'Bash', handler: Handler<PreToolUseContext<BashToolInput>>): this
+  on(eventName: 'PreToolUse', matcher: 'Edit', handler: Handler<PreToolUseContext<EditToolInput>>): this
+  on(eventName: 'PreToolUse', matcher: 'Write', handler: Handler<PreToolUseContext<WriteToolInput>>): this
+  on(eventName: 'PreToolUse', matcher: 'Read', handler: Handler<PreToolUseContext<ReadToolInput>>): this
+  on(eventName: 'PostToolUse' | 'PostToolUseFailure', matcher: 'Bash', handler: Handler<PostToolUseContext<BashToolInput>>): this
+  on(eventName: 'PostToolUse' | 'PostToolUseFailure', matcher: 'Edit', handler: Handler<PostToolUseContext<EditToolInput>>): this
+  on(eventName: 'PostToolUse' | 'PostToolUseFailure', matcher: 'Write', handler: Handler<PostToolUseContext<WriteToolInput>>): this
+  on(eventName: 'PostToolUse' | 'PostToolUseFailure', matcher: 'Read', handler: Handler<PostToolUseContext<ReadToolInput>>): this
+  on(eventName: 'PreToolUse' | 'PermissionRequest' | 'PermissionDenied', matcher: string, handler: Handler<PreToolUseContext>): this
   on(eventName: 'PostToolUse' | 'PostToolUseFailure', matcher: string, handler: Handler<PostToolUseContext>): this
   on(eventName: 'UserPromptSubmit' | 'UserPromptExpansion', matcher: string, handler: Handler<UserPromptSubmitContext>): this
   on(eventName: 'Stop' | 'SubagentStop', matcher: string, handler: Handler<StopContext>): this
