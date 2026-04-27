@@ -18,6 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      pull-requests: write
     steps:
       - uses: actions/checkout@v4
         with:
@@ -39,13 +40,32 @@ jobs:
           git config user.email "stanislav.03@list.ru"
 
       - name: Bump version
-        run: |
-          npm version ${{ github.event.inputs.bump }} -m "release: v%s"
+        run: npm version ${{ github.event.inputs.bump }} --no-git-tag-version
 
-      - name: Push tag
-        run: git push --follow-tags
+      - name: Get new version
+        id: version
+        run: echo "value=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
+
+      - name: Create GitHub release
+        run: gh release create "v${{ steps.version.outputs.value }}" --title "v${{ steps.version.outputs.value }}" --generate-notes
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Publish to npm
         run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Open version bump PR
+        run: |
+          BRANCH="release/v${{ steps.version.outputs.value }}"
+          git checkout -b "$BRANCH"
+          git add package.json package-lock.json
+          git commit -m "chore: bump version to ${{ steps.version.outputs.value }}"
+          git push origin "$BRANCH"
+          gh pr create \
+            --title "chore: bump version to ${{ steps.version.outputs.value }}" \
+            --body "Version bump after release v${{ steps.version.outputs.value }}." \
+            --base main
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
