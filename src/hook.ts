@@ -71,7 +71,7 @@ function createContext(event: AnyEvent): BaseContext {
 export class HookHandler {
   private registrations: Registration[] = []
 
-  on(eventName: 'PreToolUse', matcher: string, handler: Handler<PreToolUseContext>): this
+  on(eventName: 'PreToolUse' | 'PermissionRequest' | 'PermissionDenied', matcher: string, handler: Handler<PreToolUseContext>): this
   on(eventName: 'PostToolUse' | 'PostToolUseFailure', matcher: string, handler: Handler<PostToolUseContext>): this
   on(eventName: 'UserPromptSubmit' | 'UserPromptExpansion', matcher: string, handler: Handler<UserPromptSubmitContext>): this
   on(eventName: 'Stop' | 'SubagentStop', matcher: string, handler: Handler<StopContext>): this
