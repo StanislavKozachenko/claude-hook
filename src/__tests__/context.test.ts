@@ -1,5 +1,5 @@
-import { PreToolUseContext, UserPromptSubmitContext, PostToolUseContext } from '../context'
-import type { PreToolUseEvent, PostToolUseEvent, UserPromptSubmitEvent } from '../types'
+import { PreToolUseContext, UserPromptSubmitContext, PostToolUseContext, FileChangedContext, CwdChangedContext, ElicitationContext } from '../context'
+import type { PreToolUseEvent, PostToolUseEvent, UserPromptSubmitEvent, FileChangedEvent, CwdChangedEvent, ElicitationEvent } from '../types'
 
 const baseEvent = {
   session_id: 'sess1',
@@ -93,5 +93,66 @@ describe('UserPromptSubmitContext', () => {
     const ctx = new UserPromptSubmitContext(promptEvent)
     ctx.setTitle('My Session')
     expect(ctx._getOutput().hookSpecificOutput?.sessionTitle).toBe('My Session')
+  })
+})
+
+describe('FileChangedContext', () => {
+  const event: FileChangedEvent = {
+    ...baseEvent,
+    hook_event_name: 'FileChanged',
+    file_path: '/project/.env',
+  }
+
+  test('filePath accessor', () => {
+    const ctx = new FileChangedContext(event)
+    expect(ctx.filePath).toBe('/project/.env')
+  })
+
+  test('block sets _blocked', () => {
+    const ctx = new FileChangedContext(event)
+    ctx.block('env changed')
+    expect(ctx._isBlocked()).toBe(true)
+    expect(ctx._getBlockReason()).toBe('env changed')
+  })
+})
+
+describe('CwdChangedContext', () => {
+  const event: CwdChangedEvent = {
+    ...baseEvent,
+    hook_event_name: 'CwdChanged',
+    old_cwd: '/old',
+    new_cwd: '/new',
+  }
+
+  test('oldCwd and newCwd accessors', () => {
+    const ctx = new CwdChangedContext(event)
+    expect(ctx.oldCwd).toBe('/old')
+    expect(ctx.newCwd).toBe('/new')
+  })
+
+  test('block sets _blocked', () => {
+    const ctx = new CwdChangedContext(event)
+    ctx.block('not allowed')
+    expect(ctx._isBlocked()).toBe(true)
+  })
+})
+
+describe('ElicitationContext', () => {
+  const event: ElicitationEvent = {
+    ...baseEvent,
+    hook_event_name: 'Elicitation',
+    prompt: 'What is the answer?',
+  }
+
+  test('prompt accessor', () => {
+    const ctx = new ElicitationContext(event)
+    expect(ctx.prompt).toBe('What is the answer?')
+  })
+
+  test('block sets _blocked', () => {
+    const ctx = new ElicitationContext(event)
+    ctx.block('no elicitation in automated sessions')
+    expect(ctx._isBlocked()).toBe(true)
+    expect(ctx._getBlockReason()).toBe('no elicitation in automated sessions')
   })
 })

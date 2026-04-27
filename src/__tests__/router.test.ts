@@ -43,6 +43,11 @@ describe('getMatcherValue', () => {
     expect(getMatcherValue({ hook_event_name: 'Notification', notification_type: 'permission_prompt' })).toBe('permission_prompt')
   })
 
+  test('returns basename for FileChanged', () => {
+    expect(getMatcherValue({ hook_event_name: 'FileChanged', file_path: '/project/.env' })).toBe('.env')
+    expect(getMatcherValue({ hook_event_name: 'FileChanged', file_path: '.envrc' })).toBe('.envrc')
+  })
+
   test('returns empty string for events without a matcher value', () => {
     expect(getMatcherValue({ hook_event_name: 'SessionEnd' })).toBe('')
   })

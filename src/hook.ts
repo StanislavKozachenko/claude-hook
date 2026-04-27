@@ -5,10 +5,15 @@ import type {
   PreToolUseEvent,
   PostToolUseEvent,
   PostToolUseFailureEvent,
+  PermissionRequestEvent,
+  PermissionDeniedEvent,
   UserPromptSubmitEvent,
   SessionStartEvent,
   StopEvent,
   SubagentStopEvent,
+  FileChangedEvent,
+  CwdChangedEvent,
+  ElicitationEvent,
 } from './types.js'
 import {
   BaseContext,
@@ -17,6 +22,9 @@ import {
   UserPromptSubmitContext,
   StopContext,
   SessionStartContext,
+  FileChangedContext,
+  CwdChangedContext,
+  ElicitationContext,
   GenericContext,
 } from './context.js'
 import { matchMatcher, getMatcherValue } from './router.js'
@@ -33,6 +41,10 @@ function createContext(event: AnyEvent): BaseContext {
   switch (event.hook_event_name) {
     case 'PreToolUse':
       return new PreToolUseContext(event as PreToolUseEvent)
+    case 'PermissionRequest':
+      return new PreToolUseContext(event as unknown as PreToolUseEvent)
+    case 'PermissionDenied':
+      return new PreToolUseContext(event as unknown as PreToolUseEvent)
     case 'PostToolUse':
     case 'PostToolUseFailure':
       return new PostToolUseContext(event as PostToolUseEvent | PostToolUseFailureEvent)
@@ -40,10 +52,17 @@ function createContext(event: AnyEvent): BaseContext {
     case 'UserPromptExpansion':
       return new UserPromptSubmitContext(event as UserPromptSubmitEvent)
     case 'Stop':
+    case 'StopFailure':
     case 'SubagentStop':
       return new StopContext(event as StopEvent | SubagentStopEvent)
     case 'SessionStart':
       return new SessionStartContext(event as SessionStartEvent)
+    case 'FileChanged':
+      return new FileChangedContext(event as FileChangedEvent)
+    case 'CwdChanged':
+      return new CwdChangedContext(event as CwdChangedEvent)
+    case 'Elicitation':
+      return new ElicitationContext(event as ElicitationEvent)
     default:
       return new GenericContext(event)
   }
@@ -57,6 +76,9 @@ export class HookHandler {
   on(eventName: 'UserPromptSubmit' | 'UserPromptExpansion', matcher: string, handler: Handler<UserPromptSubmitContext>): this
   on(eventName: 'Stop' | 'SubagentStop', matcher: string, handler: Handler<StopContext>): this
   on(eventName: 'SessionStart', matcher: string, handler: Handler<SessionStartContext>): this
+  on(eventName: 'FileChanged', matcher: string, handler: Handler<FileChangedContext>): this
+  on(eventName: 'CwdChanged', matcher: string, handler: Handler<CwdChangedContext>): this
+  on(eventName: 'Elicitation', matcher: string, handler: Handler<ElicitationContext>): this
   on(eventName: HookEventName, matcher: string, handler: Handler<GenericContext>): this
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   on(eventName: string, matcher: string, handler: (ctx: any) => void | Promise<void>): this {

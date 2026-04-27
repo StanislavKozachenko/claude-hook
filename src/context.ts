@@ -8,6 +8,9 @@ import type {
   SessionStartEvent,
   StopEvent,
   SubagentStopEvent,
+  FileChangedEvent,
+  CwdChangedEvent,
+  ElicitationEvent,
   HookOutput,
   HookEventName,
 } from './types.js'
@@ -142,6 +145,60 @@ export class SessionStartContext extends BaseContext {
     if (envFile) {
       fs.appendFileSync(envFile, `export ${key}=${value}\n`)
     }
+  }
+}
+
+export class FileChangedContext extends BaseContext {
+  declare readonly event: FileChangedEvent
+
+  constructor(event: FileChangedEvent) { super(event) }
+
+  get filePath(): string { return this.event.file_path }
+
+  setEnv(key: string, value: string): void {
+    const envFile = process.env['CLAUDE_ENV_FILE']
+    if (envFile) {
+      fs.appendFileSync(envFile, `export ${key}=${value}\n`)
+    }
+  }
+
+  block(reason: string): void {
+    this._blocked = true
+    this._blockReason = reason
+  }
+}
+
+export class CwdChangedContext extends BaseContext {
+  declare readonly event: CwdChangedEvent
+
+  constructor(event: CwdChangedEvent) { super(event) }
+
+  get oldCwd(): string { return this.event.old_cwd }
+  get newCwd(): string { return this.event.new_cwd }
+
+  setEnv(key: string, value: string): void {
+    const envFile = process.env['CLAUDE_ENV_FILE']
+    if (envFile) {
+      fs.appendFileSync(envFile, `export ${key}=${value}\n`)
+    }
+  }
+
+  block(reason: string): void {
+    this._blocked = true
+    this._blockReason = reason
+  }
+}
+
+export class ElicitationContext extends BaseContext {
+  declare readonly event: ElicitationEvent
+
+  constructor(event: ElicitationEvent) { super(event) }
+
+  get prompt(): string { return this.event.prompt }
+
+  block(reason: string): void {
+    this._blocked = true
+    this._blockReason = reason
   }
 }
 
