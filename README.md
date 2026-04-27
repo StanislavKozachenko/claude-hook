@@ -38,7 +38,7 @@ Claude Code invokes your script as a subprocess and pipes a JSON event to stdin.
 
 ## Quick start
 
-1. Create `.claude/hooks/index.js` (or compile a `.ts` file):
+1. Create `.claude/hooks/index.ts`:
 
 ```ts
 import { createHook } from 'claude-hook'
@@ -61,7 +61,7 @@ hook.run()
     "PreToolUse": [
       {
         "matcher": "Bash",
-        "hooks": [{ "type": "command", "command": "node .claude/hooks/index.js" }]
+        "hooks": [{ "type": "command", "command": "npx claude-hook run .claude/hooks/index.ts" }]
       }
     ]
   }
