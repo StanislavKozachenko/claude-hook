@@ -1,6 +1,6 @@
 {
   "name": "claude-hook",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "TypeScript middleware framework for Claude Code command hooks",
   "keywords": [
     "claude",
@@ -15,14 +15,14 @@
     "type": "git",
     "url": "https://github.com/stankozachenko/claude-hook.git"
   },
-  "main": "./dist/index.cjs",
-  "module": "./dist/index.js",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.js",
-      "require": "./dist/index.cjs"
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
     }
   },
   "bin": {

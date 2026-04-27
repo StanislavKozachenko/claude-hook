@@ -13,6 +13,7 @@ import type {
   ElicitationEvent,
   HookOutput,
   HookEventName,
+  ToolInput,
 } from './types.js'
 
 export class BaseContext {
@@ -38,13 +39,13 @@ export class BaseContext {
   _getOutput(): HookOutput { return this._output }
 }
 
-export class PreToolUseContext extends BaseContext {
+export class PreToolUseContext<T extends ToolInput = ToolInput> extends BaseContext {
   declare readonly event: PreToolUseEvent
 
   constructor(event: PreToolUseEvent) { super(event) }
 
   get toolName(): string { return this.event.tool_name }
-  get input(): PreToolUseEvent['tool_input'] { return this.event.tool_input }
+  get input(): T { return this.event.tool_input as T }
 
   block(reason: string): void {
     this._blocked = true
@@ -76,13 +77,13 @@ export class PreToolUseContext extends BaseContext {
   }
 }
 
-export class PostToolUseContext extends BaseContext {
+export class PostToolUseContext<T extends ToolInput = ToolInput> extends BaseContext {
   declare readonly event: PostToolUseEvent | PostToolUseFailureEvent
 
   constructor(event: PostToolUseEvent | PostToolUseFailureEvent) { super(event) }
 
   get toolName(): string { return this.event.tool_name }
-  get input(): PostToolUseEvent['tool_input'] { return this.event.tool_input }
+  get input(): T { return this.event.tool_input as T }
   get output(): unknown { return 'tool_response' in this.event ? this.event.tool_response : undefined }
   get error(): string | undefined { return 'error' in this.event ? this.event.error : undefined }
 
