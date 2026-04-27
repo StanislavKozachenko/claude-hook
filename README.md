@@ -1,5 +1,7 @@
 # claude-hook
 
+![claude-hook](assets/social-preview.png)
+
 TypeScript middleware framework for [Claude Code](https://docs.anthropic.com/en/docs/claude-code) command hooks.
 
 Instead of writing raw shell scripts that parse JSON with `jq` and manage exit codes manually, you write typed TypeScript handlers.
