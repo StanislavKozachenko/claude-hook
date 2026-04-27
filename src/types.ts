@@ -2,17 +2,31 @@ export type HookEventName =
   | 'PreToolUse'
   | 'PostToolUse'
   | 'PostToolUseFailure'
+  | 'PostToolBatch'
+  | 'PermissionRequest'
+  | 'PermissionDenied'
   | 'UserPromptSubmit'
   | 'UserPromptExpansion'
   | 'SessionStart'
   | 'SessionEnd'
   | 'Stop'
   | 'StopFailure'
+  | 'SubagentStart'
   | 'SubagentStop'
+  | 'TaskCreated'
+  | 'TaskCompleted'
+  | 'WorktreeCreate'
+  | 'WorktreeRemove'
+  | 'FileChanged'
+  | 'CwdChanged'
+  | 'ConfigChange'
+  | 'TeammateIdle'
+  | 'PreCompact'
+  | 'PostCompact'
+  | 'Elicitation'
+  | 'ElicitationResult'
   | 'Notification'
   | 'InstructionsLoaded'
-  | 'PermissionRequest'
-  | 'PermissionDenied'
 
 export interface BaseEvent {
   session_id: string
@@ -119,17 +133,116 @@ export interface InstructionsLoadedEvent extends BaseEvent {
   files: string[]
 }
 
+export interface PermissionRequestEvent extends BaseEvent {
+  hook_event_name: 'PermissionRequest'
+  tool_name: string
+  tool_input: ToolInput
+  tool_use_id: string
+}
+
+export interface PermissionDeniedEvent extends BaseEvent {
+  hook_event_name: 'PermissionDenied'
+  tool_name: string
+  tool_input: ToolInput
+  tool_use_id: string
+}
+
+export interface PostToolBatchEvent extends BaseEvent {
+  hook_event_name: 'PostToolBatch'
+}
+
+export interface SubagentStartEvent extends BaseEvent {
+  hook_event_name: 'SubagentStart'
+}
+
+export interface TaskCreatedEvent extends BaseEvent {
+  hook_event_name: 'TaskCreated'
+  task_id: string
+  description: string
+}
+
+export interface TaskCompletedEvent extends BaseEvent {
+  hook_event_name: 'TaskCompleted'
+  task_id: string
+  description: string
+}
+
+export interface WorktreeCreateEvent extends BaseEvent {
+  hook_event_name: 'WorktreeCreate'
+  worktree_path: string
+}
+
+export interface WorktreeRemoveEvent extends BaseEvent {
+  hook_event_name: 'WorktreeRemove'
+  worktree_path: string
+}
+
+export interface FileChangedEvent extends BaseEvent {
+  hook_event_name: 'FileChanged'
+  file_path: string
+}
+
+export interface CwdChangedEvent extends BaseEvent {
+  hook_event_name: 'CwdChanged'
+  old_cwd: string
+  new_cwd: string
+}
+
+export interface ConfigChangeEvent extends BaseEvent {
+  hook_event_name: 'ConfigChange'
+}
+
+export interface TeammateIdleEvent extends BaseEvent {
+  hook_event_name: 'TeammateIdle'
+  teammate_id: string
+}
+
+export interface PreCompactEvent extends BaseEvent {
+  hook_event_name: 'PreCompact'
+}
+
+export interface PostCompactEvent extends BaseEvent {
+  hook_event_name: 'PostCompact'
+}
+
+export interface ElicitationEvent extends BaseEvent {
+  hook_event_name: 'Elicitation'
+  prompt: string
+}
+
+export interface ElicitationResultEvent extends BaseEvent {
+  hook_event_name: 'ElicitationResult'
+  prompt: string
+  result: string
+}
+
 export type AnyEvent =
   | PreToolUseEvent
   | PostToolUseEvent
   | PostToolUseFailureEvent
+  | PostToolBatchEvent
+  | PermissionRequestEvent
+  | PermissionDeniedEvent
   | UserPromptSubmitEvent
   | UserPromptExpansionEvent
   | SessionStartEvent
   | SessionEndEvent
   | StopEvent
   | StopFailureEvent
+  | SubagentStartEvent
   | SubagentStopEvent
+  | TaskCreatedEvent
+  | TaskCompletedEvent
+  | WorktreeCreateEvent
+  | WorktreeRemoveEvent
+  | FileChangedEvent
+  | CwdChangedEvent
+  | ConfigChangeEvent
+  | TeammateIdleEvent
+  | PreCompactEvent
+  | PostCompactEvent
+  | ElicitationEvent
+  | ElicitationResultEvent
   | NotificationEvent
   | InstructionsLoadedEvent
 

@@ -33,5 +33,10 @@ export function getMatcherValue(event: Record<string, unknown>): string {
   if (name === 'StopFailure') return (event['error'] as string) ?? ''
   // SessionStart: match on session source (if present)
   if (name === 'SessionStart') return (event['session_source'] as string) ?? ''
+  // FileChanged: match on filename (basename)
+  if (name === 'FileChanged') {
+    const filePath = (event['file_path'] as string) ?? ''
+    return filePath.split('/').pop() ?? filePath
+  }
   return ''
 }
