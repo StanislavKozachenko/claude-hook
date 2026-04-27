@@ -1,6 +1,6 @@
 # claude-hook
 
-![claude-hook](assets/social-preview.png)
+![claude-hook](https://raw.githubusercontent.com/StanislavKozachenko/claude-hook/main/assets/social-preview.png)
 
 TypeScript middleware framework for [Claude Code](https://docs.anthropic.com/en/docs/claude-code) command hooks.
 
@@ -27,10 +27,20 @@ hook.run()
 ## Installation
 
 ```bash
+# npm
 npm install claude-hook
+
+# pnpm
+pnpm add claude-hook
+
+# yarn
+yarn add claude-hook
+
+# bun
+bun add claude-hook
 ```
 
-Requires Node.js 18+.
+Requires Node.js 18+ or Bun 1.0+.
 
 ## How it works
 
@@ -68,6 +78,14 @@ hook.run()
     ]
   }
 }
+```
+
+Or with pnpm / yarn / bun:
+
+```json
+{ "type": "command", "command": "pnpm dlx claude-hook run .claude/hooks/index.ts" }
+{ "type": "command", "command": "yarn dlx claude-hook run .claude/hooks/index.ts" }
+{ "type": "command", "command": "bunx claude-hook run .claude/hooks/index.ts" }
 ```
 
 One script can handle multiple event types — register as many `hook.on()` calls as you need.
