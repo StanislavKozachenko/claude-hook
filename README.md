@@ -130,12 +130,17 @@ All contexts expose:
 
 ```ts
 hook.on('PreToolUse', 'Bash', (ctx) => {
-  ctx.toolName          // 'Bash'
-  ctx.input             // { command: string }
-  ctx.block('reason')   // exit 2, block the tool call
-  ctx.allow()           // explicitly allow (skip permission prompt)
+  ctx.toolName             // 'Bash'
+  ctx.input                // { command: string, description?: string }
+  ctx.block('reason')      // exit 2, block the tool call
+  ctx.allow()              // explicitly allow (skip permission prompt)
   ctx.modify({ command: 'echo safe' })  // rewrite tool input
   ctx.addContext('info for Claude')
+})
+
+// On PermissionRequest events, suggestions from Claude Code are also available:
+hook.on('PermissionRequest', '*', (ctx) => {
+  ctx.permissionSuggestions  // e.g. [{ type: 'setMode', mode: 'acceptEdits', destination: 'session' }]
 })
 ```
 
@@ -143,10 +148,11 @@ hook.on('PreToolUse', 'Bash', (ctx) => {
 
 ```ts
 hook.on('PostToolUse', 'Bash', (ctx) => {
-  ctx.toolName   // 'Bash'
-  ctx.input      // tool input
-  ctx.output     // tool response
-  ctx.error      // error string (PostToolUseFailure only)
+  ctx.toolName    // 'Bash'
+  ctx.input       // tool input
+  ctx.output      // tool response
+  ctx.error       // error string (PostToolUseFailure only)
+  ctx.durationMs  // execution time in ms
   ctx.addContext('feedback for Claude')
 })
 ```
@@ -166,7 +172,8 @@ hook.on('UserPromptSubmit', '*', (ctx) => {
 
 ```ts
 hook.on('Stop', '*', (ctx) => {
-  ctx.block('not done yet')  // prevent Claude from stopping
+  ctx.lastAssistantMessage  // last message Claude produced
+  ctx.block('not done yet') // prevent Claude from stopping
 })
 ```
 
@@ -174,16 +181,28 @@ hook.on('Stop', '*', (ctx) => {
 
 ```ts
 hook.on('SessionStart', '*', (ctx) => {
+  ctx.source  // 'startup' | 'resume' | undefined
+  ctx.model   // e.g. 'claude-sonnet-4-6'
   ctx.setEnv('NODE_ENV', 'production')  // persists to CLAUDE_ENV_FILE
 })
 ```
 
-### `FileChangedContext` / `CwdChangedContext`
+### `FileChangedContext`
 
 ```ts
 hook.on('FileChanged', '.env|.envrc', (ctx) => {
+  ctx.filePath  // absolute path to changed file
   ctx.setEnv('UPDATED', '1')
   ctx.block('env file changed, session restart recommended')
+})
+```
+
+### `CwdChangedContext`
+
+```ts
+hook.on('CwdChanged', '*', (ctx) => {
+  ctx.oldCwd  // previous working directory
+  ctx.newCwd  // new working directory
 })
 ```
 

@@ -32,7 +32,7 @@ export interface BaseEvent {
   session_id: string
   transcript_path: string
   cwd: string
-  permission_mode: string
+  permission_mode?: string
   hook_event_name: HookEventName
   agent_id?: string
   agent_type?: string
@@ -42,6 +42,7 @@ export interface BaseEvent {
 export interface BashToolInput {
   command: string
   restart?: boolean
+  description?: string
 }
 
 export interface EditToolInput {
@@ -78,6 +79,7 @@ export interface PostToolUseEvent extends BaseEvent {
   tool_input: ToolInput
   tool_use_id: string
   tool_response: unknown
+  duration_ms?: number
 }
 
 export interface PostToolUseFailureEvent extends BaseEvent {
@@ -86,11 +88,12 @@ export interface PostToolUseFailureEvent extends BaseEvent {
   tool_input: ToolInput
   tool_use_id: string
   error: string
+  duration_ms?: number
 }
 
 export interface UserPromptSubmitEvent extends BaseEvent {
   hook_event_name: 'UserPromptSubmit'
-  user_message: string
+  prompt: string
 }
 
 export interface UserPromptExpansionEvent extends BaseEvent {
@@ -100,6 +103,8 @@ export interface UserPromptExpansionEvent extends BaseEvent {
 
 export interface SessionStartEvent extends BaseEvent {
   hook_event_name: 'SessionStart'
+  source?: string
+  model?: string
 }
 
 export interface SessionEndEvent extends BaseEvent {
@@ -109,6 +114,7 @@ export interface SessionEndEvent extends BaseEvent {
 export interface StopEvent extends BaseEvent {
   hook_event_name: 'Stop'
   stop_hook_active: boolean
+  last_assistant_message?: string
 }
 
 export interface StopFailureEvent extends BaseEvent {
@@ -119,6 +125,8 @@ export interface StopFailureEvent extends BaseEvent {
 export interface SubagentStopEvent extends BaseEvent {
   hook_event_name: 'SubagentStop'
   stop_hook_active: boolean
+  last_assistant_message?: string
+  agent_transcript_path?: string
 }
 
 export interface NotificationEvent extends BaseEvent {
@@ -133,18 +141,25 @@ export interface InstructionsLoadedEvent extends BaseEvent {
   files: string[]
 }
 
+export interface PermissionSuggestion {
+  type: string
+  mode?: string
+  destination?: string
+}
+
 export interface PermissionRequestEvent extends BaseEvent {
   hook_event_name: 'PermissionRequest'
   tool_name: string
   tool_input: ToolInput
-  tool_use_id: string
+  tool_use_id?: string
+  permission_suggestions?: PermissionSuggestion[]
 }
 
 export interface PermissionDeniedEvent extends BaseEvent {
   hook_event_name: 'PermissionDenied'
   tool_name: string
   tool_input: ToolInput
-  tool_use_id: string
+  tool_use_id?: string
 }
 
 export interface PostToolBatchEvent extends BaseEvent {
