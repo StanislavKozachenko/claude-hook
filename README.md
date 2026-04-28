@@ -2,6 +2,12 @@
 
 ![claude-hook](https://raw.githubusercontent.com/StanislavKozachenko/claude-hook/main/assets/social-preview.png)
 
+[![npm version](https://img.shields.io/npm/v/claude-hook)](https://www.npmjs.com/package/claude-hook)
+[![npm downloads](https://img.shields.io/npm/dm/claude-hook)](https://www.npmjs.com/package/claude-hook)
+[![CI](https://img.shields.io/github/actions/workflow/status/StanislavKozachenko/claude-hook/ci.yml?branch=main&label=CI)](https://github.com/StanislavKozachenko/claude-hook/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue)](https://github.com/StanislavKozachenko/claude-hook/blob/main/LICENSE)
+[![Node.js](https://img.shields.io/node/v/claude-hook)](https://nodejs.org)
+
 TypeScript middleware framework for [Claude Code](https://docs.anthropic.com/en/docs/claude-code) command hooks.
 
 Instead of writing raw shell scripts that parse JSON with `jq` and manage exit codes manually, you write typed TypeScript handlers.
