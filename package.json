@@ -32,6 +32,9 @@
     "dist",
     "bin"
   ],
+  "engines": {
+    "node": ">=18"
+  },
   "dependencies": {
     "tsx": "^4.19.0"
   },
