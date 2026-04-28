@@ -14,6 +14,7 @@ import type {
   HookOutput,
   HookEventName,
   ToolInput,
+  PermissionSuggestion,
 } from './types.js'
 
 export class BaseContext {
@@ -46,6 +47,9 @@ export class PreToolUseContext<T extends ToolInput = ToolInput> extends BaseCont
 
   get toolName(): string { return this.event.tool_name }
   get input(): T { return this.event.tool_input as T }
+  get permissionSuggestions(): PermissionSuggestion[] | undefined {
+    return (this.event as unknown as { permission_suggestions?: PermissionSuggestion[] }).permission_suggestions
+  }
 
   block(reason: string): void {
     this._blocked = true
@@ -86,6 +90,7 @@ export class PostToolUseContext<T extends ToolInput = ToolInput> extends BaseCon
   get input(): T { return this.event.tool_input as T }
   get output(): unknown { return 'tool_response' in this.event ? this.event.tool_response : undefined }
   get error(): string | undefined { return 'error' in this.event ? this.event.error : undefined }
+  get durationMs(): number | undefined { return this.event.duration_ms }
 
   addContext(text: string): void {
     this._output.hookSpecificOutput = {
@@ -130,6 +135,8 @@ export class StopContext extends BaseContext {
 
   constructor(event: StopEvent | SubagentStopEvent) { super(event) }
 
+  get lastAssistantMessage(): string | undefined { return this.event.last_assistant_message }
+
   block(reason: string): void {
     this._blocked = true
     this._blockReason = reason
@@ -140,6 +147,9 @@ export class SessionStartContext extends BaseContext {
   declare readonly event: SessionStartEvent
 
   constructor(event: SessionStartEvent) { super(event) }
+
+  get source(): string | undefined { return this.event.source }
+  get model(): string | undefined { return this.event.model }
 
   setEnv(key: string, value: string): void {
     const envFile = process.env['CLAUDE_ENV_FILE']
