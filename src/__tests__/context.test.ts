@@ -1,5 +1,5 @@
-import { PreToolUseContext, UserPromptSubmitContext, PostToolUseContext, FileChangedContext, CwdChangedContext, ElicitationContext } from '../context'
-import type { PreToolUseEvent, PostToolUseEvent, UserPromptSubmitEvent, FileChangedEvent, CwdChangedEvent, ElicitationEvent } from '../types'
+import { PreToolUseContext, UserPromptSubmitContext, UserPromptExpansionContext, PostToolUseContext, FileChangedContext, CwdChangedContext, ElicitationContext } from '../context'
+import type { PreToolUseEvent, PostToolUseEvent, UserPromptSubmitEvent, UserPromptExpansionEvent, FileChangedEvent, CwdChangedEvent, ElicitationEvent } from '../types'
 
 const baseEvent = {
   session_id: 'sess1',
@@ -93,6 +93,47 @@ describe('UserPromptSubmitContext', () => {
     const ctx = new UserPromptSubmitContext(promptEvent)
     ctx.setTitle('My Session')
     expect(ctx._getOutput().hookSpecificOutput?.sessionTitle).toBe('My Session')
+  })
+})
+
+describe('UserPromptExpansionContext', () => {
+  const event: UserPromptExpansionEvent = {
+    ...baseEvent,
+    hook_event_name: 'UserPromptExpansion',
+    expansion_type: 'slash_command',
+    command_name: 'test-expansion',
+    command_args: '',
+    command_source: 'projectSettings',
+    prompt: '/test-expansion',
+  }
+
+  test('accessors return correct fields', () => {
+    const ctx = new UserPromptExpansionContext(event)
+    expect(ctx.expansionType).toBe('slash_command')
+    expect(ctx.commandName).toBe('test-expansion')
+    expect(ctx.commandArgs).toBe('')
+    expect(ctx.commandSource).toBe('projectSettings')
+    expect(ctx.prompt).toBe('/test-expansion')
+  })
+
+  test('block sets _blocked', () => {
+    const ctx = new UserPromptExpansionContext(event)
+    ctx.block('no slash commands')
+    expect(ctx._isBlocked()).toBe(true)
+    expect(ctx._getBlockReason()).toBe('no slash commands')
+  })
+
+  test('addContext sets additionalContext with correct hookEventName', () => {
+    const ctx = new UserPromptExpansionContext(event)
+    ctx.addContext('extra info')
+    expect(ctx._getOutput().hookSpecificOutput?.additionalContext).toBe('extra info')
+    expect(ctx._getOutput().hookSpecificOutput?.hookEventName).toBe('UserPromptExpansion')
+  })
+
+  test('setTitle sets sessionTitle', () => {
+    const ctx = new UserPromptExpansionContext(event)
+    ctx.setTitle('Slash Session')
+    expect(ctx._getOutput().hookSpecificOutput?.sessionTitle).toBe('Slash Session')
   })
 })
 

@@ -8,6 +8,7 @@ import type {
   PermissionRequestEvent,
   PermissionDeniedEvent,
   UserPromptSubmitEvent,
+  UserPromptExpansionEvent,
   SessionStartEvent,
   StopEvent,
   SubagentStopEvent,
@@ -24,6 +25,7 @@ import {
   PreToolUseContext,
   PostToolUseContext,
   UserPromptSubmitContext,
+  UserPromptExpansionContext,
   StopContext,
   SessionStartContext,
   FileChangedContext,
@@ -53,8 +55,9 @@ function createContext(event: AnyEvent): BaseContext {
     case 'PostToolUseFailure':
       return new PostToolUseContext(event as PostToolUseEvent | PostToolUseFailureEvent)
     case 'UserPromptSubmit':
-    case 'UserPromptExpansion':
       return new UserPromptSubmitContext(event as UserPromptSubmitEvent)
+    case 'UserPromptExpansion':
+      return new UserPromptExpansionContext(event as UserPromptExpansionEvent)
     case 'Stop':
     case 'StopFailure':
     case 'SubagentStop':
@@ -85,7 +88,8 @@ export class HookHandler {
   on(eventName: 'PostToolUse' | 'PostToolUseFailure', matcher: 'Read', handler: Handler<PostToolUseContext<ReadToolInput>>): this
   on(eventName: 'PreToolUse' | 'PermissionRequest' | 'PermissionDenied', matcher: string, handler: Handler<PreToolUseContext>): this
   on(eventName: 'PostToolUse' | 'PostToolUseFailure', matcher: string, handler: Handler<PostToolUseContext>): this
-  on(eventName: 'UserPromptSubmit' | 'UserPromptExpansion', matcher: string, handler: Handler<UserPromptSubmitContext>): this
+  on(eventName: 'UserPromptSubmit', matcher: string, handler: Handler<UserPromptSubmitContext>): this
+  on(eventName: 'UserPromptExpansion', matcher: string, handler: Handler<UserPromptExpansionContext>): this
   on(eventName: 'Stop' | 'SubagentStop', matcher: string, handler: Handler<StopContext>): this
   on(eventName: 'SessionStart', matcher: string, handler: Handler<SessionStartContext>): this
   on(eventName: 'FileChanged', matcher: string, handler: Handler<FileChangedContext>): this
