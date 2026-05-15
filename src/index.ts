@@ -5,6 +5,7 @@ export {
   PreToolUseContext,
   PostToolUseContext,
   UserPromptSubmitContext,
+  UserPromptExpansionContext,
   StopContext,
   SessionStartContext,
   FileChangedContext,

@@ -174,6 +174,17 @@ hook.on('UserPromptSubmit', '*', (ctx) => {
 })
 ```
 
+### `UserPromptExpansionContext`
+
+```ts
+hook.on('UserPromptExpansion', '*', (ctx) => {
+  ctx.expansion          // expanded text of the slash command
+  ctx.block('reason')
+  ctx.addContext('extra context')
+  ctx.setTitle('Session title')
+})
+```
+
 ### `StopContext`
 
 ```ts
@@ -233,7 +244,7 @@ For all other events, the handler receives a `GenericContext` with `ctx.block(re
 | `PermissionRequest` | When permission dialog shows | yes | `PreToolUseContext` |
 | `PermissionDenied` | After permission denied | no | `PreToolUseContext` |
 | `UserPromptSubmit` | Before Claude sees your message | yes | `UserPromptSubmitContext` |
-| `UserPromptExpansion` | When a slash command expands | yes | `UserPromptSubmitContext` |
+| `UserPromptExpansion` | When a slash command expands | yes | `UserPromptExpansionContext` |
 | `SessionStart` | Session begins or resumes | no | `SessionStartContext` |
 | `SessionEnd` | Session ends | no | `GenericContext` |
 | `Stop` | Claude finishes a turn | yes | `StopContext` |

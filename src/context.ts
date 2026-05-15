@@ -5,6 +5,7 @@ import type {
   PostToolUseEvent,
   PostToolUseFailureEvent,
   UserPromptSubmitEvent,
+  UserPromptExpansionEvent,
   SessionStartEvent,
   StopEvent,
   SubagentStopEvent,
@@ -125,6 +126,35 @@ export class UserPromptSubmitContext extends BaseContext {
     this._output.hookSpecificOutput = {
       ...this._output.hookSpecificOutput,
       hookEventName: 'UserPromptSubmit',
+      sessionTitle: title,
+    }
+  }
+}
+
+export class UserPromptExpansionContext extends BaseContext {
+  declare readonly event: UserPromptExpansionEvent
+
+  constructor(event: UserPromptExpansionEvent) { super(event) }
+
+  get expansion(): string { return this.event.expansion }
+
+  block(reason: string): void {
+    this._blocked = true
+    this._blockReason = reason
+  }
+
+  addContext(text: string): void {
+    this._output.hookSpecificOutput = {
+      ...this._output.hookSpecificOutput,
+      hookEventName: 'UserPromptExpansion',
+      additionalContext: text,
+    }
+  }
+
+  setTitle(title: string): void {
+    this._output.hookSpecificOutput = {
+      ...this._output.hookSpecificOutput,
+      hookEventName: 'UserPromptExpansion',
       sessionTitle: title,
     }
   }
