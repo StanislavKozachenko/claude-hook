@@ -136,7 +136,11 @@ export class UserPromptExpansionContext extends BaseContext {
 
   constructor(event: UserPromptExpansionEvent) { super(event) }
 
-  get expansion(): string { return this.event.expansion }
+  get expansionType(): string { return this.event.expansion_type }
+  get commandName(): string { return this.event.command_name }
+  get commandArgs(): string { return this.event.command_args }
+  get commandSource(): string { return this.event.command_source }
+  get prompt(): string { return this.event.prompt }
 
   block(reason: string): void {
     this._blocked = true

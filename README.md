@@ -178,7 +178,11 @@ hook.on('UserPromptSubmit', '*', (ctx) => {
 
 ```ts
 hook.on('UserPromptExpansion', '*', (ctx) => {
-  ctx.expansion          // expanded text of the slash command
+  ctx.prompt             // original slash command input, e.g. '/compact'
+  ctx.commandName        // command name, e.g. 'compact'
+  ctx.commandArgs        // arguments string (empty if none)
+  ctx.commandSource      // 'projectSettings' | 'globalSettings' | etc.
+  ctx.expansionType      // e.g. 'slash_command'
   ctx.block('reason')
   ctx.addContext('extra context')
   ctx.setTitle('Session title')

@@ -100,12 +100,20 @@ describe('UserPromptExpansionContext', () => {
   const event: UserPromptExpansionEvent = {
     ...baseEvent,
     hook_event_name: 'UserPromptExpansion',
-    expansion: '/compact expanded text',
+    expansion_type: 'slash_command',
+    command_name: 'test-expansion',
+    command_args: '',
+    command_source: 'projectSettings',
+    prompt: '/test-expansion',
   }
 
-  test('expansion accessor', () => {
+  test('accessors return correct fields', () => {
     const ctx = new UserPromptExpansionContext(event)
-    expect(ctx.expansion).toBe('/compact expanded text')
+    expect(ctx.expansionType).toBe('slash_command')
+    expect(ctx.commandName).toBe('test-expansion')
+    expect(ctx.commandArgs).toBe('')
+    expect(ctx.commandSource).toBe('projectSettings')
+    expect(ctx.prompt).toBe('/test-expansion')
   })
 
   test('block sets _blocked', () => {
