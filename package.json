@@ -1,6 +1,6 @@
 {
   "name": "claude-hook",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "TypeScript middleware framework for Claude Code command hooks",
   "keywords": [
     "claude",
