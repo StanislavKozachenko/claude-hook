@@ -6,6 +6,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ---
 
+## [0.2.5] - 2026-06-01
+
+### Changed
+
+- Switched npm publishing to Trusted Publishers (OIDC) — removed long-lived `NPM_TOKEN`, added `--provenance` flag
+- Added `CHANGELOG.md` following Keep a Changelog format with automated updates on release
+- Upgraded Node.js to 24 in CI and release workflows (required for npm 11.x and Trusted Publishing support)
+
+---
+
+
 ## [0.2.4] - 2026-04-28
 
 ### Added
