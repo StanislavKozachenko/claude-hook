@@ -58,12 +58,13 @@ jobs:
             if [ -n "$LAST_TAG" ]; then
               git log "${LAST_TAG}..HEAD" --pretty=format:"%s" \
                 | grep -E "^${prefix}(\([^)]+\))?:" \
-                | sed -E "s/^${prefix}(\([^)]+\))?: /- /" || true
+                | sed -E "s/^[a-z]+(\([^)]+\))?: /- /" || true
             fi
           }
 
           ADDED=$(get_section "feat")
           FIXED=$(get_section "fix")
+          CHANGED=$(get_section "refactor|perf|docs|ci")
 
           {
             echo "## [${VERSION}] - ${DATE}"
@@ -78,6 +79,12 @@ jobs:
               echo "### Fixed"
               echo ""
               echo "$FIXED"
+              echo ""
+            fi
+            if [ -n "$CHANGED" ]; then
+              echo "### Changed"
+              echo ""
+              echo "$CHANGED"
               echo ""
             fi
             echo "---"
