@@ -11,10 +11,18 @@ import type {
   UserPromptExpansionEvent,
   SessionStartEvent,
   StopEvent,
+  StopFailureEvent,
   SubagentStopEvent,
   FileChangedEvent,
   CwdChangedEvent,
   ElicitationEvent,
+  ElicitationResultEvent,
+  NotificationEvent,
+  InstructionsLoadedEvent,
+  TaskCreatedEvent,
+  TaskCompletedEvent,
+  WorktreeCreateEvent,
+  WorktreeRemoveEvent,
   BashToolInput,
   EditToolInput,
   WriteToolInput,
@@ -31,6 +39,14 @@ import {
   FileChangedContext,
   CwdChangedContext,
   ElicitationContext,
+  StopFailureContext,
+  ElicitationResultContext,
+  NotificationContext,
+  InstructionsLoadedContext,
+  TaskCreatedContext,
+  TaskCompletedContext,
+  WorktreeCreateContext,
+  WorktreeRemoveContext,
   GenericContext,
 } from './context.js'
 import { matchMatcher, getMatcherValue } from './router.js'
@@ -59,9 +75,10 @@ function createContext(event: AnyEvent): BaseContext {
     case 'UserPromptExpansion':
       return new UserPromptExpansionContext(event as UserPromptExpansionEvent)
     case 'Stop':
-    case 'StopFailure':
     case 'SubagentStop':
       return new StopContext(event as StopEvent | SubagentStopEvent)
+    case 'StopFailure':
+      return new StopFailureContext(event as StopFailureEvent)
     case 'SessionStart':
       return new SessionStartContext(event as SessionStartEvent)
     case 'FileChanged':
@@ -70,6 +87,20 @@ function createContext(event: AnyEvent): BaseContext {
       return new CwdChangedContext(event as CwdChangedEvent)
     case 'Elicitation':
       return new ElicitationContext(event as ElicitationEvent)
+    case 'ElicitationResult':
+      return new ElicitationResultContext(event as ElicitationResultEvent)
+    case 'Notification':
+      return new NotificationContext(event as NotificationEvent)
+    case 'InstructionsLoaded':
+      return new InstructionsLoadedContext(event as InstructionsLoadedEvent)
+    case 'TaskCreated':
+      return new TaskCreatedContext(event as TaskCreatedEvent)
+    case 'TaskCompleted':
+      return new TaskCompletedContext(event as TaskCompletedEvent)
+    case 'WorktreeCreate':
+      return new WorktreeCreateContext(event as WorktreeCreateEvent)
+    case 'WorktreeRemove':
+      return new WorktreeRemoveContext(event as WorktreeRemoveEvent)
     default:
       return new GenericContext(event)
   }
@@ -95,6 +126,14 @@ export class HookHandler {
   on(eventName: 'FileChanged', matcher: string, handler: Handler<FileChangedContext>): this
   on(eventName: 'CwdChanged', matcher: string, handler: Handler<CwdChangedContext>): this
   on(eventName: 'Elicitation', matcher: string, handler: Handler<ElicitationContext>): this
+  on(eventName: 'ElicitationResult', matcher: string, handler: Handler<ElicitationResultContext>): this
+  on(eventName: 'StopFailure', matcher: string, handler: Handler<StopFailureContext>): this
+  on(eventName: 'Notification', matcher: string, handler: Handler<NotificationContext>): this
+  on(eventName: 'InstructionsLoaded', matcher: string, handler: Handler<InstructionsLoadedContext>): this
+  on(eventName: 'TaskCreated', matcher: string, handler: Handler<TaskCreatedContext>): this
+  on(eventName: 'TaskCompleted', matcher: string, handler: Handler<TaskCompletedContext>): this
+  on(eventName: 'WorktreeCreate', matcher: string, handler: Handler<WorktreeCreateContext>): this
+  on(eventName: 'WorktreeRemove', matcher: string, handler: Handler<WorktreeRemoveContext>): this
   on(eventName: HookEventName, matcher: string, handler: Handler<GenericContext>): this
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   on(eventName: string, matcher: string, handler: (ctx: any) => void | Promise<void>): this {
