@@ -235,6 +235,58 @@ hook.on('Elicitation', '*', (ctx) => {
 })
 ```
 
+### `ElicitationResultContext`
+
+```ts
+hook.on('ElicitationResult', '*', (ctx) => {
+  ctx.prompt  // the original elicitation prompt
+  ctx.result  // the user's answer
+})
+```
+
+### `StopFailureContext`
+
+```ts
+hook.on('StopFailure', '*', (ctx) => {
+  ctx.error  // error message describing what went wrong
+})
+```
+
+### `NotificationContext`
+
+```ts
+hook.on('Notification', '*', (ctx) => {
+  ctx.notificationType  // e.g. 'info' | 'warning' | 'error'
+  ctx.message           // notification text
+})
+```
+
+### `InstructionsLoadedContext`
+
+```ts
+hook.on('InstructionsLoaded', '*', (ctx) => {
+  ctx.reason  // why instructions were loaded
+  ctx.files   // list of loaded CLAUDE.md file paths
+})
+```
+
+### `TaskCreatedContext` / `TaskCompletedContext`
+
+```ts
+hook.on('TaskCreated', '*', (ctx) => {
+  ctx.taskId       // unique task identifier
+  ctx.description  // task description
+})
+```
+
+### `WorktreeCreateContext` / `WorktreeRemoveContext`
+
+```ts
+hook.on('WorktreeCreate', '*', (ctx) => {
+  ctx.worktreePath  // absolute path to the worktree
+})
+```
+
 For all other events, the handler receives a `GenericContext` with `ctx.block(reason)` and base properties.
 
 ## Supported events
@@ -252,13 +304,13 @@ For all other events, the handler receives a `GenericContext` with `ctx.block(re
 | `SessionStart` | Session begins or resumes | no | `SessionStartContext` |
 | `SessionEnd` | Session ends | no | `GenericContext` |
 | `Stop` | Claude finishes a turn | yes | `StopContext` |
-| `StopFailure` | Claude turn ended with error | no | `StopContext` |
+| `StopFailure` | Claude turn ended with error | no | `StopFailureContext` |
 | `SubagentStart` | Subagent spawned | no | `GenericContext` |
 | `SubagentStop` | Subagent finished | yes | `StopContext` |
-| `TaskCreated` | Task created | yes | `GenericContext` |
-| `TaskCompleted` | Task completed | yes | `GenericContext` |
-| `WorktreeCreate` | Git worktree created | yes | `GenericContext` |
-| `WorktreeRemove` | Git worktree removed | yes | `GenericContext` |
+| `TaskCreated` | Task created | yes | `TaskCreatedContext` |
+| `TaskCompleted` | Task completed | yes | `TaskCompletedContext` |
+| `WorktreeCreate` | Git worktree created | yes | `WorktreeCreateContext` |
+| `WorktreeRemove` | Git worktree removed | yes | `WorktreeRemoveContext` |
 | `FileChanged` | Watched file changed on disk | yes | `FileChangedContext` |
 | `CwdChanged` | Working directory changed | yes | `CwdChangedContext` |
 | `ConfigChange` | Claude Code config changed | yes | `GenericContext` |
@@ -266,9 +318,9 @@ For all other events, the handler receives a `GenericContext` with `ctx.block(re
 | `PreCompact` | Before context compaction | yes | `GenericContext` |
 | `PostCompact` | After context compaction | no | `GenericContext` |
 | `Elicitation` | Claude needs user input | yes | `ElicitationContext` |
-| `ElicitationResult` | Elicitation answer received | yes | `GenericContext` |
-| `InstructionsLoaded` | CLAUDE.md / rules loaded | no | `GenericContext` |
-| `Notification` | System notification | no | `GenericContext` |
+| `ElicitationResult` | Elicitation answer received | yes | `ElicitationResultContext` |
+| `InstructionsLoaded` | CLAUDE.md / rules loaded | no | `InstructionsLoadedContext` |
+| `Notification` | System notification | no | `NotificationContext` |
 
 ## Exit codes
 

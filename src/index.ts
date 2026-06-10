@@ -7,10 +7,18 @@ export {
   UserPromptSubmitContext,
   UserPromptExpansionContext,
   StopContext,
+  StopFailureContext,
   SessionStartContext,
   FileChangedContext,
   CwdChangedContext,
   ElicitationContext,
+  ElicitationResultContext,
+  NotificationContext,
+  InstructionsLoadedContext,
+  TaskCreatedContext,
+  TaskCompletedContext,
+  WorktreeCreateContext,
+  WorktreeRemoveContext,
   GenericContext,
 } from './context.js'
 export type {

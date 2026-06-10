@@ -8,10 +8,18 @@ import type {
   UserPromptExpansionEvent,
   SessionStartEvent,
   StopEvent,
+  StopFailureEvent,
   SubagentStopEvent,
   FileChangedEvent,
   CwdChangedEvent,
   ElicitationEvent,
+  ElicitationResultEvent,
+  NotificationEvent,
+  InstructionsLoadedEvent,
+  TaskCreatedEvent,
+  TaskCompletedEvent,
+  WorktreeCreateEvent,
+  WorktreeRemoveEvent,
   HookOutput,
   HookEventName,
   ToolInput,
@@ -245,6 +253,75 @@ export class ElicitationContext extends BaseContext {
     this._blocked = true
     this._blockReason = reason
   }
+}
+
+export class StopFailureContext extends BaseContext {
+  declare readonly event: StopFailureEvent
+
+  constructor(event: StopFailureEvent) { super(event) }
+
+  get error(): string { return this.event.error }
+}
+
+export class ElicitationResultContext extends BaseContext {
+  declare readonly event: ElicitationResultEvent
+
+  constructor(event: ElicitationResultEvent) { super(event) }
+
+  get prompt(): string { return this.event.prompt }
+  get result(): string { return this.event.result }
+}
+
+export class NotificationContext extends BaseContext {
+  declare readonly event: NotificationEvent
+
+  constructor(event: NotificationEvent) { super(event) }
+
+  get notificationType(): string { return this.event.notification_type }
+  get message(): string { return this.event.message }
+}
+
+export class InstructionsLoadedContext extends BaseContext {
+  declare readonly event: InstructionsLoadedEvent
+
+  constructor(event: InstructionsLoadedEvent) { super(event) }
+
+  get reason(): string { return this.event.reason }
+  get files(): string[] { return this.event.files }
+}
+
+export class TaskCreatedContext extends BaseContext {
+  declare readonly event: TaskCreatedEvent
+
+  constructor(event: TaskCreatedEvent) { super(event) }
+
+  get taskId(): string { return this.event.task_id }
+  get description(): string { return this.event.description }
+}
+
+export class TaskCompletedContext extends BaseContext {
+  declare readonly event: TaskCompletedEvent
+
+  constructor(event: TaskCompletedEvent) { super(event) }
+
+  get taskId(): string { return this.event.task_id }
+  get description(): string { return this.event.description }
+}
+
+export class WorktreeCreateContext extends BaseContext {
+  declare readonly event: WorktreeCreateEvent
+
+  constructor(event: WorktreeCreateEvent) { super(event) }
+
+  get worktreePath(): string { return this.event.worktree_path }
+}
+
+export class WorktreeRemoveContext extends BaseContext {
+  declare readonly event: WorktreeRemoveEvent
+
+  constructor(event: WorktreeRemoveEvent) { super(event) }
+
+  get worktreePath(): string { return this.event.worktree_path }
 }
 
 export class GenericContext extends BaseContext {
