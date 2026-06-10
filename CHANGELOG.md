@@ -8,6 +8,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [0.3.0] - 2026-06-10
 
+### Added
+
+- `StopFailureContext` — dedicated context for `StopFailure` events with `error` accessor
+- `ElicitationResultContext` — dedicated context for `ElicitationResult` events with `prompt` and `result` accessors
+- `NotificationContext` — dedicated context for `Notification` events with `notificationType` and `message` accessors
+- `InstructionsLoadedContext` — dedicated context for `InstructionsLoaded` events with `reason` and `files` accessors
+- `TaskCreatedContext` / `TaskCompletedContext` — dedicated contexts for task lifecycle events with `taskId` and `description` accessors
+- `WorktreeCreateContext` / `WorktreeRemoveContext` — dedicated contexts for worktree lifecycle events with `worktreePath` accessor
+
 ---
 
 
