@@ -58,7 +58,7 @@ jobs:
             local prefix=$1
             if [ -n "$LAST_TAG" ]; then
               git log "${LAST_TAG}..HEAD" --pretty=format:"%s" \
-                | grep -E "^${prefix}(\([^)]+\))?:" \
+                | grep -E "^(${prefix})(\([^)]+\))?:" \
                 | sed -E "s/^[a-z]+(\([^)]+\))?: /- /" || true
             fi
           }
@@ -66,6 +66,11 @@ jobs:
           ADDED=$(get_section "feat")
           FIXED=$(get_section "fix")
           CHANGED=$(get_section "refactor|perf|docs|ci")
+
+          if [ -z "$ADDED" ] && [ -z "$FIXED" ] && [ -z "$CHANGED" ]; then
+            echo "::error::No releasable commits (feat/fix/refactor/perf/docs/ci) found since ${LAST_TAG:-the beginning}. CHANGELOG would be empty. Add conventional commits before releasing."
+            exit 1
+          fi
 
           {
             echo "## [${VERSION}] - ${DATE}"
