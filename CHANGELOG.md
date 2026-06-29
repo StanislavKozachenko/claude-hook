@@ -6,6 +6,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ---
 
+## [0.3.1] - 2026-06-29
+
+### Fixed
+
+- commit version bump to main before publishing to npm
+
+### Changed
+
+- guard against empty CHANGELOG + fix get_section regex
+- fill CHANGELOG entry for v0.3.0
+- fetch full git history in release workflow to resolve tags
+
+---
+
+
 ## [0.3.0] - 2026-06-10
 
 ### Added
