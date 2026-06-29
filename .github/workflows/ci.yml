@@ -21,3 +21,27 @@ jobs:
       - run: npm ci
       - run: npm test
       - run: npm run build
+
+  changelog-check:
+    name: CHANGELOG pre-check
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check for releasable commits since last tag
+        run: |
+          LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+          RANGE="${LAST_TAG:+${LAST_TAG}..}HEAD"
+
+          HAS=$(git log $RANGE --pretty=format:"%s" \
+            | grep -qE "^(feat|fix|refactor|perf|docs|ci)(\([^)]+\))?:" && echo yes || echo no)
+
+          if [ "$HAS" = "no" ]; then
+            echo "::error::No releasable commits (feat/fix/refactor/perf/docs/ci) found since ${LAST_TAG:-the beginning}. The next release run would emit an empty CHANGELOG. Add at least one commit with a conventional prefix."
+            exit 1
+          fi
+
+          echo "Releasable commits found since ${LAST_TAG:-the beginning} — release workflow will generate a non-empty CHANGELOG."
