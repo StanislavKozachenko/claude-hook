@@ -287,6 +287,59 @@ hook.on('WorktreeCreate', '*', (ctx) => {
 })
 ```
 
+### `SessionEndContext`
+
+```ts
+hook.on('SessionEnd', '*', (ctx) => {
+  ctx.sessionId  // base accessor, no event-specific fields
+})
+```
+
+> Claude Code gives `SessionEnd` a much shorter exit-time budget than other hooks
+> (historically ~1.5s, regardless of the hook's own `timeout`), so slow-starting
+> commands (e.g. `npx`) can get killed before they run. Override it with the
+> `CLAUDE_CODE_SESSIONEND_HOOKS_TIMEOUT_MS` environment variable if you need more time.
+
+### `SubagentStartContext`
+
+```ts
+hook.on('SubagentStart', '*', (ctx) => {
+  ctx.sessionId  // base accessor, no event-specific fields
+})
+```
+
+### `ConfigChangeContext`
+
+```ts
+hook.on('ConfigChange', '*', (ctx) => {
+  ctx.cwd  // base accessor, no event-specific fields
+})
+```
+
+### `TeammateIdleContext`
+
+```ts
+hook.on('TeammateIdle', '*', (ctx) => {
+  ctx.teammateId  // id of the teammate agent that went idle
+})
+```
+
+### `PreCompactContext` / `PostCompactContext`
+
+```ts
+hook.on('PreCompact', '*', (ctx) => {
+  ctx.sessionId  // base accessor, no event-specific fields
+})
+```
+
+### `PostToolBatchContext`
+
+```ts
+hook.on('PostToolBatch', '*', (ctx) => {
+  ctx.sessionId  // base accessor, no event-specific fields
+})
+```
+
 For all other events, the handler receives a `GenericContext` with `ctx.block(reason)` and base properties.
 
 ## Supported events
@@ -296,16 +349,16 @@ For all other events, the handler receives a `GenericContext` with `ctx.block(re
 | `PreToolUse` | Before any tool call | yes | `PreToolUseContext` |
 | `PostToolUse` | After successful tool call | no | `PostToolUseContext` |
 | `PostToolUseFailure` | After failed tool call | no | `PostToolUseContext` |
-| `PostToolBatch` | After a batch of tool calls | yes | `GenericContext` |
+| `PostToolBatch` | After a batch of tool calls | yes | `PostToolBatchContext` |
 | `PermissionRequest` | When permission dialog shows | yes | `PreToolUseContext` |
 | `PermissionDenied` | After permission denied | no | `PreToolUseContext` |
 | `UserPromptSubmit` | Before Claude sees your message | yes | `UserPromptSubmitContext` |
 | `UserPromptExpansion` | When a slash command expands | yes | `UserPromptExpansionContext` |
 | `SessionStart` | Session begins or resumes | no | `SessionStartContext` |
-| `SessionEnd` | Session ends | no | `GenericContext` |
+| `SessionEnd` | Session ends | no | `SessionEndContext` |
 | `Stop` | Claude finishes a turn | yes | `StopContext` |
 | `StopFailure` | Claude turn ended with error | no | `StopFailureContext` |
-| `SubagentStart` | Subagent spawned | no | `GenericContext` |
+| `SubagentStart` | Subagent spawned | no | `SubagentStartContext` |
 | `SubagentStop` | Subagent finished | yes | `StopContext` |
 | `TaskCreated` | Task created | yes | `TaskCreatedContext` |
 | `TaskCompleted` | Task completed | yes | `TaskCompletedContext` |
@@ -313,10 +366,10 @@ For all other events, the handler receives a `GenericContext` with `ctx.block(re
 | `WorktreeRemove` | Git worktree removed | yes | `WorktreeRemoveContext` |
 | `FileChanged` | Watched file changed on disk | yes | `FileChangedContext` |
 | `CwdChanged` | Working directory changed | yes | `CwdChangedContext` |
-| `ConfigChange` | Claude Code config changed | yes | `GenericContext` |
-| `TeammateIdle` | Teammate agent went idle | yes | `GenericContext` |
-| `PreCompact` | Before context compaction | yes | `GenericContext` |
-| `PostCompact` | After context compaction | no | `GenericContext` |
+| `ConfigChange` | Claude Code config changed | yes | `ConfigChangeContext` |
+| `TeammateIdle` | Teammate agent went idle | yes | `TeammateIdleContext` |
+| `PreCompact` | Before context compaction | yes | `PreCompactContext` |
+| `PostCompact` | After context compaction | no | `PostCompactContext` |
 | `Elicitation` | Claude needs user input | yes | `ElicitationContext` |
 | `ElicitationResult` | Elicitation answer received | yes | `ElicitationResultContext` |
 | `InstructionsLoaded` | CLAUDE.md / rules loaded | no | `InstructionsLoadedContext` |

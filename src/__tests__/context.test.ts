@@ -1,5 +1,5 @@
-import { PreToolUseContext, UserPromptSubmitContext, UserPromptExpansionContext, PostToolUseContext, FileChangedContext, CwdChangedContext, ElicitationContext } from '../context'
-import type { PreToolUseEvent, PostToolUseEvent, UserPromptSubmitEvent, UserPromptExpansionEvent, FileChangedEvent, CwdChangedEvent, ElicitationEvent } from '../types'
+import { PreToolUseContext, UserPromptSubmitContext, UserPromptExpansionContext, PostToolUseContext, FileChangedContext, CwdChangedContext, ElicitationContext, SessionEndContext, SubagentStartContext, ConfigChangeContext, TeammateIdleContext, PreCompactContext, PostCompactContext, PostToolBatchContext } from '../context'
+import type { PreToolUseEvent, PostToolUseEvent, UserPromptSubmitEvent, UserPromptExpansionEvent, FileChangedEvent, CwdChangedEvent, ElicitationEvent, SessionEndEvent, SubagentStartEvent, ConfigChangeEvent, TeammateIdleEvent, PreCompactEvent, PostCompactEvent, PostToolBatchEvent } from '../types'
 
 const baseEvent = {
   session_id: 'sess1',
@@ -195,5 +195,90 @@ describe('ElicitationContext', () => {
     ctx.block('no elicitation in automated sessions')
     expect(ctx._isBlocked()).toBe(true)
     expect(ctx._getBlockReason()).toBe('no elicitation in automated sessions')
+  })
+})
+
+describe('SessionEndContext', () => {
+  const event: SessionEndEvent = {
+    ...baseEvent,
+    hook_event_name: 'SessionEnd',
+  }
+
+  test('sessionId accessor inherited from BaseContext', () => {
+    const ctx = new SessionEndContext(event)
+    expect(ctx.sessionId).toBe('sess1')
+  })
+})
+
+describe('SubagentStartContext', () => {
+  const event: SubagentStartEvent = {
+    ...baseEvent,
+    hook_event_name: 'SubagentStart',
+  }
+
+  test('hookEventName accessor inherited from BaseContext', () => {
+    const ctx = new SubagentStartContext(event)
+    expect(ctx.hookEventName).toBe('SubagentStart')
+  })
+})
+
+describe('ConfigChangeContext', () => {
+  const event: ConfigChangeEvent = {
+    ...baseEvent,
+    hook_event_name: 'ConfigChange',
+  }
+
+  test('cwd accessor inherited from BaseContext', () => {
+    const ctx = new ConfigChangeContext(event)
+    expect(ctx.cwd).toBe('/home/user')
+  })
+})
+
+describe('TeammateIdleContext', () => {
+  const event: TeammateIdleEvent = {
+    ...baseEvent,
+    hook_event_name: 'TeammateIdle',
+    teammate_id: 'teammate-1',
+  }
+
+  test('teammateId accessor', () => {
+    const ctx = new TeammateIdleContext(event)
+    expect(ctx.teammateId).toBe('teammate-1')
+  })
+})
+
+describe('PreCompactContext', () => {
+  const event: PreCompactEvent = {
+    ...baseEvent,
+    hook_event_name: 'PreCompact',
+  }
+
+  test('hookEventName accessor inherited from BaseContext', () => {
+    const ctx = new PreCompactContext(event)
+    expect(ctx.hookEventName).toBe('PreCompact')
+  })
+})
+
+describe('PostCompactContext', () => {
+  const event: PostCompactEvent = {
+    ...baseEvent,
+    hook_event_name: 'PostCompact',
+  }
+
+  test('hookEventName accessor inherited from BaseContext', () => {
+    const ctx = new PostCompactContext(event)
+    expect(ctx.hookEventName).toBe('PostCompact')
+  })
+})
+
+describe('PostToolBatchContext', () => {
+  const event: PostToolBatchEvent = {
+    ...baseEvent,
+    hook_event_name: 'PostToolBatch',
+  }
+
+  test('hookEventName accessor inherited from BaseContext', () => {
+    const ctx = new PostToolBatchContext(event)
+    expect(ctx.hookEventName).toBe('PostToolBatch')
   })
 })
