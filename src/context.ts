@@ -4,14 +4,21 @@ import type {
   PreToolUseEvent,
   PostToolUseEvent,
   PostToolUseFailureEvent,
+  PostToolBatchEvent,
   UserPromptSubmitEvent,
   UserPromptExpansionEvent,
   SessionStartEvent,
+  SessionEndEvent,
   StopEvent,
   StopFailureEvent,
+  SubagentStartEvent,
   SubagentStopEvent,
   FileChangedEvent,
   CwdChangedEvent,
+  ConfigChangeEvent,
+  TeammateIdleEvent,
+  PreCompactEvent,
+  PostCompactEvent,
   ElicitationEvent,
   ElicitationResultEvent,
   NotificationEvent,
@@ -322,6 +329,50 @@ export class WorktreeRemoveContext extends BaseContext {
   constructor(event: WorktreeRemoveEvent) { super(event) }
 
   get worktreePath(): string { return this.event.worktree_path }
+}
+
+export class SessionEndContext extends BaseContext {
+  declare readonly event: SessionEndEvent
+
+  constructor(event: SessionEndEvent) { super(event) }
+}
+
+export class SubagentStartContext extends BaseContext {
+  declare readonly event: SubagentStartEvent
+
+  constructor(event: SubagentStartEvent) { super(event) }
+}
+
+export class ConfigChangeContext extends BaseContext {
+  declare readonly event: ConfigChangeEvent
+
+  constructor(event: ConfigChangeEvent) { super(event) }
+}
+
+export class TeammateIdleContext extends BaseContext {
+  declare readonly event: TeammateIdleEvent
+
+  constructor(event: TeammateIdleEvent) { super(event) }
+
+  get teammateId(): string { return this.event.teammate_id }
+}
+
+export class PreCompactContext extends BaseContext {
+  declare readonly event: PreCompactEvent
+
+  constructor(event: PreCompactEvent) { super(event) }
+}
+
+export class PostCompactContext extends BaseContext {
+  declare readonly event: PostCompactEvent
+
+  constructor(event: PostCompactEvent) { super(event) }
+}
+
+export class PostToolBatchContext extends BaseContext {
+  declare readonly event: PostToolBatchEvent
+
+  constructor(event: PostToolBatchEvent) { super(event) }
 }
 
 export class GenericContext extends BaseContext {

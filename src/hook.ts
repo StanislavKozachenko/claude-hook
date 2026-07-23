@@ -5,16 +5,23 @@ import type {
   PreToolUseEvent,
   PostToolUseEvent,
   PostToolUseFailureEvent,
+  PostToolBatchEvent,
   PermissionRequestEvent,
   PermissionDeniedEvent,
   UserPromptSubmitEvent,
   UserPromptExpansionEvent,
   SessionStartEvent,
+  SessionEndEvent,
   StopEvent,
   StopFailureEvent,
+  SubagentStartEvent,
   SubagentStopEvent,
   FileChangedEvent,
   CwdChangedEvent,
+  ConfigChangeEvent,
+  TeammateIdleEvent,
+  PreCompactEvent,
+  PostCompactEvent,
   ElicitationEvent,
   ElicitationResultEvent,
   NotificationEvent,
@@ -32,12 +39,19 @@ import {
   BaseContext,
   PreToolUseContext,
   PostToolUseContext,
+  PostToolBatchContext,
   UserPromptSubmitContext,
   UserPromptExpansionContext,
   StopContext,
   SessionStartContext,
+  SessionEndContext,
+  SubagentStartContext,
   FileChangedContext,
   CwdChangedContext,
+  ConfigChangeContext,
+  TeammateIdleContext,
+  PreCompactContext,
+  PostCompactContext,
   ElicitationContext,
   StopFailureContext,
   ElicitationResultContext,
@@ -70,6 +84,8 @@ function createContext(event: AnyEvent): BaseContext {
     case 'PostToolUse':
     case 'PostToolUseFailure':
       return new PostToolUseContext(event as PostToolUseEvent | PostToolUseFailureEvent)
+    case 'PostToolBatch':
+      return new PostToolBatchContext(event as PostToolBatchEvent)
     case 'UserPromptSubmit':
       return new UserPromptSubmitContext(event as UserPromptSubmitEvent)
     case 'UserPromptExpansion':
@@ -79,12 +95,24 @@ function createContext(event: AnyEvent): BaseContext {
       return new StopContext(event as StopEvent | SubagentStopEvent)
     case 'StopFailure':
       return new StopFailureContext(event as StopFailureEvent)
+    case 'SubagentStart':
+      return new SubagentStartContext(event as SubagentStartEvent)
     case 'SessionStart':
       return new SessionStartContext(event as SessionStartEvent)
+    case 'SessionEnd':
+      return new SessionEndContext(event as SessionEndEvent)
     case 'FileChanged':
       return new FileChangedContext(event as FileChangedEvent)
     case 'CwdChanged':
       return new CwdChangedContext(event as CwdChangedEvent)
+    case 'ConfigChange':
+      return new ConfigChangeContext(event as ConfigChangeEvent)
+    case 'TeammateIdle':
+      return new TeammateIdleContext(event as TeammateIdleEvent)
+    case 'PreCompact':
+      return new PreCompactContext(event as PreCompactEvent)
+    case 'PostCompact':
+      return new PostCompactContext(event as PostCompactEvent)
     case 'Elicitation':
       return new ElicitationContext(event as ElicitationEvent)
     case 'ElicitationResult':
@@ -119,12 +147,19 @@ export class HookHandler {
   on(eventName: 'PostToolUse' | 'PostToolUseFailure', matcher: 'Read', handler: Handler<PostToolUseContext<ReadToolInput>>): this
   on(eventName: 'PreToolUse' | 'PermissionRequest' | 'PermissionDenied', matcher: string, handler: Handler<PreToolUseContext>): this
   on(eventName: 'PostToolUse' | 'PostToolUseFailure', matcher: string, handler: Handler<PostToolUseContext>): this
+  on(eventName: 'PostToolBatch', matcher: string, handler: Handler<PostToolBatchContext>): this
   on(eventName: 'UserPromptSubmit', matcher: string, handler: Handler<UserPromptSubmitContext>): this
   on(eventName: 'UserPromptExpansion', matcher: string, handler: Handler<UserPromptExpansionContext>): this
   on(eventName: 'Stop' | 'SubagentStop', matcher: string, handler: Handler<StopContext>): this
+  on(eventName: 'SubagentStart', matcher: string, handler: Handler<SubagentStartContext>): this
   on(eventName: 'SessionStart', matcher: string, handler: Handler<SessionStartContext>): this
+  on(eventName: 'SessionEnd', matcher: string, handler: Handler<SessionEndContext>): this
   on(eventName: 'FileChanged', matcher: string, handler: Handler<FileChangedContext>): this
   on(eventName: 'CwdChanged', matcher: string, handler: Handler<CwdChangedContext>): this
+  on(eventName: 'ConfigChange', matcher: string, handler: Handler<ConfigChangeContext>): this
+  on(eventName: 'TeammateIdle', matcher: string, handler: Handler<TeammateIdleContext>): this
+  on(eventName: 'PreCompact', matcher: string, handler: Handler<PreCompactContext>): this
+  on(eventName: 'PostCompact', matcher: string, handler: Handler<PostCompactContext>): this
   on(eventName: 'Elicitation', matcher: string, handler: Handler<ElicitationContext>): this
   on(eventName: 'ElicitationResult', matcher: string, handler: Handler<ElicitationResultContext>): this
   on(eventName: 'StopFailure', matcher: string, handler: Handler<StopFailureContext>): this
