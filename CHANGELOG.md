@@ -6,6 +6,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ---
 
+## [0.4.0] - 2026-07-23
+
+### Added
+
+- add typed context classes for remaining hook events
+
+---
+
+
 ## [0.3.1] - 2026-06-29
 
 ### Fixed
