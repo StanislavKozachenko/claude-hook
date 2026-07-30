@@ -75,7 +75,7 @@ export class PreToolUseContext<T extends ToolInput = ToolInput> extends BaseCont
   allow(): void {
     this._output.hookSpecificOutput = {
       ...this._output.hookSpecificOutput,
-      hookEventName: 'PreToolUse',
+      hookEventName: this.event.hook_event_name,
       permissionDecision: 'allow',
     }
   }
@@ -83,7 +83,7 @@ export class PreToolUseContext<T extends ToolInput = ToolInput> extends BaseCont
   modify(newInput: Record<string, unknown>): void {
     this._output.hookSpecificOutput = {
       ...this._output.hookSpecificOutput,
-      hookEventName: 'PreToolUse',
+      hookEventName: this.event.hook_event_name,
       updatedInput: newInput,
     }
   }
@@ -91,7 +91,7 @@ export class PreToolUseContext<T extends ToolInput = ToolInput> extends BaseCont
   addContext(text: string): void {
     this._output.hookSpecificOutput = {
       ...this._output.hookSpecificOutput,
-      hookEventName: 'PreToolUse',
+      hookEventName: this.event.hook_event_name,
       additionalContext: text,
     }
   }

@@ -1,5 +1,5 @@
 import { PreToolUseContext, UserPromptSubmitContext, UserPromptExpansionContext, PostToolUseContext, FileChangedContext, CwdChangedContext, ElicitationContext, SessionEndContext, SubagentStartContext, ConfigChangeContext, TeammateIdleContext, PreCompactContext, PostCompactContext, PostToolBatchContext } from '../context'
-import type { PreToolUseEvent, PostToolUseEvent, UserPromptSubmitEvent, UserPromptExpansionEvent, FileChangedEvent, CwdChangedEvent, ElicitationEvent, SessionEndEvent, SubagentStartEvent, ConfigChangeEvent, TeammateIdleEvent, PreCompactEvent, PostCompactEvent, PostToolBatchEvent } from '../types'
+import type { PreToolUseEvent, PostToolUseEvent, UserPromptSubmitEvent, UserPromptExpansionEvent, FileChangedEvent, CwdChangedEvent, ElicitationEvent, SessionEndEvent, SubagentStartEvent, ConfigChangeEvent, TeammateIdleEvent, PreCompactEvent, PostCompactEvent, PostToolBatchEvent, PermissionRequestEvent, PermissionDeniedEvent } from '../types'
 
 const baseEvent = {
   session_id: 'sess1',
@@ -60,6 +60,38 @@ describe('PreToolUseContext', () => {
     const ctx = new PreToolUseContext(preToolEvent)
     expect(ctx.toolName).toBe('Bash')
     expect(ctx.input.command).toBe('rm -rf /tmp/foo')
+  })
+
+  test('allow/modify/addContext report the actual event name for PermissionRequest', () => {
+    const permissionRequestEvent: PermissionRequestEvent = {
+      ...baseEvent,
+      hook_event_name: 'PermissionRequest',
+      tool_name: 'Bash',
+      tool_input: { command: 'rm -rf /tmp/foo' },
+    }
+    const ctx = new PreToolUseContext(permissionRequestEvent as unknown as PreToolUseEvent)
+
+    ctx.allow()
+    expect(ctx._getOutput().hookSpecificOutput?.hookEventName).toBe('PermissionRequest')
+
+    ctx.modify({ command: 'echo safe' })
+    expect(ctx._getOutput().hookSpecificOutput?.hookEventName).toBe('PermissionRequest')
+
+    ctx.addContext('extra info')
+    expect(ctx._getOutput().hookSpecificOutput?.hookEventName).toBe('PermissionRequest')
+  })
+
+  test('allow/modify/addContext report the actual event name for PermissionDenied', () => {
+    const permissionDeniedEvent: PermissionDeniedEvent = {
+      ...baseEvent,
+      hook_event_name: 'PermissionDenied',
+      tool_name: 'Bash',
+      tool_input: { command: 'rm -rf /tmp/foo' },
+    }
+    const ctx = new PreToolUseContext(permissionDeniedEvent as unknown as PreToolUseEvent)
+
+    ctx.addContext('denied context')
+    expect(ctx._getOutput().hookSpecificOutput?.hookEventName).toBe('PermissionDenied')
   })
 })
 
