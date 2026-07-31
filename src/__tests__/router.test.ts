@@ -51,4 +51,10 @@ describe('getMatcherValue', () => {
   test('returns empty string for events without a matcher value', () => {
     expect(getMatcherValue({ hook_event_name: 'SessionEnd' })).toBe('')
   })
+
+  test('returns source for SessionStart', () => {
+    expect(getMatcherValue({ hook_event_name: 'SessionStart', source: 'startup' })).toBe('startup')
+    expect(getMatcherValue({ hook_event_name: 'SessionStart', source: 'resume' })).toBe('resume')
+    expect(getMatcherValue({ hook_event_name: 'SessionStart' })).toBe('')
+  })
 })
