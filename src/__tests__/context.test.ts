@@ -1,5 +1,5 @@
-import { PreToolUseContext, UserPromptSubmitContext, UserPromptExpansionContext, PostToolUseContext, FileChangedContext, CwdChangedContext, ElicitationContext, SessionEndContext, SubagentStartContext, ConfigChangeContext, TeammateIdleContext, PreCompactContext, PostCompactContext, PostToolBatchContext } from '../context'
-import type { PreToolUseEvent, PostToolUseEvent, UserPromptSubmitEvent, UserPromptExpansionEvent, FileChangedEvent, CwdChangedEvent, ElicitationEvent, SessionEndEvent, SubagentStartEvent, ConfigChangeEvent, TeammateIdleEvent, PreCompactEvent, PostCompactEvent, PostToolBatchEvent, PermissionRequestEvent, PermissionDeniedEvent } from '../types'
+import { PreToolUseContext, UserPromptSubmitContext, UserPromptExpansionContext, PostToolUseContext, FileChangedContext, CwdChangedContext, ElicitationContext, SessionEndContext, SubagentStartContext, ConfigChangeContext, TeammateIdleContext, PreCompactContext, PostCompactContext, PostToolBatchContext, StopContext, StopFailureContext, ElicitationResultContext, NotificationContext, InstructionsLoadedContext, TaskCreatedContext, TaskCompletedContext, WorktreeCreateContext, WorktreeRemoveContext, GenericContext } from '../context'
+import type { PreToolUseEvent, PostToolUseEvent, UserPromptSubmitEvent, UserPromptExpansionEvent, FileChangedEvent, CwdChangedEvent, ElicitationEvent, SessionEndEvent, SubagentStartEvent, ConfigChangeEvent, TeammateIdleEvent, PreCompactEvent, PostCompactEvent, PostToolBatchEvent, PermissionRequestEvent, PermissionDeniedEvent, StopEvent, SubagentStopEvent, StopFailureEvent, ElicitationResultEvent, NotificationEvent, InstructionsLoadedEvent, TaskCreatedEvent, TaskCompletedEvent, WorktreeCreateEvent, WorktreeRemoveEvent } from '../types'
 
 const baseEvent = {
   session_id: 'sess1',
@@ -312,5 +312,172 @@ describe('PostToolBatchContext', () => {
   test('hookEventName accessor inherited from BaseContext', () => {
     const ctx = new PostToolBatchContext(event)
     expect(ctx.hookEventName).toBe('PostToolBatch')
+  })
+})
+
+describe('StopContext', () => {
+  const stopEvent: StopEvent = {
+    ...baseEvent,
+    hook_event_name: 'Stop',
+    stop_hook_active: false,
+    last_assistant_message: 'Done.',
+  }
+
+  const subagentStopEvent: SubagentStopEvent = {
+    ...baseEvent,
+    hook_event_name: 'SubagentStop',
+    stop_hook_active: false,
+    last_assistant_message: 'Subagent done.',
+  }
+
+  test('lastAssistantMessage accessor for Stop', () => {
+    const ctx = new StopContext(stopEvent)
+    expect(ctx.lastAssistantMessage).toBe('Done.')
+  })
+
+  test('lastAssistantMessage accessor for SubagentStop', () => {
+    const ctx = new StopContext(subagentStopEvent)
+    expect(ctx.lastAssistantMessage).toBe('Subagent done.')
+  })
+
+  test('block sets _blocked and _blockReason', () => {
+    const ctx = new StopContext(stopEvent)
+    ctx.block('keep going')
+    expect(ctx._isBlocked()).toBe(true)
+    expect(ctx._getBlockReason()).toBe('keep going')
+  })
+})
+
+describe('StopFailureContext', () => {
+  const event: StopFailureEvent = {
+    ...baseEvent,
+    hook_event_name: 'StopFailure',
+    error: 'stop hook crashed',
+  }
+
+  test('error accessor', () => {
+    const ctx = new StopFailureContext(event)
+    expect(ctx.error).toBe('stop hook crashed')
+  })
+})
+
+describe('ElicitationResultContext', () => {
+  const event: ElicitationResultEvent = {
+    ...baseEvent,
+    hook_event_name: 'ElicitationResult',
+    prompt: 'What is the answer?',
+    result: '42',
+  }
+
+  test('prompt and result accessors', () => {
+    const ctx = new ElicitationResultContext(event)
+    expect(ctx.prompt).toBe('What is the answer?')
+    expect(ctx.result).toBe('42')
+  })
+})
+
+describe('NotificationContext', () => {
+  const event: NotificationEvent = {
+    ...baseEvent,
+    hook_event_name: 'Notification',
+    notification_type: 'permission_prompt',
+    message: 'Waiting for permission',
+  }
+
+  test('notificationType and message accessors', () => {
+    const ctx = new NotificationContext(event)
+    expect(ctx.notificationType).toBe('permission_prompt')
+    expect(ctx.message).toBe('Waiting for permission')
+  })
+})
+
+describe('InstructionsLoadedContext', () => {
+  const event: InstructionsLoadedEvent = {
+    ...baseEvent,
+    hook_event_name: 'InstructionsLoaded',
+    reason: 'startup',
+    files: ['CLAUDE.md', '.claude/rules.md'],
+  }
+
+  test('reason and files accessors', () => {
+    const ctx = new InstructionsLoadedContext(event)
+    expect(ctx.reason).toBe('startup')
+    expect(ctx.files).toEqual(['CLAUDE.md', '.claude/rules.md'])
+  })
+})
+
+describe('TaskCreatedContext', () => {
+  const event: TaskCreatedEvent = {
+    ...baseEvent,
+    hook_event_name: 'TaskCreated',
+    task_id: 'task-1',
+    description: 'Fix the bug',
+  }
+
+  test('taskId and description accessors', () => {
+    const ctx = new TaskCreatedContext(event)
+    expect(ctx.taskId).toBe('task-1')
+    expect(ctx.description).toBe('Fix the bug')
+  })
+})
+
+describe('TaskCompletedContext', () => {
+  const event: TaskCompletedEvent = {
+    ...baseEvent,
+    hook_event_name: 'TaskCompleted',
+    task_id: 'task-1',
+    description: 'Fix the bug',
+  }
+
+  test('taskId and description accessors', () => {
+    const ctx = new TaskCompletedContext(event)
+    expect(ctx.taskId).toBe('task-1')
+    expect(ctx.description).toBe('Fix the bug')
+  })
+})
+
+describe('WorktreeCreateContext', () => {
+  const event: WorktreeCreateEvent = {
+    ...baseEvent,
+    hook_event_name: 'WorktreeCreate',
+    worktree_path: '/home/user/.worktrees/feature-x',
+  }
+
+  test('worktreePath accessor', () => {
+    const ctx = new WorktreeCreateContext(event)
+    expect(ctx.worktreePath).toBe('/home/user/.worktrees/feature-x')
+  })
+})
+
+describe('WorktreeRemoveContext', () => {
+  const event: WorktreeRemoveEvent = {
+    ...baseEvent,
+    hook_event_name: 'WorktreeRemove',
+    worktree_path: '/home/user/.worktrees/feature-x',
+  }
+
+  test('worktreePath accessor', () => {
+    const ctx = new WorktreeRemoveContext(event)
+    expect(ctx.worktreePath).toBe('/home/user/.worktrees/feature-x')
+  })
+})
+
+describe('GenericContext', () => {
+  const event: ConfigChangeEvent = {
+    ...baseEvent,
+    hook_event_name: 'ConfigChange',
+  }
+
+  test('block sets _blocked and _blockReason', () => {
+    const ctx = new GenericContext(event)
+    ctx.block('no config changes allowed')
+    expect(ctx._isBlocked()).toBe(true)
+    expect(ctx._getBlockReason()).toBe('no config changes allowed')
+  })
+
+  test('base accessors inherited from BaseContext', () => {
+    const ctx = new GenericContext(event)
+    expect(ctx.hookEventName).toBe('ConfigChange')
+    expect(ctx.sessionId).toBe('sess1')
   })
 })
