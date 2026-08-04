@@ -6,6 +6,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ---
 
+## [0.4.3] - 2026-08-04
+
+### Fixed
+
+- route matcher on command_name/reason/agent_type for 4 events
+- extract FileChanged basename on both / and \ separators
+
+### Changed
+
+- fix FileChanged/CwdChanged blockability in README
+
+---
+
+
 ## [0.4.2] - 2026-07-31
 
 ### Fixed
