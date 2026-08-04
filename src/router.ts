@@ -33,6 +33,12 @@ export function getMatcherValue(event: Record<string, unknown>): string {
   if (name === 'StopFailure') return (event['error'] as string) ?? ''
   // SessionStart: match on session source (if present)
   if (name === 'SessionStart') return (event['source'] as string) ?? ''
+  // UserPromptExpansion: match on command name
+  if (name === 'UserPromptExpansion') return (event['command_name'] as string) ?? ''
+  // InstructionsLoaded: match on load reason
+  if (name === 'InstructionsLoaded') return (event['reason'] as string) ?? ''
+  // SubagentStart/SubagentStop: match on agent type
+  if (name === 'SubagentStart' || name === 'SubagentStop') return (event['agent_type'] as string) ?? ''
   // FileChanged: match on filename (basename), handling both POSIX and Windows separators
   if (name === 'FileChanged') {
     const filePath = (event['file_path'] as string) ?? ''

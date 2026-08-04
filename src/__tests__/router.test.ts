@@ -62,4 +62,20 @@ describe('getMatcherValue', () => {
     expect(getMatcherValue({ hook_event_name: 'SessionStart', source: 'resume' })).toBe('resume')
     expect(getMatcherValue({ hook_event_name: 'SessionStart' })).toBe('')
   })
+
+  test('returns command_name for UserPromptExpansion', () => {
+    expect(getMatcherValue({ hook_event_name: 'UserPromptExpansion', command_name: 'my-command' })).toBe('my-command')
+    expect(getMatcherValue({ hook_event_name: 'UserPromptExpansion' })).toBe('')
+  })
+
+  test('returns reason for InstructionsLoaded', () => {
+    expect(getMatcherValue({ hook_event_name: 'InstructionsLoaded', reason: 'session_start' })).toBe('session_start')
+    expect(getMatcherValue({ hook_event_name: 'InstructionsLoaded' })).toBe('')
+  })
+
+  test('returns agent_type for SubagentStart and SubagentStop', () => {
+    expect(getMatcherValue({ hook_event_name: 'SubagentStart', agent_type: 'Explore' })).toBe('Explore')
+    expect(getMatcherValue({ hook_event_name: 'SubagentStop', agent_type: 'Plan' })).toBe('Plan')
+    expect(getMatcherValue({ hook_event_name: 'SubagentStart' })).toBe('')
+  })
 })
