@@ -48,6 +48,11 @@ describe('getMatcherValue', () => {
     expect(getMatcherValue({ hook_event_name: 'FileChanged', file_path: '.envrc' })).toBe('.envrc')
   })
 
+  test('returns basename for FileChanged on Windows-style paths', () => {
+    expect(getMatcherValue({ hook_event_name: 'FileChanged', file_path: 'C:\\Users\\foo\\project\\.env' })).toBe('.env')
+    expect(getMatcherValue({ hook_event_name: 'FileChanged', file_path: 'C:\\Users\\foo\\project\\src\\index.ts' })).toBe('index.ts')
+  })
+
   test('returns empty string for events without a matcher value', () => {
     expect(getMatcherValue({ hook_event_name: 'SessionEnd' })).toBe('')
   })
