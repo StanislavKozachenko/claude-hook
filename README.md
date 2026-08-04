@@ -218,6 +218,10 @@ hook.on('FileChanged', '.env|.envrc', (ctx) => {
 })
 ```
 
+> `FileChanged` fires after the file has already changed on disk, so `ctx.block()`
+> can't undo it. Claude Code only shows the reason to the user; it doesn't stop
+> anything.
+
 ### `CwdChangedContext`
 
 ```ts
@@ -226,6 +230,10 @@ hook.on('CwdChanged', '*', (ctx) => {
   ctx.newCwd  // new working directory
 })
 ```
+
+> `CwdChanged` fires after the directory has already changed, so `ctx.block()`
+> can't undo it. Claude Code only shows the reason to the user; it doesn't stop
+> anything.
 
 ### `ElicitationContext`
 
@@ -364,8 +372,8 @@ For all other events, the handler receives a `GenericContext` with `ctx.block(re
 | `TaskCompleted` | Task completed | yes | `TaskCompletedContext` |
 | `WorktreeCreate` | Git worktree created | yes | `WorktreeCreateContext` |
 | `WorktreeRemove` | Git worktree removed | yes | `WorktreeRemoveContext` |
-| `FileChanged` | Watched file changed on disk | yes | `FileChangedContext` |
-| `CwdChanged` | Working directory changed | yes | `CwdChangedContext` |
+| `FileChanged` | Watched file changed on disk | no | `FileChangedContext` |
+| `CwdChanged` | Working directory changed | no | `CwdChangedContext` |
 | `ConfigChange` | Claude Code config changed | yes | `ConfigChangeContext` |
 | `TeammateIdle` | Teammate agent went idle | yes | `TeammateIdleContext` |
 | `PreCompact` | Before context compaction | yes | `PreCompactContext` |
