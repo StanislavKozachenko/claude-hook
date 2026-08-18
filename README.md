@@ -292,8 +292,16 @@ hook.on('TaskCreated', '*', (ctx) => {
 ```ts
 hook.on('WorktreeCreate', '*', (ctx) => {
   ctx.worktreePath  // absolute path to the worktree
+  ctx.block('worktree creation not allowed here')
+})
+
+hook.on('WorktreeRemove', '*', (ctx) => {
+  ctx.worktreePath  // absolute path to the worktree
 })
 ```
+
+> `WorktreeRemove` failures are only logged in debug mode; there's no way to
+> block or stop the removal, so `WorktreeRemoveContext` has no `.block()`.
 
 ### `SessionEndContext`
 
@@ -380,7 +388,7 @@ For all other events, the handler receives a `GenericContext` with `ctx.block(re
 | `TaskCreated` | Task created | yes | `TaskCreatedContext` |
 | `TaskCompleted` | Task completed | yes | `TaskCompletedContext` |
 | `WorktreeCreate` | Git worktree created | yes | `WorktreeCreateContext` |
-| `WorktreeRemove` | Git worktree removed | yes | `WorktreeRemoveContext` |
+| `WorktreeRemove` | Git worktree removed | no | `WorktreeRemoveContext` |
 | `FileChanged` | Watched file changed on disk | no | `FileChangedContext` |
 | `CwdChanged` | Working directory changed | no | `CwdChangedContext` |
 | `ConfigChange` | Claude Code config changed | yes | `ConfigChangeContext` |
