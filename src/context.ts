@@ -95,6 +95,14 @@ export class PreToolUseContext<T extends ToolInput = ToolInput> extends BaseCont
       additionalContext: text,
     }
   }
+
+  retry(): void {
+    this._output.hookSpecificOutput = {
+      ...this._output.hookSpecificOutput,
+      hookEventName: this.event.hook_event_name,
+      retry: true,
+    }
+  }
 }
 
 export class PostToolUseContext<T extends ToolInput = ToolInput> extends BaseContext {
