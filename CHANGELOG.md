@@ -6,6 +6,22 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ---
 
+## [0.5.0] - 2026-08-18
+
+### Added
+
+- add retry() to PreToolUseContext for PermissionDenied (#77)
+- add block() to 8 context classes for officially blockable events (#73)
+- add source and file_path fields to ConfigChangeEvent/ConfigChangeContext (#71)
+- add reason field to SessionEndEvent/SessionEndContext (#69)
+
+### Changed
+
+- fix WorktreeRemove blockability in README (#75)
+
+---
+
+
 ## [0.4.3] - 2026-08-04
 
 ### Fixed
