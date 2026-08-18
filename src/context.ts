@@ -349,6 +349,9 @@ export class ConfigChangeContext extends BaseContext {
   declare readonly event: ConfigChangeEvent
 
   constructor(event: ConfigChangeEvent) { super(event) }
+
+  get source(): string { return this.event.source }
+  get filePath(): string { return this.event.file_path }
 }
 
 export class TeammateIdleContext extends BaseContext {

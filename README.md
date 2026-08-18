@@ -324,7 +324,12 @@ hook.on('SubagentStart', '*', (ctx) => {
 
 ```ts
 hook.on('ConfigChange', '*', (ctx) => {
-  ctx.cwd  // base accessor, no event-specific fields
+  ctx.source    // 'user_settings' | 'project_settings' | 'local_settings' | 'policy_settings' | 'skills'
+  ctx.filePath  // absolute path to the changed config file
+})
+
+hook.on('ConfigChange', 'user_settings', (ctx) => {
+  // matcher filters on ctx.source
 })
 ```
 

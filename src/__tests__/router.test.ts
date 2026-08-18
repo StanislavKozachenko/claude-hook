@@ -84,4 +84,10 @@ describe('getMatcherValue', () => {
     expect(getMatcherValue({ hook_event_name: 'SessionEnd', reason: 'clear' })).toBe('clear')
     expect(getMatcherValue({ hook_event_name: 'SessionEnd' })).toBe('')
   })
+
+  test('returns source for ConfigChange', () => {
+    expect(getMatcherValue({ hook_event_name: 'ConfigChange', source: 'user_settings' })).toBe('user_settings')
+    expect(getMatcherValue({ hook_event_name: 'ConfigChange', source: 'policy_settings' })).toBe('policy_settings')
+    expect(getMatcherValue({ hook_event_name: 'ConfigChange' })).toBe('')
+  })
 })
