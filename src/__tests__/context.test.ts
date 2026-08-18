@@ -282,6 +282,13 @@ describe('ConfigChangeContext', () => {
     const ctx = new ConfigChangeContext(event)
     expect(ctx.filePath).toBe('/home/user/.claude/settings.json')
   })
+
+  test('block sets _blocked and _blockReason', () => {
+    const ctx = new ConfigChangeContext(event)
+    ctx.block('config changes not allowed')
+    expect(ctx._isBlocked()).toBe(true)
+    expect(ctx._getBlockReason()).toBe('config changes not allowed')
+  })
 })
 
 describe('TeammateIdleContext', () => {
@@ -295,6 +302,13 @@ describe('TeammateIdleContext', () => {
     const ctx = new TeammateIdleContext(event)
     expect(ctx.teammateId).toBe('teammate-1')
   })
+
+  test('block sets _blocked and _blockReason', () => {
+    const ctx = new TeammateIdleContext(event)
+    ctx.block('keep teammate active')
+    expect(ctx._isBlocked()).toBe(true)
+    expect(ctx._getBlockReason()).toBe('keep teammate active')
+  })
 })
 
 describe('PreCompactContext', () => {
@@ -306,6 +320,13 @@ describe('PreCompactContext', () => {
   test('hookEventName accessor inherited from BaseContext', () => {
     const ctx = new PreCompactContext(event)
     expect(ctx.hookEventName).toBe('PreCompact')
+  })
+
+  test('block sets _blocked and _blockReason', () => {
+    const ctx = new PreCompactContext(event)
+    ctx.block('not now')
+    expect(ctx._isBlocked()).toBe(true)
+    expect(ctx._getBlockReason()).toBe('not now')
   })
 })
 
@@ -330,6 +351,13 @@ describe('PostToolBatchContext', () => {
   test('hookEventName accessor inherited from BaseContext', () => {
     const ctx = new PostToolBatchContext(event)
     expect(ctx.hookEventName).toBe('PostToolBatch')
+  })
+
+  test('block sets _blocked and _blockReason', () => {
+    const ctx = new PostToolBatchContext(event)
+    ctx.block('stop the loop')
+    expect(ctx._isBlocked()).toBe(true)
+    expect(ctx._getBlockReason()).toBe('stop the loop')
   })
 })
 
@@ -392,6 +420,13 @@ describe('ElicitationResultContext', () => {
     expect(ctx.prompt).toBe('What is the answer?')
     expect(ctx.result).toBe('42')
   })
+
+  test('block sets _blocked and _blockReason', () => {
+    const ctx = new ElicitationResultContext(event)
+    ctx.block('decline the result')
+    expect(ctx._isBlocked()).toBe(true)
+    expect(ctx._getBlockReason()).toBe('decline the result')
+  })
 })
 
 describe('NotificationContext', () => {
@@ -437,6 +472,13 @@ describe('TaskCreatedContext', () => {
     expect(ctx.taskId).toBe('task-1')
     expect(ctx.description).toBe('Fix the bug')
   })
+
+  test('block sets _blocked and _blockReason', () => {
+    const ctx = new TaskCreatedContext(event)
+    ctx.block('rollback task creation')
+    expect(ctx._isBlocked()).toBe(true)
+    expect(ctx._getBlockReason()).toBe('rollback task creation')
+  })
 })
 
 describe('TaskCompletedContext', () => {
@@ -452,6 +494,13 @@ describe('TaskCompletedContext', () => {
     expect(ctx.taskId).toBe('task-1')
     expect(ctx.description).toBe('Fix the bug')
   })
+
+  test('block sets _blocked and _blockReason', () => {
+    const ctx = new TaskCompletedContext(event)
+    ctx.block('not actually complete')
+    expect(ctx._isBlocked()).toBe(true)
+    expect(ctx._getBlockReason()).toBe('not actually complete')
+  })
 })
 
 describe('WorktreeCreateContext', () => {
@@ -464,6 +513,13 @@ describe('WorktreeCreateContext', () => {
   test('worktreePath accessor', () => {
     const ctx = new WorktreeCreateContext(event)
     expect(ctx.worktreePath).toBe('/home/user/.worktrees/feature-x')
+  })
+
+  test('block sets _blocked and _blockReason', () => {
+    const ctx = new WorktreeCreateContext(event)
+    ctx.block('worktree creation failed')
+    expect(ctx._isBlocked()).toBe(true)
+    expect(ctx._getBlockReason()).toBe('worktree creation failed')
   })
 })
 

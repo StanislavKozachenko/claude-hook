@@ -277,6 +277,11 @@ export class ElicitationResultContext extends BaseContext {
 
   get prompt(): string { return this.event.prompt }
   get result(): string { return this.event.result }
+
+  block(reason: string): void {
+    this._blocked = true
+    this._blockReason = reason
+  }
 }
 
 export class NotificationContext extends BaseContext {
@@ -304,6 +309,11 @@ export class TaskCreatedContext extends BaseContext {
 
   get taskId(): string { return this.event.task_id }
   get description(): string { return this.event.description }
+
+  block(reason: string): void {
+    this._blocked = true
+    this._blockReason = reason
+  }
 }
 
 export class TaskCompletedContext extends BaseContext {
@@ -313,6 +323,11 @@ export class TaskCompletedContext extends BaseContext {
 
   get taskId(): string { return this.event.task_id }
   get description(): string { return this.event.description }
+
+  block(reason: string): void {
+    this._blocked = true
+    this._blockReason = reason
+  }
 }
 
 export class WorktreeCreateContext extends BaseContext {
@@ -321,6 +336,11 @@ export class WorktreeCreateContext extends BaseContext {
   constructor(event: WorktreeCreateEvent) { super(event) }
 
   get worktreePath(): string { return this.event.worktree_path }
+
+  block(reason: string): void {
+    this._blocked = true
+    this._blockReason = reason
+  }
 }
 
 export class WorktreeRemoveContext extends BaseContext {
@@ -352,6 +372,11 @@ export class ConfigChangeContext extends BaseContext {
 
   get source(): string { return this.event.source }
   get filePath(): string { return this.event.file_path }
+
+  block(reason: string): void {
+    this._blocked = true
+    this._blockReason = reason
+  }
 }
 
 export class TeammateIdleContext extends BaseContext {
@@ -360,12 +385,22 @@ export class TeammateIdleContext extends BaseContext {
   constructor(event: TeammateIdleEvent) { super(event) }
 
   get teammateId(): string { return this.event.teammate_id }
+
+  block(reason: string): void {
+    this._blocked = true
+    this._blockReason = reason
+  }
 }
 
 export class PreCompactContext extends BaseContext {
   declare readonly event: PreCompactEvent
 
   constructor(event: PreCompactEvent) { super(event) }
+
+  block(reason: string): void {
+    this._blocked = true
+    this._blockReason = reason
+  }
 }
 
 export class PostCompactContext extends BaseContext {
@@ -378,6 +413,11 @@ export class PostToolBatchContext extends BaseContext {
   declare readonly event: PostToolBatchEvent
 
   constructor(event: PostToolBatchEvent) { super(event) }
+
+  block(reason: string): void {
+    this._blocked = true
+    this._blockReason = reason
+  }
 }
 
 export class GenericContext extends BaseContext {
