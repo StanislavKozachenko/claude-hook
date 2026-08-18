@@ -279,6 +279,7 @@ export interface HookSpecificOutput {
   additionalContext?: string
   sessionTitle?: string
   updatedMCPToolOutput?: string
+  retry?: boolean
 }
 
 export interface HookOutput {

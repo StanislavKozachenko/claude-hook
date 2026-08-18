@@ -148,6 +148,13 @@ hook.on('PreToolUse', 'Bash', (ctx) => {
 hook.on('PermissionRequest', '*', (ctx) => {
   ctx.permissionSuggestions  // e.g. [{ type: 'setMode', mode: 'acceptEdits', destination: 'session' }]
 })
+
+// PermissionDenied also reuses PreToolUseContext; the denial already happened
+// (`.block()`/`.allow()`/`.modify()` have no effect), but `.retry()` tells
+// Claude Code the model may retry the denied tool call.
+hook.on('PermissionDenied', '*', (ctx) => {
+  ctx.retry()
+})
 ```
 
 ### `PostToolUseContext`

@@ -50,6 +50,12 @@ describe('PreToolUseContext', () => {
     expect(ctx._getOutput().hookSpecificOutput?.additionalContext).toBe('extra info')
   })
 
+  test('retry sets retry flag in hookSpecificOutput', () => {
+    const ctx = new PreToolUseContext(preToolEvent)
+    ctx.retry()
+    expect(ctx._getOutput().hookSpecificOutput?.retry).toBe(true)
+  })
+
   test('allow sets permissionDecision', () => {
     const ctx = new PreToolUseContext(preToolEvent)
     ctx.allow()
@@ -92,6 +98,20 @@ describe('PreToolUseContext', () => {
 
     ctx.addContext('denied context')
     expect(ctx._getOutput().hookSpecificOutput?.hookEventName).toBe('PermissionDenied')
+  })
+
+  test('retry reports the actual event name for PermissionDenied', () => {
+    const permissionDeniedEvent: PermissionDeniedEvent = {
+      ...baseEvent,
+      hook_event_name: 'PermissionDenied',
+      tool_name: 'Bash',
+      tool_input: { command: 'rm -rf /tmp/foo' },
+    }
+    const ctx = new PreToolUseContext(permissionDeniedEvent as unknown as PreToolUseEvent)
+
+    ctx.retry()
+    expect(ctx._getOutput().hookSpecificOutput?.hookEventName).toBe('PermissionDenied')
+    expect(ctx._getOutput().hookSpecificOutput?.retry).toBe(true)
   })
 })
 
