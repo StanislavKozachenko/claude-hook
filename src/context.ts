@@ -5,6 +5,7 @@ import type {
   PostToolUseEvent,
   PostToolUseFailureEvent,
   PostToolBatchEvent,
+  PostToolBatchToolCall,
   UserPromptSubmitEvent,
   UserPromptExpansionEvent,
   SessionStartEvent,
@@ -46,6 +47,7 @@ export class BaseContext {
   get sessionId(): string { return this.event.session_id }
   get cwd(): string { return this.event.cwd }
   get hookEventName(): HookEventName { return this.event.hook_event_name }
+  get promptId(): string | undefined { return this.event.prompt_id }
 
   suppress(): void {
     this._output.suppressOutput = true
@@ -421,6 +423,8 @@ export class PostToolBatchContext extends BaseContext {
   declare readonly event: PostToolBatchEvent
 
   constructor(event: PostToolBatchEvent) { super(event) }
+
+  get toolCalls(): PostToolBatchToolCall[] { return this.event.tool_calls }
 
   block(reason: string): void {
     this._blocked = true

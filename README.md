@@ -130,6 +130,7 @@ All contexts expose:
 | `ctx.sessionId` | Current session ID |
 | `ctx.cwd` | Working directory |
 | `ctx.hookEventName` | Event name |
+| `ctx.promptId` | Current prompt ID, if present |
 | `ctx.suppress()` | Set `suppressOutput: true` |
 
 ### `PreToolUseContext`
@@ -375,7 +376,8 @@ hook.on('PreCompact', '*', (ctx) => {
 
 ```ts
 hook.on('PostToolBatch', '*', (ctx) => {
-  ctx.sessionId  // base accessor, no event-specific fields
+  ctx.toolCalls  // [{ tool_name, tool_input, tool_response, tool_use_id }, ...]
+  ctx.block('reason')  // exit 2, stops the loop before the next model call
 })
 ```
 
