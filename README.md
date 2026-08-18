@@ -298,7 +298,7 @@ hook.on('TaskCreated', '*', (ctx) => {
 
 ```ts
 hook.on('WorktreeCreate', '*', (ctx) => {
-  ctx.worktreePath  // absolute path to the worktree
+  ctx.name  // requested worktree name (e.g. 'feature-x')
   ctx.block('worktree creation not allowed here')
 })
 
@@ -307,6 +307,13 @@ hook.on('WorktreeRemove', '*', (ctx) => {
 })
 ```
 
+> Configuring a `WorktreeCreate` hook makes Claude Code delegate worktree
+> creation to it entirely (even inside a git repo) — `.block()` still works
+> to reject the request, but to *allow* it your hook must create the
+> worktree itself and print its absolute path to stdout (nothing else on
+> stdout). `claude-hook` doesn't automate that part; it only wires up the
+> event and gives you `.block()`.
+>
 > `WorktreeRemove` failures are only logged in debug mode; there's no way to
 > block or stop the removal, so `WorktreeRemoveContext` has no `.block()`.
 

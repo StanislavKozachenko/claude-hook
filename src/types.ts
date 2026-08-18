@@ -189,7 +189,7 @@ export interface TaskCompletedEvent extends BaseEvent {
 
 export interface WorktreeCreateEvent extends BaseEvent {
   hook_event_name: 'WorktreeCreate'
-  worktree_path: string
+  name: string
 }
 
 export interface WorktreeRemoveEvent extends BaseEvent {

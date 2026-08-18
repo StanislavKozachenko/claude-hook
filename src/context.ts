@@ -343,7 +343,7 @@ export class WorktreeCreateContext extends BaseContext {
 
   constructor(event: WorktreeCreateEvent) { super(event) }
 
-  get worktreePath(): string { return this.event.worktree_path }
+  get name(): string { return this.event.name }
 
   block(reason: string): void {
     this._blocked = true
