@@ -527,12 +527,12 @@ describe('WorktreeCreateContext', () => {
   const event: WorktreeCreateEvent = {
     ...baseEvent,
     hook_event_name: 'WorktreeCreate',
-    worktree_path: '/home/user/.worktrees/feature-x',
+    name: 'feature-x',
   }
 
-  test('worktreePath accessor', () => {
+  test('name accessor', () => {
     const ctx = new WorktreeCreateContext(event)
-    expect(ctx.worktreePath).toBe('/home/user/.worktrees/feature-x')
+    expect(ctx.name).toBe('feature-x')
   })
 
   test('block sets _blocked and _blockReason', () => {
