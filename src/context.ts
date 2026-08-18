@@ -335,6 +335,8 @@ export class SessionEndContext extends BaseContext {
   declare readonly event: SessionEndEvent
 
   constructor(event: SessionEndEvent) { super(event) }
+
+  get reason(): string { return this.event.reason }
 }
 
 export class SubagentStartContext extends BaseContext {

@@ -39,6 +39,8 @@ export function getMatcherValue(event: Record<string, unknown>): string {
   if (name === 'InstructionsLoaded') return (event['reason'] as string) ?? ''
   // SubagentStart/SubagentStop: match on agent type
   if (name === 'SubagentStart' || name === 'SubagentStop') return (event['agent_type'] as string) ?? ''
+  // SessionEnd: match on end reason
+  if (name === 'SessionEnd') return (event['reason'] as string) ?? ''
   // FileChanged: match on filename (basename), handling both POSIX and Windows separators
   if (name === 'FileChanged') {
     const filePath = (event['file_path'] as string) ?? ''

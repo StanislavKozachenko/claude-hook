@@ -234,11 +234,17 @@ describe('SessionEndContext', () => {
   const event: SessionEndEvent = {
     ...baseEvent,
     hook_event_name: 'SessionEnd',
+    reason: 'logout',
   }
 
   test('sessionId accessor inherited from BaseContext', () => {
     const ctx = new SessionEndContext(event)
     expect(ctx.sessionId).toBe('sess1')
+  })
+
+  test('reason accessor', () => {
+    const ctx = new SessionEndContext(event)
+    expect(ctx.reason).toBe('logout')
   })
 })
 

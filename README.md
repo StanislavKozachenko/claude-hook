@@ -299,7 +299,11 @@ hook.on('WorktreeCreate', '*', (ctx) => {
 
 ```ts
 hook.on('SessionEnd', '*', (ctx) => {
-  ctx.sessionId  // base accessor, no event-specific fields
+  ctx.reason  // 'clear' | 'resume' | 'logout' | 'prompt_input_exit' | 'bypass_permissions_disabled' | 'other'
+})
+
+hook.on('SessionEnd', 'logout', (ctx) => {
+  // matcher filters on ctx.reason
 })
 ```
 

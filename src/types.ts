@@ -113,6 +113,7 @@ export interface SessionStartEvent extends BaseEvent {
 
 export interface SessionEndEvent extends BaseEvent {
   hook_event_name: 'SessionEnd'
+  reason: string
 }
 
 export interface StopEvent extends BaseEvent {
