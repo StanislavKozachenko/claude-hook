@@ -6,6 +6,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ---
 
+## [0.5.1] - 2026-08-18
+
+### Added
+
+- add tool_calls to PostToolBatchEvent and prompt_id to BaseEvent (#81)
+
+### Fixed
+
+- WorktreeCreateEvent uses name field, not worktree_path (#79)
+
+---
+
+
 ## [0.5.0] - 2026-08-18
 
 ### Added
