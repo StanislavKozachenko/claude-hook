@@ -7,6 +7,7 @@ const baseEvent = {
   cwd: '/home/user',
   permission_mode: 'default',
   tool_use_id: 'tu1',
+  prompt_id: 'prompt1',
 }
 
 const preToolEvent: PreToolUseEvent = {
@@ -36,6 +37,11 @@ describe('PreToolUseContext', () => {
     ctx.block('too dangerous')
     expect(ctx._isBlocked()).toBe(true)
     expect(ctx._getBlockReason()).toBe('too dangerous')
+  })
+
+  test('promptId accessor inherited from BaseContext', () => {
+    const ctx = new PreToolUseContext(preToolEvent)
+    expect(ctx.promptId).toBe('prompt1')
   })
 
   test('modify sets updatedInput in hookSpecificOutput', () => {
@@ -366,11 +372,22 @@ describe('PostToolBatchContext', () => {
   const event: PostToolBatchEvent = {
     ...baseEvent,
     hook_event_name: 'PostToolBatch',
+    tool_calls: [
+      { tool_name: 'Bash', tool_input: { command: 'echo hi' }, tool_response: 'hi', tool_use_id: 'toolu_1' },
+      { tool_name: 'Read', tool_input: { file_path: '/tmp/a' }, tool_response: 'contents', tool_use_id: 'toolu_2' },
+    ],
   }
 
   test('hookEventName accessor inherited from BaseContext', () => {
     const ctx = new PostToolBatchContext(event)
     expect(ctx.hookEventName).toBe('PostToolBatch')
+  })
+
+  test('toolCalls accessor', () => {
+    const ctx = new PostToolBatchContext(event)
+    expect(ctx.toolCalls).toHaveLength(2)
+    expect(ctx.toolCalls[0].tool_name).toBe('Bash')
+    expect(ctx.toolCalls[1].tool_use_id).toBe('toolu_2')
   })
 
   test('block sets _blocked and _blockReason', () => {

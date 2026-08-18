@@ -36,6 +36,7 @@ export interface BaseEvent {
   hook_event_name: HookEventName
   agent_id?: string
   agent_type?: string
+  prompt_id?: string
 }
 
 // Common tool inputs
@@ -167,8 +168,16 @@ export interface PermissionDeniedEvent extends BaseEvent {
   tool_use_id?: string
 }
 
+export interface PostToolBatchToolCall {
+  tool_name: string
+  tool_input: ToolInput
+  tool_response: unknown
+  tool_use_id: string
+}
+
 export interface PostToolBatchEvent extends BaseEvent {
   hook_event_name: 'PostToolBatch'
+  tool_calls: PostToolBatchToolCall[]
 }
 
 export interface SubagentStartEvent extends BaseEvent {
