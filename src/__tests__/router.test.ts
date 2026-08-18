@@ -78,4 +78,10 @@ describe('getMatcherValue', () => {
     expect(getMatcherValue({ hook_event_name: 'SubagentStop', agent_type: 'Plan' })).toBe('Plan')
     expect(getMatcherValue({ hook_event_name: 'SubagentStart' })).toBe('')
   })
+
+  test('returns reason for SessionEnd', () => {
+    expect(getMatcherValue({ hook_event_name: 'SessionEnd', reason: 'logout' })).toBe('logout')
+    expect(getMatcherValue({ hook_event_name: 'SessionEnd', reason: 'clear' })).toBe('clear')
+    expect(getMatcherValue({ hook_event_name: 'SessionEnd' })).toBe('')
+  })
 })
