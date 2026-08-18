@@ -264,11 +264,23 @@ describe('ConfigChangeContext', () => {
   const event: ConfigChangeEvent = {
     ...baseEvent,
     hook_event_name: 'ConfigChange',
+    source: 'user_settings',
+    file_path: '/home/user/.claude/settings.json',
   }
 
   test('cwd accessor inherited from BaseContext', () => {
     const ctx = new ConfigChangeContext(event)
     expect(ctx.cwd).toBe('/home/user')
+  })
+
+  test('source accessor', () => {
+    const ctx = new ConfigChangeContext(event)
+    expect(ctx.source).toBe('user_settings')
+  })
+
+  test('filePath accessor', () => {
+    const ctx = new ConfigChangeContext(event)
+    expect(ctx.filePath).toBe('/home/user/.claude/settings.json')
   })
 })
 
@@ -472,6 +484,8 @@ describe('GenericContext', () => {
   const event: ConfigChangeEvent = {
     ...baseEvent,
     hook_event_name: 'ConfigChange',
+    source: 'user_settings',
+    file_path: '/home/user/.claude/settings.json',
   }
 
   test('block sets _blocked and _blockReason', () => {
