@@ -432,6 +432,9 @@ export class PostCompactContext extends BaseContext {
   declare readonly event: PostCompactEvent
 
   constructor(event: PostCompactEvent) { super(event) }
+
+  get trigger(): 'manual' | 'auto' { return this.event.trigger }
+  get compactSummary(): string { return this.event.compact_summary }
 }
 
 export class PostToolBatchContext extends BaseContext {
