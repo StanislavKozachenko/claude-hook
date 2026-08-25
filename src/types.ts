@@ -196,13 +196,21 @@ export interface SubagentStartEvent extends BaseEvent {
 export interface TaskCreatedEvent extends BaseEvent {
   hook_event_name: 'TaskCreated'
   task_id: string
-  description: string
+  task_subject: string
+  task_description?: string
+  teammate_name?: string
+  /** @deprecated Sessions have a single implicit team; this will be removed in a future release. */
+  team_name?: string
 }
 
 export interface TaskCompletedEvent extends BaseEvent {
   hook_event_name: 'TaskCompleted'
   task_id: string
-  description: string
+  task_subject: string
+  task_description?: string
+  teammate_name?: string
+  /** @deprecated Sessions have a single implicit team; this will be removed in a future release. */
+  team_name?: string
 }
 
 export interface WorktreeCreateEvent extends BaseEvent {
