@@ -423,7 +423,7 @@ export class TeammateIdleContext extends BaseContext {
 
   constructor(event: TeammateIdleEvent) { super(event) }
 
-  get teammateId(): string { return this.event.teammate_id }
+  get teammateName(): string { return this.event.teammate_name }
 
   block(reason: string): void {
     this._blocked = true
