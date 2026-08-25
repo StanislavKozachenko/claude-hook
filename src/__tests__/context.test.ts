@@ -222,11 +222,17 @@ describe('FileChangedContext', () => {
     ...baseEvent,
     hook_event_name: 'FileChanged',
     file_path: '/project/.env',
+    event: 'change',
   }
 
   test('filePath accessor', () => {
     const ctx = new FileChangedContext(event)
     expect(ctx.filePath).toBe('/project/.env')
+  })
+
+  test('changeType accessor', () => {
+    const ctx = new FileChangedContext(event)
+    expect(ctx.changeType).toBe('change')
   })
 
   test('block sets _blocked', () => {

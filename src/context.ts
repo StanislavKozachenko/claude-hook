@@ -228,6 +228,7 @@ export class FileChangedContext extends BaseContext {
   constructor(event: FileChangedEvent) { super(event) }
 
   get filePath(): string { return this.event.file_path }
+  get changeType(): 'change' | 'add' | 'unlink' { return this.event.event }
 
   setEnv(key: string, value: string): void {
     const envFile = process.env['CLAUDE_ENV_FILE']
