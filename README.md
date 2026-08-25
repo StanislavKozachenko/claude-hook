@@ -247,6 +247,9 @@ hook.on('CwdChanged', '*', (ctx) => {
 
 ```ts
 hook.on('Elicitation', '*', (ctx) => {
+  ctx.mcpServerName  // which MCP server is asking
+  ctx.message        // the question shown to the user
+  ctx.mode           // 'form' | 'url' | undefined
   ctx.block('automated sessions do not support interactive prompts')
 })
 ```

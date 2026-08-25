@@ -264,7 +264,12 @@ export class ElicitationContext extends BaseContext {
 
   constructor(event: ElicitationEvent) { super(event) }
 
-  get prompt(): string { return this.event.prompt }
+  get mcpServerName(): string { return this.event.mcp_server_name }
+  get message(): string { return this.event.message }
+  get mode(): 'form' | 'url' | undefined { return this.event.mode }
+  get url(): string | undefined { return this.event.url }
+  get elicitationId(): string | undefined { return this.event.elicitation_id }
+  get requestedSchema(): Record<string, unknown> | undefined { return this.event.requested_schema }
 
   block(reason: string): void {
     this._blocked = true
