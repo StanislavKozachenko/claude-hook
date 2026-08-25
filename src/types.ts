@@ -243,7 +243,9 @@ export interface ConfigChangeEvent extends BaseEvent {
 
 export interface TeammateIdleEvent extends BaseEvent {
   hook_event_name: 'TeammateIdle'
-  teammate_id: string
+  teammate_name: string
+  /** @deprecated Sessions have a single implicit team; this will be removed in a future release. */
+  team_name: string
 }
 
 export interface PreCompactEvent extends BaseEvent {

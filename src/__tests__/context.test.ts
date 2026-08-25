@@ -367,12 +367,13 @@ describe('TeammateIdleContext', () => {
   const event: TeammateIdleEvent = {
     ...baseEvent,
     hook_event_name: 'TeammateIdle',
-    teammate_id: 'teammate-1',
+    teammate_name: 'alice',
+    team_name: 'team-1',
   }
 
-  test('teammateId accessor', () => {
+  test('teammateName accessor', () => {
     const ctx = new TeammateIdleContext(event)
-    expect(ctx.teammateId).toBe('teammate-1')
+    expect(ctx.teammateName).toBe('alice')
   })
 
   test('block sets _blocked and _blockReason', () => {

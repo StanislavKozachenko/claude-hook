@@ -384,9 +384,13 @@ hook.on('ConfigChange', 'user_settings', (ctx) => {
 
 ```ts
 hook.on('TeammateIdle', '*', (ctx) => {
-  ctx.teammateId  // id of the teammate agent that went idle
+  ctx.teammateName     // name of the teammate agent that went idle
+  ctx.block('reason')  // exit 2, prevents the teammate from going idle
 })
 ```
+
+> Requires the experimental Agent Teams feature
+> (`CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`).
 
 ### `PreCompactContext` / `PostCompactContext`
 
