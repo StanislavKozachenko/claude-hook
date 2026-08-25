@@ -6,6 +6,27 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ---
 
+## [0.5.2] - 2026-08-25
+
+### Added
+
+- expose agent_id/agent_type/agent_transcript_path on SubagentStart/SubagentStop (#97)
+- add event field (change/add/unlink) to FileChangedEvent (#95)
+- add trigger and compact_summary fields to PostCompactEvent (#91)
+- add trigger and custom_instructions fields to PreCompactEvent (#89)
+
+### Fixed
+
+- TeammateIdleEvent uses teammate_name/team_name, not teammate_id (#101)
+- TaskCreatedEvent/TaskCompletedEvent use task_subject/task_description, not description (#99)
+- add reason field to PermissionDeniedEvent, require tool_use_id (#93)
+- InstructionsLoadedEvent uses load_reason/file_path/memory_type, not reason/files (#87)
+- ElicitationResultEvent uses mcp_server_name/action/content, not prompt/result (#85)
+- ElicitationEvent uses message and mcp_server_name, not prompt (#83)
+
+---
+
+
 ## [0.5.1] - 2026-08-18
 
 ### Added
