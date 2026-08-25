@@ -240,12 +240,22 @@ describe('ElicitationContext', () => {
   const event: ElicitationEvent = {
     ...baseEvent,
     hook_event_name: 'Elicitation',
-    prompt: 'What is the answer?',
+    mcp_server_name: 'my-mcp-server',
+    message: 'What is the answer?',
+    mode: 'form',
+    requested_schema: { type: 'object' },
   }
 
-  test('prompt accessor', () => {
+  test('mcpServerName and message accessors', () => {
     const ctx = new ElicitationContext(event)
-    expect(ctx.prompt).toBe('What is the answer?')
+    expect(ctx.mcpServerName).toBe('my-mcp-server')
+    expect(ctx.message).toBe('What is the answer?')
+  })
+
+  test('mode and requestedSchema accessors', () => {
+    const ctx = new ElicitationContext(event)
+    expect(ctx.mode).toBe('form')
+    expect(ctx.requestedSchema).toEqual({ type: 'object' })
   })
 
   test('block sets _blocked', () => {

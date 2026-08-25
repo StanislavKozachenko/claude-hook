@@ -238,7 +238,12 @@ export interface PostCompactEvent extends BaseEvent {
 
 export interface ElicitationEvent extends BaseEvent {
   hook_event_name: 'Elicitation'
-  prompt: string
+  mcp_server_name: string
+  message: string
+  mode?: 'form' | 'url'
+  url?: string
+  elicitation_id?: string
+  requested_schema?: Record<string, unknown>
 }
 
 export interface ElicitationResultEvent extends BaseEvent {
