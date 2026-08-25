@@ -69,6 +69,10 @@ export class PreToolUseContext<T extends ToolInput = ToolInput> extends BaseCont
     return (this.event as unknown as { permission_suggestions?: PermissionSuggestion[] }).permission_suggestions
   }
 
+  get reason(): string | undefined {
+    return (this.event as unknown as { reason?: string }).reason
+  }
+
   block(reason: string): void {
     this._blocked = true
     this._blockReason = reason
