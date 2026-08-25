@@ -316,11 +316,19 @@ describe('SubagentStartContext', () => {
   const event: SubagentStartEvent = {
     ...baseEvent,
     hook_event_name: 'SubagentStart',
+    agent_id: 'agent-1',
+    agent_type: 'Explore',
   }
 
   test('hookEventName accessor inherited from BaseContext', () => {
     const ctx = new SubagentStartContext(event)
     expect(ctx.hookEventName).toBe('SubagentStart')
+  })
+
+  test('agentId and agentType accessors', () => {
+    const ctx = new SubagentStartContext(event)
+    expect(ctx.agentId).toBe('agent-1')
+    expect(ctx.agentType).toBe('Explore')
   })
 })
 
@@ -465,6 +473,9 @@ describe('StopContext', () => {
     hook_event_name: 'SubagentStop',
     stop_hook_active: false,
     last_assistant_message: 'Subagent done.',
+    agent_id: 'agent-1',
+    agent_type: 'Explore',
+    agent_transcript_path: '/tmp/subagents/agent-1.jsonl',
   }
 
   test('lastAssistantMessage accessor for Stop', () => {
@@ -475,6 +486,20 @@ describe('StopContext', () => {
   test('lastAssistantMessage accessor for SubagentStop', () => {
     const ctx = new StopContext(subagentStopEvent)
     expect(ctx.lastAssistantMessage).toBe('Subagent done.')
+  })
+
+  test('agentId, agentType, and agentTranscriptPath accessors for SubagentStop', () => {
+    const ctx = new StopContext(subagentStopEvent)
+    expect(ctx.agentId).toBe('agent-1')
+    expect(ctx.agentType).toBe('Explore')
+    expect(ctx.agentTranscriptPath).toBe('/tmp/subagents/agent-1.jsonl')
+  })
+
+  test('agentId, agentType, and agentTranscriptPath are undefined for Stop', () => {
+    const ctx = new StopContext(stopEvent)
+    expect(ctx.agentId).toBeUndefined()
+    expect(ctx.agentType).toBeUndefined()
+    expect(ctx.agentTranscriptPath).toBeUndefined()
   })
 
   test('block sets _blocked and _blockReason', () => {

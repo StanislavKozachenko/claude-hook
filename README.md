@@ -205,6 +205,12 @@ hook.on('Stop', '*', (ctx) => {
   ctx.lastAssistantMessage  // last message Claude produced
   ctx.block('not done yet') // prevent Claude from stopping
 })
+
+hook.on('SubagentStop', '*', (ctx) => {
+  ctx.agentId              // subagent identifier
+  ctx.agentType            // e.g. 'Explore'
+  ctx.agentTranscriptPath  // path to the subagent's transcript
+})
 ```
 
 ### `SessionStartContext`
@@ -350,7 +356,8 @@ hook.on('SessionEnd', 'logout', (ctx) => {
 
 ```ts
 hook.on('SubagentStart', '*', (ctx) => {
-  ctx.sessionId  // base accessor, no event-specific fields
+  ctx.agentId    // subagent identifier
+  ctx.agentType  // e.g. 'Explore'
 })
 ```
 

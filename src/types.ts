@@ -131,8 +131,10 @@ export interface StopFailureEvent extends BaseEvent {
 export interface SubagentStopEvent extends BaseEvent {
   hook_event_name: 'SubagentStop'
   stop_hook_active: boolean
+  agent_id: string
+  agent_type: string
+  agent_transcript_path: string
   last_assistant_message?: string
-  agent_transcript_path?: string
 }
 
 export interface NotificationEvent extends BaseEvent {
@@ -187,6 +189,8 @@ export interface PostToolBatchEvent extends BaseEvent {
 
 export interface SubagentStartEvent extends BaseEvent {
   hook_event_name: 'SubagentStart'
+  agent_id: string
+  agent_type: string
 }
 
 export interface TaskCreatedEvent extends BaseEvent {
