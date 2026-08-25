@@ -385,6 +385,11 @@ hook.on('PreCompact', '*', (ctx) => {
 hook.on('PreCompact', 'manual', (ctx) => {
   // matcher filters on ctx.trigger
 })
+
+hook.on('PostCompact', '*', (ctx) => {
+  ctx.trigger        // 'manual' | 'auto'
+  ctx.compactSummary // the conversation summary produced by compaction
+})
 ```
 
 ### `PostToolBatchContext`

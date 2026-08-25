@@ -378,11 +378,19 @@ describe('PostCompactContext', () => {
   const event: PostCompactEvent = {
     ...baseEvent,
     hook_event_name: 'PostCompact',
+    trigger: 'auto',
+    compact_summary: 'Summarized the last 40 turns.',
   }
 
   test('hookEventName accessor inherited from BaseContext', () => {
     const ctx = new PostCompactContext(event)
     expect(ctx.hookEventName).toBe('PostCompact')
+  })
+
+  test('trigger and compactSummary accessors', () => {
+    const ctx = new PostCompactContext(event)
+    expect(ctx.trigger).toBe('auto')
+    expect(ctx.compactSummary).toBe('Summarized the last 40 turns.')
   })
 })
 

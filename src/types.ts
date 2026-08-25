@@ -240,6 +240,8 @@ export interface PreCompactEvent extends BaseEvent {
 
 export interface PostCompactEvent extends BaseEvent {
   hook_event_name: 'PostCompact'
+  trigger: 'manual' | 'auto'
+  compact_summary: string
 }
 
 export interface ElicitationEvent extends BaseEvent {
