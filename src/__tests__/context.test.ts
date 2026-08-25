@@ -351,11 +351,19 @@ describe('PreCompactContext', () => {
   const event: PreCompactEvent = {
     ...baseEvent,
     hook_event_name: 'PreCompact',
+    trigger: 'auto',
+    custom_instructions: null,
   }
 
   test('hookEventName accessor inherited from BaseContext', () => {
     const ctx = new PreCompactContext(event)
     expect(ctx.hookEventName).toBe('PreCompact')
+  })
+
+  test('trigger and customInstructions accessors', () => {
+    const ctx = new PreCompactContext(event)
+    expect(ctx.trigger).toBe('auto')
+    expect(ctx.customInstructions).toBeNull()
   })
 
   test('block sets _blocked and _blockReason', () => {

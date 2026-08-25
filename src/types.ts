@@ -234,6 +234,8 @@ export interface TeammateIdleEvent extends BaseEvent {
 
 export interface PreCompactEvent extends BaseEvent {
   hook_event_name: 'PreCompact'
+  trigger: 'manual' | 'auto'
+  custom_instructions: string | null
 }
 
 export interface PostCompactEvent extends BaseEvent {

@@ -377,7 +377,13 @@ hook.on('TeammateIdle', '*', (ctx) => {
 
 ```ts
 hook.on('PreCompact', '*', (ctx) => {
-  ctx.sessionId  // base accessor, no event-specific fields
+  ctx.trigger            // 'manual' | 'auto'
+  ctx.customInstructions // string | null
+  ctx.block('not now')   // exit 2, blocks compaction
+})
+
+hook.on('PreCompact', 'manual', (ctx) => {
+  // matcher filters on ctx.trigger
 })
 ```
 

@@ -419,6 +419,9 @@ export class PreCompactContext extends BaseContext {
 
   constructor(event: PreCompactEvent) { super(event) }
 
+  get trigger(): 'manual' | 'auto' { return this.event.trigger }
+  get customInstructions(): string | null { return this.event.custom_instructions }
+
   block(reason: string): void {
     this._blocked = true
     this._blockReason = reason

@@ -90,4 +90,10 @@ describe('getMatcherValue', () => {
     expect(getMatcherValue({ hook_event_name: 'ConfigChange', source: 'policy_settings' })).toBe('policy_settings')
     expect(getMatcherValue({ hook_event_name: 'ConfigChange' })).toBe('')
   })
+
+  test('returns trigger for PreCompact', () => {
+    expect(getMatcherValue({ hook_event_name: 'PreCompact', trigger: 'manual' })).toBe('manual')
+    expect(getMatcherValue({ hook_event_name: 'PreCompact', trigger: 'auto' })).toBe('auto')
+    expect(getMatcherValue({ hook_event_name: 'PreCompact' })).toBe('')
+  })
 })
