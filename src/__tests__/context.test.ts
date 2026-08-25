@@ -99,6 +99,8 @@ describe('PreToolUseContext', () => {
       hook_event_name: 'PermissionDenied',
       tool_name: 'Bash',
       tool_input: { command: 'rm -rf /tmp/foo' },
+      tool_use_id: 'toolu_1',
+      reason: 'matched a deny rule',
     }
     const ctx = new PreToolUseContext(permissionDeniedEvent as unknown as PreToolUseEvent)
 
@@ -112,12 +114,32 @@ describe('PreToolUseContext', () => {
       hook_event_name: 'PermissionDenied',
       tool_name: 'Bash',
       tool_input: { command: 'rm -rf /tmp/foo' },
+      tool_use_id: 'toolu_1',
+      reason: 'matched a deny rule',
     }
     const ctx = new PreToolUseContext(permissionDeniedEvent as unknown as PreToolUseEvent)
 
     ctx.retry()
     expect(ctx._getOutput().hookSpecificOutput?.hookEventName).toBe('PermissionDenied')
     expect(ctx._getOutput().hookSpecificOutput?.retry).toBe(true)
+  })
+
+  test('reason accessor for PermissionDenied', () => {
+    const permissionDeniedEvent: PermissionDeniedEvent = {
+      ...baseEvent,
+      hook_event_name: 'PermissionDenied',
+      tool_name: 'Bash',
+      tool_input: { command: 'rm -rf /tmp/foo' },
+      tool_use_id: 'toolu_1',
+      reason: 'matched a deny rule',
+    }
+    const ctx = new PreToolUseContext(permissionDeniedEvent as unknown as PreToolUseEvent)
+    expect(ctx.reason).toBe('matched a deny rule')
+  })
+
+  test('reason accessor is undefined for PreToolUse', () => {
+    const ctx = new PreToolUseContext(preToolEvent)
+    expect(ctx.reason).toBeUndefined()
   })
 })
 

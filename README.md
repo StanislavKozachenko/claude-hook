@@ -154,6 +154,7 @@ hook.on('PermissionRequest', '*', (ctx) => {
 // (`.block()`/`.allow()`/`.modify()` have no effect), but `.retry()` tells
 // Claude Code the model may retry the denied tool call.
 hook.on('PermissionDenied', '*', (ctx) => {
+  ctx.reason  // why the permission was denied
   ctx.retry()
 })
 ```

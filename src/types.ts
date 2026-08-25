@@ -169,7 +169,8 @@ export interface PermissionDeniedEvent extends BaseEvent {
   hook_event_name: 'PermissionDenied'
   tool_name: string
   tool_input: ToolInput
-  tool_use_id?: string
+  tool_use_id: string
+  reason: string
 }
 
 export interface PostToolBatchToolCall {
