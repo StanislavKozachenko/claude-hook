@@ -199,6 +199,11 @@ export class StopContext extends BaseContext {
   constructor(event: StopEvent | SubagentStopEvent) { super(event) }
 
   get lastAssistantMessage(): string | undefined { return this.event.last_assistant_message }
+  get agentId(): string | undefined { return (this.event as unknown as { agent_id?: string }).agent_id }
+  get agentType(): string | undefined { return (this.event as unknown as { agent_type?: string }).agent_type }
+  get agentTranscriptPath(): string | undefined {
+    return (this.event as unknown as { agent_transcript_path?: string }).agent_transcript_path
+  }
 
   block(reason: string): void {
     this._blocked = true
@@ -390,6 +395,9 @@ export class SubagentStartContext extends BaseContext {
   declare readonly event: SubagentStartEvent
 
   constructor(event: SubagentStartEvent) { super(event) }
+
+  get agentId(): string { return this.event.agent_id }
+  get agentType(): string { return this.event.agent_type }
 }
 
 export class ConfigChangeContext extends BaseContext {
