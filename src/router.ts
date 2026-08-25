@@ -36,7 +36,7 @@ export function getMatcherValue(event: Record<string, unknown>): string {
   // UserPromptExpansion: match on command name
   if (name === 'UserPromptExpansion') return (event['command_name'] as string) ?? ''
   // InstructionsLoaded: match on load reason
-  if (name === 'InstructionsLoaded') return (event['reason'] as string) ?? ''
+  if (name === 'InstructionsLoaded') return (event['load_reason'] as string) ?? ''
   // SubagentStart/SubagentStop: match on agent type
   if (name === 'SubagentStart' || name === 'SubagentStop') return (event['agent_type'] as string) ?? ''
   // SessionEnd: match on end reason

@@ -505,14 +505,22 @@ describe('InstructionsLoadedContext', () => {
   const event: InstructionsLoadedEvent = {
     ...baseEvent,
     hook_event_name: 'InstructionsLoaded',
-    reason: 'startup',
-    files: ['CLAUDE.md', '.claude/rules.md'],
+    file_path: '/home/user/project/CLAUDE.md',
+    memory_type: 'Project',
+    load_reason: 'session_start',
+    globs: ['**/CLAUDE.md'],
   }
 
-  test('reason and files accessors', () => {
+  test('filePath, memoryType, and loadReason accessors', () => {
     const ctx = new InstructionsLoadedContext(event)
-    expect(ctx.reason).toBe('startup')
-    expect(ctx.files).toEqual(['CLAUDE.md', '.claude/rules.md'])
+    expect(ctx.filePath).toBe('/home/user/project/CLAUDE.md')
+    expect(ctx.memoryType).toBe('Project')
+    expect(ctx.loadReason).toBe('session_start')
+  })
+
+  test('globs accessor', () => {
+    const ctx = new InstructionsLoadedContext(event)
+    expect(ctx.globs).toEqual(['**/CLAUDE.md'])
   })
 })
 

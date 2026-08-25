@@ -143,8 +143,12 @@ export interface NotificationEvent extends BaseEvent {
 
 export interface InstructionsLoadedEvent extends BaseEvent {
   hook_event_name: 'InstructionsLoaded'
-  reason: string
-  files: string[]
+  file_path: string
+  memory_type: 'User' | 'Project' | 'Local' | 'Managed'
+  load_reason: 'session_start' | 'nested_traversal' | 'path_glob_match' | 'include' | 'compact'
+  globs?: string[]
+  trigger_file_path?: string
+  parent_file_path?: string
 }
 
 export interface PermissionSuggestion {

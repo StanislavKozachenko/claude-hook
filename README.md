@@ -285,8 +285,13 @@ hook.on('Notification', '*', (ctx) => {
 
 ```ts
 hook.on('InstructionsLoaded', '*', (ctx) => {
-  ctx.reason  // why instructions were loaded
-  ctx.files   // list of loaded CLAUDE.md file paths
+  ctx.filePath    // absolute path to the loaded file
+  ctx.memoryType  // 'User' | 'Project' | 'Local' | 'Managed'
+  ctx.loadReason  // 'session_start' | 'nested_traversal' | 'path_glob_match' | 'include' | 'compact'
+})
+
+hook.on('InstructionsLoaded', 'session_start', (ctx) => {
+  // matcher filters on ctx.loadReason
 })
 ```
 
