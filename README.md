@@ -258,8 +258,9 @@ hook.on('Elicitation', '*', (ctx) => {
 
 ```ts
 hook.on('ElicitationResult', '*', (ctx) => {
-  ctx.prompt  // the original elicitation prompt
-  ctx.result  // the user's answer
+  ctx.mcpServerName  // which MCP server asked
+  ctx.action         // 'accept' | 'decline' | 'cancel'
+  ctx.content        // the user's answer, if accepted
 })
 ```
 

@@ -458,14 +458,24 @@ describe('ElicitationResultContext', () => {
   const event: ElicitationResultEvent = {
     ...baseEvent,
     hook_event_name: 'ElicitationResult',
-    prompt: 'What is the answer?',
-    result: '42',
+    mcp_server_name: 'figma',
+    elicitation_id: 'elicit-1',
+    mode: 'form',
+    action: 'accept',
+    content: { answer: '42' },
   }
 
-  test('prompt and result accessors', () => {
+  test('mcpServerName and action accessors', () => {
     const ctx = new ElicitationResultContext(event)
-    expect(ctx.prompt).toBe('What is the answer?')
-    expect(ctx.result).toBe('42')
+    expect(ctx.mcpServerName).toBe('figma')
+    expect(ctx.action).toBe('accept')
+  })
+
+  test('elicitationId, mode, and content accessors', () => {
+    const ctx = new ElicitationResultContext(event)
+    expect(ctx.elicitationId).toBe('elicit-1')
+    expect(ctx.mode).toBe('form')
+    expect(ctx.content).toEqual({ answer: '42' })
   })
 
   test('block sets _blocked and _blockReason', () => {

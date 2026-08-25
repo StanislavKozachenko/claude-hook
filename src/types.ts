@@ -248,8 +248,11 @@ export interface ElicitationEvent extends BaseEvent {
 
 export interface ElicitationResultEvent extends BaseEvent {
   hook_event_name: 'ElicitationResult'
-  prompt: string
-  result: string
+  mcp_server_name: string
+  elicitation_id?: string
+  mode?: 'form' | 'url'
+  action: 'accept' | 'decline' | 'cancel'
+  content?: Record<string, unknown>
 }
 
 export type AnyEvent =

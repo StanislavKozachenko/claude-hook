@@ -290,8 +290,11 @@ export class ElicitationResultContext extends BaseContext {
 
   constructor(event: ElicitationResultEvent) { super(event) }
 
-  get prompt(): string { return this.event.prompt }
-  get result(): string { return this.event.result }
+  get mcpServerName(): string { return this.event.mcp_server_name }
+  get elicitationId(): string | undefined { return this.event.elicitation_id }
+  get mode(): 'form' | 'url' | undefined { return this.event.mode }
+  get action(): 'accept' | 'decline' | 'cancel' { return this.event.action }
+  get content(): Record<string, unknown> | undefined { return this.event.content }
 
   block(reason: string): void {
     this._blocked = true
