@@ -316,8 +316,12 @@ export class InstructionsLoadedContext extends BaseContext {
 
   constructor(event: InstructionsLoadedEvent) { super(event) }
 
-  get reason(): string { return this.event.reason }
-  get files(): string[] { return this.event.files }
+  get filePath(): string { return this.event.file_path }
+  get memoryType(): 'User' | 'Project' | 'Local' | 'Managed' { return this.event.memory_type }
+  get loadReason(): 'session_start' | 'nested_traversal' | 'path_glob_match' | 'include' | 'compact' { return this.event.load_reason }
+  get globs(): string[] | undefined { return this.event.globs }
+  get triggerFilePath(): string | undefined { return this.event.trigger_file_path }
+  get parentFilePath(): string | undefined { return this.event.parent_file_path }
 }
 
 export class TaskCreatedContext extends BaseContext {

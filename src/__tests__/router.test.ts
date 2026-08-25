@@ -68,8 +68,8 @@ describe('getMatcherValue', () => {
     expect(getMatcherValue({ hook_event_name: 'UserPromptExpansion' })).toBe('')
   })
 
-  test('returns reason for InstructionsLoaded', () => {
-    expect(getMatcherValue({ hook_event_name: 'InstructionsLoaded', reason: 'session_start' })).toBe('session_start')
+  test('returns load_reason for InstructionsLoaded', () => {
+    expect(getMatcherValue({ hook_event_name: 'InstructionsLoaded', load_reason: 'session_start' })).toBe('session_start')
     expect(getMatcherValue({ hook_event_name: 'InstructionsLoaded' })).toBe('')
   })
 
