@@ -221,7 +221,8 @@ hook.on('SessionStart', '*', (ctx) => {
 
 ```ts
 hook.on('FileChanged', '.env|.envrc', (ctx) => {
-  ctx.filePath  // absolute path to changed file
+  ctx.filePath   // absolute path to changed file
+  ctx.changeType // 'change' | 'add' | 'unlink'
   ctx.setEnv('UPDATED', '1')
   ctx.block('env file changed, session restart recommended')
 })

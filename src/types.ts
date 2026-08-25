@@ -214,6 +214,7 @@ export interface WorktreeRemoveEvent extends BaseEvent {
 export interface FileChangedEvent extends BaseEvent {
   hook_event_name: 'FileChanged'
   file_path: string
+  event: 'change' | 'add' | 'unlink'
 }
 
 export interface CwdChangedEvent extends BaseEvent {
