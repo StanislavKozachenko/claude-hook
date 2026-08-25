@@ -598,13 +598,17 @@ describe('TaskCreatedContext', () => {
     ...baseEvent,
     hook_event_name: 'TaskCreated',
     task_id: 'task-1',
-    description: 'Fix the bug',
+    task_subject: 'Fix the bug',
+    task_description: 'Null pointer in the parser',
+    teammate_name: 'alice',
   }
 
-  test('taskId and description accessors', () => {
+  test('taskId, taskSubject, taskDescription, and teammateName accessors', () => {
     const ctx = new TaskCreatedContext(event)
     expect(ctx.taskId).toBe('task-1')
-    expect(ctx.description).toBe('Fix the bug')
+    expect(ctx.taskSubject).toBe('Fix the bug')
+    expect(ctx.taskDescription).toBe('Null pointer in the parser')
+    expect(ctx.teammateName).toBe('alice')
   })
 
   test('block sets _blocked and _blockReason', () => {
@@ -620,13 +624,17 @@ describe('TaskCompletedContext', () => {
     ...baseEvent,
     hook_event_name: 'TaskCompleted',
     task_id: 'task-1',
-    description: 'Fix the bug',
+    task_subject: 'Fix the bug',
+    task_description: 'Null pointer in the parser',
+    teammate_name: 'alice',
   }
 
-  test('taskId and description accessors', () => {
+  test('taskId, taskSubject, taskDescription, and teammateName accessors', () => {
     const ctx = new TaskCompletedContext(event)
     expect(ctx.taskId).toBe('task-1')
-    expect(ctx.description).toBe('Fix the bug')
+    expect(ctx.taskSubject).toBe('Fix the bug')
+    expect(ctx.taskDescription).toBe('Null pointer in the parser')
+    expect(ctx.teammateName).toBe('alice')
   })
 
   test('block sets _blocked and _blockReason', () => {

@@ -340,7 +340,9 @@ export class TaskCreatedContext extends BaseContext {
   constructor(event: TaskCreatedEvent) { super(event) }
 
   get taskId(): string { return this.event.task_id }
-  get description(): string { return this.event.description }
+  get taskSubject(): string { return this.event.task_subject }
+  get taskDescription(): string | undefined { return this.event.task_description }
+  get teammateName(): string | undefined { return this.event.teammate_name }
 
   block(reason: string): void {
     this._blocked = true
@@ -354,7 +356,9 @@ export class TaskCompletedContext extends BaseContext {
   constructor(event: TaskCompletedEvent) { super(event) }
 
   get taskId(): string { return this.event.task_id }
-  get description(): string { return this.event.description }
+  get taskSubject(): string { return this.event.task_subject }
+  get taskDescription(): string | undefined { return this.event.task_description }
+  get teammateName(): string | undefined { return this.event.teammate_name }
 
   block(reason: string): void {
     this._blocked = true

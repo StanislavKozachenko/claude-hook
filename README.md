@@ -307,10 +307,16 @@ hook.on('InstructionsLoaded', 'session_start', (ctx) => {
 
 ```ts
 hook.on('TaskCreated', '*', (ctx) => {
-  ctx.taskId       // unique task identifier
-  ctx.description  // task description
+  ctx.taskId          // unique task identifier
+  ctx.taskSubject     // short task title
+  ctx.taskDescription // longer task description, if given
+  ctx.teammateName    // assigned teammate, if any (requires Agent Teams)
+  ctx.block('reason') // exit 2, rolls back the task creation
 })
 ```
+
+> `TaskCreated`/`TaskCompleted` require the experimental Agent Teams feature
+> (`CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`).
 
 ### `WorktreeCreateContext` / `WorktreeRemoveContext`
 
