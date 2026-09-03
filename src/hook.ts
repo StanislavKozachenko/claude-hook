@@ -33,6 +33,7 @@ import type {
   SetupEvent,
   DirectoryAddedEvent,
   MessageDisplayEvent,
+  PreModelSwitchEvent,
   BashToolInput,
   EditToolInput,
   WriteToolInput,
@@ -67,6 +68,7 @@ import {
   SetupContext,
   DirectoryAddedContext,
   MessageDisplayContext,
+  PreModelSwitchContext,
   GenericContext,
 } from './context.js'
 import { matchMatcher, getMatcherValue } from './router.js'
@@ -141,6 +143,8 @@ function createContext(event: AnyEvent): BaseContext {
       return new DirectoryAddedContext(event as DirectoryAddedEvent)
     case 'MessageDisplay':
       return new MessageDisplayContext(event as MessageDisplayEvent)
+    case 'PreModelSwitch':
+      return new PreModelSwitchContext(event as PreModelSwitchEvent)
     default:
       return new GenericContext(event)
   }
@@ -184,6 +188,7 @@ export class HookHandler {
   on(eventName: 'Setup', matcher: string, handler: Handler<SetupContext>): this
   on(eventName: 'DirectoryAdded', matcher: string, handler: Handler<DirectoryAddedContext>): this
   on(eventName: 'MessageDisplay', matcher: string, handler: Handler<MessageDisplayContext>): this
+  on(eventName: 'PreModelSwitch', matcher: string, handler: Handler<PreModelSwitchContext>): this
   on(eventName: HookEventName, matcher: string, handler: Handler<GenericContext>): this
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   on(eventName: string, matcher: string, handler: (ctx: any) => void | Promise<void>): this {

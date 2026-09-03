@@ -112,4 +112,10 @@ describe('getMatcherValue', () => {
   test('returns empty string for MessageDisplay (no natural discriminant)', () => {
     expect(getMatcherValue({ hook_event_name: 'MessageDisplay', turn_id: 't1', message_id: 'm1' })).toBe('')
   })
+
+  test('returns source for PreModelSwitch', () => {
+    expect(getMatcherValue({ hook_event_name: 'PreModelSwitch', source: 'command' })).toBe('command')
+    expect(getMatcherValue({ hook_event_name: 'PreModelSwitch', source: 'picker' })).toBe('picker')
+    expect(getMatcherValue({ hook_event_name: 'PreModelSwitch' })).toBe('')
+  })
 })

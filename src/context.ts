@@ -27,6 +27,7 @@ import type {
   SetupEvent,
   DirectoryAddedEvent,
   MessageDisplayEvent,
+  PreModelSwitchEvent,
   TaskCreatedEvent,
   TaskCompletedEvent,
   WorktreeCreateEvent,
@@ -378,6 +379,35 @@ export class MessageDisplayContext extends BaseContext {
       ...this._output.hookSpecificOutput,
       hookEventName: 'MessageDisplay',
       displayContent: text,
+    }
+  }
+}
+
+export class PreModelSwitchContext extends BaseContext {
+  declare readonly event: PreModelSwitchEvent
+
+  constructor(event: PreModelSwitchEvent) { super(event) }
+
+  get fromModel(): string { return this.event.from_model }
+  get toModel(): string { return this.event.to_model }
+  get requestedModel(): string | null { return this.event.requested_model }
+  get source(): 'command' | 'picker' | 'sdk' { return this.event.source }
+  get contextTokens(): number { return this.event.context_tokens }
+  get promptCacheWarm(): boolean { return this.event.prompt_cache_warm }
+  get cacheTtl(): '5m' | '1h' { return this.event.cache_ttl }
+  get estimatedCacheWriteUsd(): number { return this.event.estimated_cache_write_usd }
+  get pricing(): 'configured' | 'catalog' | 'default' { return this.event.pricing }
+
+  block(reason: string): void {
+    this._blocked = true
+    this._blockReason = reason
+  }
+
+  allow(): void {
+    this._output.hookSpecificOutput = {
+      ...this._output.hookSpecificOutput,
+      hookEventName: 'PreModelSwitch',
+      permissionDecision: 'allow',
     }
   }
 }

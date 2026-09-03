@@ -456,6 +456,24 @@ hook.on('MessageDisplay', '*', (ctx) => {
 > Display-only — `setDisplayContent` changes what's shown, not the stored message.
 > Non-blocking, fires once per flush of every assistant message.
 
+### `PreModelSwitchContext`
+
+```ts
+hook.on('PreModelSwitch', '*', (ctx) => {
+  ctx.fromModel               // resolved model id before the switch
+  ctx.toModel                 // resolved model id after the switch
+  ctx.requestedModel          // what was asked for (alias, full id, or null for "default")
+  ctx.source                  // 'command' | 'picker' | 'sdk'
+  ctx.contextTokens           // prompt tokens the next request re-sends
+  ctx.promptCacheWarm         // whether the current model's cache is likely still warm
+  ctx.cacheTtl                // '5m' | '1h'
+  ctx.estimatedCacheWriteUsd  // estimated cost of re-caching on the new model
+  ctx.pricing                 // 'configured' | 'catalog' | 'default'
+  ctx.allow()                 // skips the interactive cache-miss confirm
+  ctx.block('reason')         // exit 2, cancels the switch
+})
+```
+
 For all other events, the handler receives a `GenericContext` with `ctx.block(reason)` and base properties.
 
 ## Supported events
@@ -493,6 +511,7 @@ For all other events, the handler receives a `GenericContext` with `ctx.block(re
 | `Setup` | Session init/maintenance setup phase | no | `SetupContext` |
 | `DirectoryAdded` | Directory added (`/add-dir` or SDK) | no | `DirectoryAddedContext` |
 | `MessageDisplay` | Assistant message flushed to screen | no | `MessageDisplayContext` |
+| `PreModelSwitch` | Before the active model changes | yes | `PreModelSwitchContext` |
 
 ## Exit codes
 
