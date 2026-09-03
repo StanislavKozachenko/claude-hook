@@ -25,6 +25,7 @@ import type {
   NotificationEvent,
   InstructionsLoadedEvent,
   SetupEvent,
+  DirectoryAddedEvent,
   TaskCreatedEvent,
   TaskCompletedEvent,
   WorktreeCreateEvent,
@@ -349,6 +350,15 @@ export class SetupContext extends BaseContext {
       additionalContext: text,
     }
   }
+}
+
+export class DirectoryAddedContext extends BaseContext {
+  declare readonly event: DirectoryAddedEvent
+
+  constructor(event: DirectoryAddedEvent) { super(event) }
+
+  get directory(): string { return this.event.directory }
+  get source(): 'slash_command' | 'register_repo_root' { return this.event.source }
 }
 
 export class TaskCreatedContext extends BaseContext {

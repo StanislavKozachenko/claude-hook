@@ -102,4 +102,10 @@ describe('getMatcherValue', () => {
     expect(getMatcherValue({ hook_event_name: 'Setup', trigger: 'maintenance' })).toBe('maintenance')
     expect(getMatcherValue({ hook_event_name: 'Setup' })).toBe('')
   })
+
+  test('returns source for DirectoryAdded', () => {
+    expect(getMatcherValue({ hook_event_name: 'DirectoryAdded', source: 'slash_command' })).toBe('slash_command')
+    expect(getMatcherValue({ hook_event_name: 'DirectoryAdded', source: 'register_repo_root' })).toBe('register_repo_root')
+    expect(getMatcherValue({ hook_event_name: 'DirectoryAdded' })).toBe('')
+  })
 })

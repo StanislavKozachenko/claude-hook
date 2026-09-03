@@ -27,6 +27,7 @@ export {
   WorktreeCreateContext,
   WorktreeRemoveContext,
   SetupContext,
+  DirectoryAddedContext,
   GenericContext,
 } from './context.js'
 export type {
@@ -62,6 +63,7 @@ export type {
   NotificationEvent,
   InstructionsLoadedEvent,
   SetupEvent,
+  DirectoryAddedEvent,
   BashToolInput,
   EditToolInput,
   WriteToolInput,

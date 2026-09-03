@@ -31,6 +31,7 @@ import type {
   WorktreeCreateEvent,
   WorktreeRemoveEvent,
   SetupEvent,
+  DirectoryAddedEvent,
   BashToolInput,
   EditToolInput,
   WriteToolInput,
@@ -63,6 +64,7 @@ import {
   WorktreeCreateContext,
   WorktreeRemoveContext,
   SetupContext,
+  DirectoryAddedContext,
   GenericContext,
 } from './context.js'
 import { matchMatcher, getMatcherValue } from './router.js'
@@ -133,6 +135,8 @@ function createContext(event: AnyEvent): BaseContext {
       return new WorktreeRemoveContext(event as WorktreeRemoveEvent)
     case 'Setup':
       return new SetupContext(event as SetupEvent)
+    case 'DirectoryAdded':
+      return new DirectoryAddedContext(event as DirectoryAddedEvent)
     default:
       return new GenericContext(event)
   }
@@ -174,6 +178,7 @@ export class HookHandler {
   on(eventName: 'WorktreeCreate', matcher: string, handler: Handler<WorktreeCreateContext>): this
   on(eventName: 'WorktreeRemove', matcher: string, handler: Handler<WorktreeRemoveContext>): this
   on(eventName: 'Setup', matcher: string, handler: Handler<SetupContext>): this
+  on(eventName: 'DirectoryAdded', matcher: string, handler: Handler<DirectoryAddedContext>): this
   on(eventName: HookEventName, matcher: string, handler: Handler<GenericContext>): this
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   on(eventName: string, matcher: string, handler: (ctx: any) => void | Promise<void>): this {
