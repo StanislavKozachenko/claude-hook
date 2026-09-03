@@ -1,5 +1,5 @@
 import { PreToolUseContext, UserPromptSubmitContext, UserPromptExpansionContext, PostToolUseContext, FileChangedContext, CwdChangedContext, ElicitationContext, SessionStartContext, SessionEndContext, SubagentStartContext, ConfigChangeContext, TeammateIdleContext, PreCompactContext, PostCompactContext, PostToolBatchContext, StopContext, StopFailureContext, ElicitationResultContext, NotificationContext, InstructionsLoadedContext, TaskCreatedContext, TaskCompletedContext, WorktreeCreateContext, WorktreeRemoveContext, SetupContext, DirectoryAddedContext, MessageDisplayContext, PreModelSwitchContext, PostModelSwitchContext, GenericContext } from '../context'
-import type { PreToolUseEvent, PostToolUseEvent, UserPromptSubmitEvent, UserPromptExpansionEvent, FileChangedEvent, CwdChangedEvent, ElicitationEvent, SessionStartEvent, SessionEndEvent, SubagentStartEvent, ConfigChangeEvent, TeammateIdleEvent, PreCompactEvent, PostCompactEvent, PostToolBatchEvent, PermissionRequestEvent, PermissionDeniedEvent, StopEvent, SubagentStopEvent, StopFailureEvent, ElicitationResultEvent, NotificationEvent, InstructionsLoadedEvent, TaskCreatedEvent, TaskCompletedEvent, WorktreeCreateEvent, WorktreeRemoveEvent, SetupEvent, DirectoryAddedEvent, MessageDisplayEvent, PreModelSwitchEvent, PostModelSwitchEvent } from '../types'
+import type { PreToolUseEvent, PostToolUseEvent, PostToolUseFailureEvent, UserPromptSubmitEvent, UserPromptExpansionEvent, FileChangedEvent, CwdChangedEvent, ElicitationEvent, SessionStartEvent, SessionEndEvent, SubagentStartEvent, ConfigChangeEvent, TeammateIdleEvent, PreCompactEvent, PostCompactEvent, PostToolBatchEvent, PermissionRequestEvent, PermissionDeniedEvent, StopEvent, SubagentStopEvent, StopFailureEvent, ElicitationResultEvent, NotificationEvent, InstructionsLoadedEvent, TaskCreatedEvent, TaskCompletedEvent, WorktreeCreateEvent, WorktreeRemoveEvent, SetupEvent, DirectoryAddedEvent, MessageDisplayEvent, PreModelSwitchEvent, PostModelSwitchEvent } from '../types'
 
 const baseEvent = {
   session_id: 'sess1',
@@ -161,6 +161,37 @@ describe('PostToolUseContext', () => {
     const ctx = new PostToolUseContext(postToolEvent)
     ctx.addContext('done')
     expect(ctx._getOutput().hookSpecificOutput?.additionalContext).toBe('done')
+  })
+
+  test('isInterrupt is undefined for PostToolUse', () => {
+    const ctx = new PostToolUseContext(postToolEvent)
+    expect(ctx.isInterrupt).toBeUndefined()
+  })
+
+  test('isInterrupt accessor for PostToolUseFailure', () => {
+    const failureEvent: PostToolUseFailureEvent = {
+      ...baseEvent,
+      hook_event_name: 'PostToolUseFailure',
+      tool_name: 'Bash',
+      tool_input: { command: 'sleep 100' },
+      error: 'interrupted by user',
+      is_interrupt: true,
+    }
+    const ctx = new PostToolUseContext(failureEvent)
+    expect(ctx.isInterrupt).toBe(true)
+    expect(ctx.error).toBe('interrupted by user')
+  })
+
+  test('isInterrupt is undefined for PostToolUseFailure when omitted', () => {
+    const failureEvent: PostToolUseFailureEvent = {
+      ...baseEvent,
+      hook_event_name: 'PostToolUseFailure',
+      tool_name: 'Bash',
+      tool_input: { command: 'ls /nonexistent' },
+      error: 'no such file or directory',
+    }
+    const ctx = new PostToolUseContext(failureEvent)
+    expect(ctx.isInterrupt).toBeUndefined()
   })
 })
 

@@ -128,6 +128,7 @@ export class PostToolUseContext<T extends ToolInput = ToolInput> extends BaseCon
   get input(): T { return this.event.tool_input as T }
   get output(): unknown { return 'tool_response' in this.event ? this.event.tool_response : undefined }
   get error(): string | undefined { return 'error' in this.event ? this.event.error : undefined }
+  get isInterrupt(): boolean | undefined { return 'is_interrupt' in this.event ? this.event.is_interrupt : undefined }
   get durationMs(): number | undefined { return this.event.duration_ms }
 
   addContext(text: string): void {
