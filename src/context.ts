@@ -513,8 +513,8 @@ export class ConfigChangeContext extends BaseContext {
 
   constructor(event: ConfigChangeEvent) { super(event) }
 
-  get source(): string { return this.event.source }
-  get filePath(): string { return this.event.file_path }
+  get source(): 'user_settings' | 'project_settings' | 'local_settings' | 'policy_settings' | 'skills' { return this.event.source }
+  get filePath(): string | undefined { return this.event.file_path }
 
   block(reason: string): void {
     this._blocked = true
