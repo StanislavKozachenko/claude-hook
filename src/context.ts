@@ -38,7 +38,7 @@ import type {
   HookOutput,
   HookEventName,
   ToolInput,
-  PermissionSuggestion,
+  PermissionUpdate,
 } from './types.js'
 
 export class BaseContext {
@@ -73,8 +73,8 @@ export class PreToolUseContext<T extends ToolInput = ToolInput> extends BaseCont
 
   get toolName(): string { return this.event.tool_name }
   get input(): T { return this.event.tool_input as T }
-  get permissionSuggestions(): PermissionSuggestion[] | undefined {
-    return (this.event as unknown as { permission_suggestions?: PermissionSuggestion[] }).permission_suggestions
+  get permissionSuggestions(): PermissionUpdate[] | undefined {
+    return (this.event as unknown as { permission_suggestions?: PermissionUpdate[] }).permission_suggestions
   }
 
   get reason(): string | undefined {
