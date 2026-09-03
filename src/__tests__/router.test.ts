@@ -108,4 +108,8 @@ describe('getMatcherValue', () => {
     expect(getMatcherValue({ hook_event_name: 'DirectoryAdded', source: 'register_repo_root' })).toBe('register_repo_root')
     expect(getMatcherValue({ hook_event_name: 'DirectoryAdded' })).toBe('')
   })
+
+  test('returns empty string for MessageDisplay (no natural discriminant)', () => {
+    expect(getMatcherValue({ hook_event_name: 'MessageDisplay', turn_id: 't1', message_id: 'm1' })).toBe('')
+  })
 })

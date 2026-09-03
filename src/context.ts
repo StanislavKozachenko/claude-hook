@@ -26,6 +26,7 @@ import type {
   InstructionsLoadedEvent,
   SetupEvent,
   DirectoryAddedEvent,
+  MessageDisplayEvent,
   TaskCreatedEvent,
   TaskCompletedEvent,
   WorktreeCreateEvent,
@@ -359,6 +360,26 @@ export class DirectoryAddedContext extends BaseContext {
 
   get directory(): string { return this.event.directory }
   get source(): 'slash_command' | 'register_repo_root' { return this.event.source }
+}
+
+export class MessageDisplayContext extends BaseContext {
+  declare readonly event: MessageDisplayEvent
+
+  constructor(event: MessageDisplayEvent) { super(event) }
+
+  get turnId(): string { return this.event.turn_id }
+  get messageId(): string { return this.event.message_id }
+  get index(): number { return this.event.index }
+  get final(): boolean { return this.event.final }
+  get delta(): string { return this.event.delta }
+
+  setDisplayContent(text: string): void {
+    this._output.hookSpecificOutput = {
+      ...this._output.hookSpecificOutput,
+      hookEventName: 'MessageDisplay',
+      displayContent: text,
+    }
+  }
 }
 
 export class TaskCreatedContext extends BaseContext {

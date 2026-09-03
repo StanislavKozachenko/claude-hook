@@ -440,6 +440,22 @@ hook.on('DirectoryAdded', '*', (ctx) => {
 
 > Read-only notification — no output or blocking is supported for this event.
 
+### `MessageDisplayContext`
+
+```ts
+hook.on('MessageDisplay', '*', (ctx) => {
+  ctx.turnId      // UUID of the current turn
+  ctx.messageId   // UUID of the assistant message, stable across every flush
+  ctx.index       // zero-based delta index within the message
+  ctx.final       // true on the message's last flush
+  ctx.delta       // newly completed lines since the prior flush
+  ctx.setDisplayContent('rewritten text')  // replaces the displayed delta on screen only
+})
+```
+
+> Display-only — `setDisplayContent` changes what's shown, not the stored message.
+> Non-blocking, fires once per flush of every assistant message.
+
 For all other events, the handler receives a `GenericContext` with `ctx.block(reason)` and base properties.
 
 ## Supported events
@@ -476,6 +492,7 @@ For all other events, the handler receives a `GenericContext` with `ctx.block(re
 | `Notification` | System notification | no | `NotificationContext` |
 | `Setup` | Session init/maintenance setup phase | no | `SetupContext` |
 | `DirectoryAdded` | Directory added (`/add-dir` or SDK) | no | `DirectoryAddedContext` |
+| `MessageDisplay` | Assistant message flushed to screen | no | `MessageDisplayContext` |
 
 ## Exit codes
 
