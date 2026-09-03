@@ -359,7 +359,7 @@ hook.on('WorktreeRemove', '*', (ctx) => {
 
 ```ts
 hook.on('SessionEnd', '*', (ctx) => {
-  ctx.reason  // 'clear' | 'resume' | 'logout' | 'prompt_input_exit' | 'bypass_permissions_disabled' | 'other'
+  ctx.reason  // 'clear' | 'resume' | 'logout' | 'prompt_input_exit' | 'other'
 })
 
 hook.on('SessionEnd', 'logout', (ctx) => {
