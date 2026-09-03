@@ -1,5 +1,5 @@
-import { PreToolUseContext, UserPromptSubmitContext, UserPromptExpansionContext, PostToolUseContext, FileChangedContext, CwdChangedContext, ElicitationContext, SessionEndContext, SubagentStartContext, ConfigChangeContext, TeammateIdleContext, PreCompactContext, PostCompactContext, PostToolBatchContext, StopContext, StopFailureContext, ElicitationResultContext, NotificationContext, InstructionsLoadedContext, TaskCreatedContext, TaskCompletedContext, WorktreeCreateContext, WorktreeRemoveContext, SetupContext, DirectoryAddedContext, MessageDisplayContext, PreModelSwitchContext, GenericContext } from '../context'
-import type { PreToolUseEvent, PostToolUseEvent, UserPromptSubmitEvent, UserPromptExpansionEvent, FileChangedEvent, CwdChangedEvent, ElicitationEvent, SessionEndEvent, SubagentStartEvent, ConfigChangeEvent, TeammateIdleEvent, PreCompactEvent, PostCompactEvent, PostToolBatchEvent, PermissionRequestEvent, PermissionDeniedEvent, StopEvent, SubagentStopEvent, StopFailureEvent, ElicitationResultEvent, NotificationEvent, InstructionsLoadedEvent, TaskCreatedEvent, TaskCompletedEvent, WorktreeCreateEvent, WorktreeRemoveEvent, SetupEvent, DirectoryAddedEvent, MessageDisplayEvent, PreModelSwitchEvent } from '../types'
+import { PreToolUseContext, UserPromptSubmitContext, UserPromptExpansionContext, PostToolUseContext, FileChangedContext, CwdChangedContext, ElicitationContext, SessionEndContext, SubagentStartContext, ConfigChangeContext, TeammateIdleContext, PreCompactContext, PostCompactContext, PostToolBatchContext, StopContext, StopFailureContext, ElicitationResultContext, NotificationContext, InstructionsLoadedContext, TaskCreatedContext, TaskCompletedContext, WorktreeCreateContext, WorktreeRemoveContext, SetupContext, DirectoryAddedContext, MessageDisplayContext, PreModelSwitchContext, PostModelSwitchContext, GenericContext } from '../context'
+import type { PreToolUseEvent, PostToolUseEvent, UserPromptSubmitEvent, UserPromptExpansionEvent, FileChangedEvent, CwdChangedEvent, ElicitationEvent, SessionEndEvent, SubagentStartEvent, ConfigChangeEvent, TeammateIdleEvent, PreCompactEvent, PostCompactEvent, PostToolBatchEvent, PermissionRequestEvent, PermissionDeniedEvent, StopEvent, SubagentStopEvent, StopFailureEvent, ElicitationResultEvent, NotificationEvent, InstructionsLoadedEvent, TaskCreatedEvent, TaskCompletedEvent, WorktreeCreateEvent, WorktreeRemoveEvent, SetupEvent, DirectoryAddedEvent, MessageDisplayEvent, PreModelSwitchEvent, PostModelSwitchEvent } from '../types'
 
 const baseEvent = {
   session_id: 'sess1',
@@ -782,6 +782,42 @@ describe('PreModelSwitchContext', () => {
     ctx.allow()
     expect(ctx._getOutput().hookSpecificOutput?.permissionDecision).toBe('allow')
     expect(ctx._getOutput().hookSpecificOutput?.hookEventName).toBe('PreModelSwitch')
+  })
+})
+
+describe('PostModelSwitchContext', () => {
+  const event: PostModelSwitchEvent = {
+    ...baseEvent,
+    hook_event_name: 'PostModelSwitch',
+    from_model: 'claude-sonnet-4-5',
+    to_model: 'claude-opus-4-5',
+    requested_model: null,
+    source: 'auto',
+    context_tokens: 8000,
+    prompt_cache_warm: false,
+    cache_ttl: '1h',
+    estimated_cache_write_usd: 0.9,
+    pricing: 'default',
+  }
+
+  test('accessors', () => {
+    const ctx = new PostModelSwitchContext(event)
+    expect(ctx.fromModel).toBe('claude-sonnet-4-5')
+    expect(ctx.toModel).toBe('claude-opus-4-5')
+    expect(ctx.requestedModel).toBeNull()
+    expect(ctx.source).toBe('auto')
+    expect(ctx.contextTokens).toBe(8000)
+    expect(ctx.promptCacheWarm).toBe(false)
+    expect(ctx.cacheTtl).toBe('1h')
+    expect(ctx.estimatedCacheWriteUsd).toBe(0.9)
+    expect(ctx.pricing).toBe('default')
+  })
+
+  test('addContext sets additionalContext', () => {
+    const ctx = new PostModelSwitchContext(event)
+    ctx.addContext('now running on opus')
+    expect(ctx._getOutput().hookSpecificOutput?.additionalContext).toBe('now running on opus')
+    expect(ctx._getOutput().hookSpecificOutput?.hookEventName).toBe('PostModelSwitch')
   })
 })
 

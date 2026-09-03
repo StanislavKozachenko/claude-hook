@@ -474,6 +474,23 @@ hook.on('PreModelSwitch', '*', (ctx) => {
 })
 ```
 
+### `PostModelSwitchContext`
+
+```ts
+hook.on('PostModelSwitch', '*', (ctx) => {
+  ctx.fromModel               // resolved model id before the switch
+  ctx.toModel                 // resolved model id after the switch
+  ctx.requestedModel          // what was asked for (alias, full id, or null for "default")
+  ctx.source                  // 'command' | 'picker' | 'sdk' | 'auto' | 'resume'
+  ctx.contextTokens           // prompt tokens the next request re-sends
+  ctx.promptCacheWarm         // whether the current model's cache is likely still warm
+  ctx.cacheTtl                // '5m' | '1h'
+  ctx.estimatedCacheWriteUsd  // estimated cost of re-caching on the new model
+  ctx.pricing                 // 'configured' | 'catalog' | 'default'
+  ctx.addContext('note')      // reaches the model with the next request the new model serves
+})
+```
+
 For all other events, the handler receives a `GenericContext` with `ctx.block(reason)` and base properties.
 
 ## Supported events
@@ -512,6 +529,7 @@ For all other events, the handler receives a `GenericContext` with `ctx.block(re
 | `DirectoryAdded` | Directory added (`/add-dir` or SDK) | no | `DirectoryAddedContext` |
 | `MessageDisplay` | Assistant message flushed to screen | no | `MessageDisplayContext` |
 | `PreModelSwitch` | Before the active model changes | yes | `PreModelSwitchContext` |
+| `PostModelSwitch` | After the active model changes | no | `PostModelSwitchContext` |
 
 ## Exit codes
 

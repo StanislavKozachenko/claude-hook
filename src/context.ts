@@ -28,6 +28,7 @@ import type {
   DirectoryAddedEvent,
   MessageDisplayEvent,
   PreModelSwitchEvent,
+  PostModelSwitchEvent,
   TaskCreatedEvent,
   TaskCompletedEvent,
   WorktreeCreateEvent,
@@ -408,6 +409,30 @@ export class PreModelSwitchContext extends BaseContext {
       ...this._output.hookSpecificOutput,
       hookEventName: 'PreModelSwitch',
       permissionDecision: 'allow',
+    }
+  }
+}
+
+export class PostModelSwitchContext extends BaseContext {
+  declare readonly event: PostModelSwitchEvent
+
+  constructor(event: PostModelSwitchEvent) { super(event) }
+
+  get fromModel(): string { return this.event.from_model }
+  get toModel(): string { return this.event.to_model }
+  get requestedModel(): string | null { return this.event.requested_model }
+  get source(): 'command' | 'picker' | 'sdk' | 'auto' | 'resume' { return this.event.source }
+  get contextTokens(): number { return this.event.context_tokens }
+  get promptCacheWarm(): boolean { return this.event.prompt_cache_warm }
+  get cacheTtl(): '5m' | '1h' { return this.event.cache_ttl }
+  get estimatedCacheWriteUsd(): number { return this.event.estimated_cache_write_usd }
+  get pricing(): 'configured' | 'catalog' | 'default' { return this.event.pricing }
+
+  addContext(text: string): void {
+    this._output.hookSpecificOutput = {
+      ...this._output.hookSpecificOutput,
+      hookEventName: 'PostModelSwitch',
+      additionalContext: text,
     }
   }
 }

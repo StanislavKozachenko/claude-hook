@@ -30,6 +30,7 @@ export {
   DirectoryAddedContext,
   MessageDisplayContext,
   PreModelSwitchContext,
+  PostModelSwitchContext,
   GenericContext,
 } from './context.js'
 export type {
@@ -68,6 +69,7 @@ export type {
   DirectoryAddedEvent,
   MessageDisplayEvent,
   PreModelSwitchEvent,
+  PostModelSwitchEvent,
   BashToolInput,
   EditToolInput,
   WriteToolInput,
