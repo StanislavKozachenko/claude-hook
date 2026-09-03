@@ -29,6 +29,7 @@ export type HookEventName =
   | 'InstructionsLoaded'
   | 'Setup'
   | 'DirectoryAdded'
+  | 'MessageDisplay'
 
 export interface BaseEvent {
   session_id: string
@@ -292,6 +293,15 @@ export interface DirectoryAddedEvent extends BaseEvent {
   source: 'slash_command' | 'register_repo_root'
 }
 
+export interface MessageDisplayEvent extends BaseEvent {
+  hook_event_name: 'MessageDisplay'
+  turn_id: string
+  message_id: string
+  index: number
+  final: boolean
+  delta: string
+}
+
 export type AnyEvent =
   | PreToolUseEvent
   | PostToolUseEvent
@@ -323,6 +333,7 @@ export type AnyEvent =
   | InstructionsLoadedEvent
   | SetupEvent
   | DirectoryAddedEvent
+  | MessageDisplayEvent
 
 // Output
 export type PermissionDecision = 'allow' | 'deny' | 'ask' | 'defer'
@@ -336,6 +347,7 @@ export interface HookSpecificOutput {
   sessionTitle?: string
   updatedMCPToolOutput?: string
   retry?: boolean
+  displayContent?: string
 }
 
 export interface HookOutput {

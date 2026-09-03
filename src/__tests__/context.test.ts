@@ -1,5 +1,5 @@
-import { PreToolUseContext, UserPromptSubmitContext, UserPromptExpansionContext, PostToolUseContext, FileChangedContext, CwdChangedContext, ElicitationContext, SessionEndContext, SubagentStartContext, ConfigChangeContext, TeammateIdleContext, PreCompactContext, PostCompactContext, PostToolBatchContext, StopContext, StopFailureContext, ElicitationResultContext, NotificationContext, InstructionsLoadedContext, TaskCreatedContext, TaskCompletedContext, WorktreeCreateContext, WorktreeRemoveContext, SetupContext, DirectoryAddedContext, GenericContext } from '../context'
-import type { PreToolUseEvent, PostToolUseEvent, UserPromptSubmitEvent, UserPromptExpansionEvent, FileChangedEvent, CwdChangedEvent, ElicitationEvent, SessionEndEvent, SubagentStartEvent, ConfigChangeEvent, TeammateIdleEvent, PreCompactEvent, PostCompactEvent, PostToolBatchEvent, PermissionRequestEvent, PermissionDeniedEvent, StopEvent, SubagentStopEvent, StopFailureEvent, ElicitationResultEvent, NotificationEvent, InstructionsLoadedEvent, TaskCreatedEvent, TaskCompletedEvent, WorktreeCreateEvent, WorktreeRemoveEvent, SetupEvent, DirectoryAddedEvent } from '../types'
+import { PreToolUseContext, UserPromptSubmitContext, UserPromptExpansionContext, PostToolUseContext, FileChangedContext, CwdChangedContext, ElicitationContext, SessionEndContext, SubagentStartContext, ConfigChangeContext, TeammateIdleContext, PreCompactContext, PostCompactContext, PostToolBatchContext, StopContext, StopFailureContext, ElicitationResultContext, NotificationContext, InstructionsLoadedContext, TaskCreatedContext, TaskCompletedContext, WorktreeCreateContext, WorktreeRemoveContext, SetupContext, DirectoryAddedContext, MessageDisplayContext, GenericContext } from '../context'
+import type { PreToolUseEvent, PostToolUseEvent, UserPromptSubmitEvent, UserPromptExpansionEvent, FileChangedEvent, CwdChangedEvent, ElicitationEvent, SessionEndEvent, SubagentStartEvent, ConfigChangeEvent, TeammateIdleEvent, PreCompactEvent, PostCompactEvent, PostToolBatchEvent, PermissionRequestEvent, PermissionDeniedEvent, StopEvent, SubagentStopEvent, StopFailureEvent, ElicitationResultEvent, NotificationEvent, InstructionsLoadedEvent, TaskCreatedEvent, TaskCompletedEvent, WorktreeCreateEvent, WorktreeRemoveEvent, SetupEvent, DirectoryAddedEvent, MessageDisplayEvent } from '../types'
 
 const baseEvent = {
   session_id: 'sess1',
@@ -711,6 +711,34 @@ describe('DirectoryAddedContext', () => {
     const ctx = new DirectoryAddedContext(event)
     expect(ctx.directory).toBe('/home/user/other-project')
     expect(ctx.source).toBe('slash_command')
+  })
+})
+
+describe('MessageDisplayContext', () => {
+  const event: MessageDisplayEvent = {
+    ...baseEvent,
+    hook_event_name: 'MessageDisplay',
+    turn_id: 'turn1',
+    message_id: 'msg1',
+    index: 2,
+    final: false,
+    delta: 'some text\n',
+  }
+
+  test('accessors', () => {
+    const ctx = new MessageDisplayContext(event)
+    expect(ctx.turnId).toBe('turn1')
+    expect(ctx.messageId).toBe('msg1')
+    expect(ctx.index).toBe(2)
+    expect(ctx.final).toBe(false)
+    expect(ctx.delta).toBe('some text\n')
+  })
+
+  test('setDisplayContent sets displayContent in hookSpecificOutput', () => {
+    const ctx = new MessageDisplayContext(event)
+    ctx.setDisplayContent('rewritten text')
+    expect(ctx._getOutput().hookSpecificOutput?.displayContent).toBe('rewritten text')
+    expect(ctx._getOutput().hookSpecificOutput?.hookEventName).toBe('MessageDisplay')
   })
 })
 
