@@ -6,6 +6,35 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ---
 
+## [0.6.0] - 2026-09-03
+
+### Added
+
+- add is_interrupt field to PostToolUseFailureEvent (#125)
+- add background_tasks/session_crons to StopEvent (#123)
+- add source/sessionTitle to UserPromptSubmitEvent, suppressOriginalPrompt output (#119)
+- enrich SessionStartEvent with real SDK fields (#117)
+- add effort field to BaseEvent (#113)
+- add PostModelSwitch hook event support (#111)
+- add PreModelSwitch hook event support (#109)
+- add MessageDisplay hook event support (#107)
+- add DirectoryAdded hook event support (#105)
+- add Setup hook event support (#103)
+
+### Fixed
+
+- replace loose PermissionSuggestion with the real PermissionUpdate union (#129)
+- make PostToolBatchToolCall.tool_response optional, tool_input unknown (#127)
+- tighten UserPromptExpansionEvent types, add suppressOriginalPrompt output (#121)
+- tighten ConfigChangeEvent source union, make file_path optional (#115)
+
+### Changed
+
+- fix SessionEnd reason values in README (5, not 6) (#131)
+
+---
+
+
 ## [0.5.2] - 2026-08-25
 
 ### Added
