@@ -53,6 +53,7 @@ export class BaseContext {
   get cwd(): string { return this.event.cwd }
   get hookEventName(): HookEventName { return this.event.hook_event_name }
   get promptId(): string | undefined { return this.event.prompt_id }
+  get effort(): { level: string } | undefined { return this.event.effort }
 
   suppress(): void {
     this._output.suppressOutput = true
