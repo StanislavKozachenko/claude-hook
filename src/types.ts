@@ -107,10 +107,10 @@ export interface UserPromptSubmitEvent extends BaseEvent {
 
 export interface UserPromptExpansionEvent extends BaseEvent {
   hook_event_name: 'UserPromptExpansion'
-  expansion_type: string
+  expansion_type: 'slash_command' | 'mcp_prompt'
   command_name: string
   command_args: string
-  command_source: string
+  command_source?: string
   prompt: string
 }
 

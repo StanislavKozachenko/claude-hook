@@ -190,14 +190,15 @@ hook.on('UserPromptSubmit', '*', (ctx) => {
 
 ```ts
 hook.on('UserPromptExpansion', '*', (ctx) => {
-  ctx.prompt             // original slash command input, e.g. '/compact'
-  ctx.commandName        // command name, e.g. 'compact'
-  ctx.commandArgs        // arguments string (empty if none)
-  ctx.commandSource      // 'projectSettings' | 'globalSettings' | etc.
-  ctx.expansionType      // e.g. 'slash_command'
+  ctx.prompt                    // original slash command input, e.g. '/compact'
+  ctx.commandName                // command name, e.g. 'compact'
+  ctx.commandArgs                // arguments string (empty if none)
+  ctx.commandSource              // e.g. 'projectSettings' | undefined
+  ctx.expansionType              // 'slash_command' | 'mcp_prompt'
   ctx.block('reason')
   ctx.addContext('extra context')
   ctx.setTitle('Session title')
+  ctx.suppressOriginalPrompt()  // when blocking, omit the original prompt from the block message
 })
 ```
 

@@ -241,6 +241,23 @@ describe('UserPromptExpansionContext', () => {
     ctx.setTitle('Slash Session')
     expect(ctx._getOutput().hookSpecificOutput?.sessionTitle).toBe('Slash Session')
   })
+
+  test('suppressOriginalPrompt sets suppressOriginalPrompt in hookSpecificOutput', () => {
+    const ctx = new UserPromptExpansionContext(event)
+    ctx.suppressOriginalPrompt()
+    expect(ctx._getOutput().hookSpecificOutput?.suppressOriginalPrompt).toBe(true)
+  })
+
+  test('commandSource is undefined when omitted', () => {
+    const { command_source, ...rest } = event
+    const ctx = new UserPromptExpansionContext(rest as UserPromptExpansionEvent)
+    expect(ctx.commandSource).toBeUndefined()
+  })
+
+  test('expansionType accepts mcp_prompt', () => {
+    const ctx = new UserPromptExpansionContext({ ...event, expansion_type: 'mcp_prompt' })
+    expect(ctx.expansionType).toBe('mcp_prompt')
+  })
 })
 
 describe('FileChangedContext', () => {
