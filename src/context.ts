@@ -181,10 +181,10 @@ export class UserPromptExpansionContext extends BaseContext {
 
   constructor(event: UserPromptExpansionEvent) { super(event) }
 
-  get expansionType(): string { return this.event.expansion_type }
+  get expansionType(): 'slash_command' | 'mcp_prompt' { return this.event.expansion_type }
   get commandName(): string { return this.event.command_name }
   get commandArgs(): string { return this.event.command_args }
-  get commandSource(): string { return this.event.command_source }
+  get commandSource(): string | undefined { return this.event.command_source }
   get prompt(): string { return this.event.prompt }
 
   block(reason: string): void {
@@ -205,6 +205,14 @@ export class UserPromptExpansionContext extends BaseContext {
       ...this._output.hookSpecificOutput,
       hookEventName: 'UserPromptExpansion',
       sessionTitle: title,
+    }
+  }
+
+  suppressOriginalPrompt(): void {
+    this._output.hookSpecificOutput = {
+      ...this._output.hookSpecificOutput,
+      hookEventName: 'UserPromptExpansion',
+      suppressOriginalPrompt: true,
     }
   }
 }
