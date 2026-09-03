@@ -212,8 +212,8 @@ export interface PermissionDeniedEvent extends BaseEvent {
 
 export interface PostToolBatchToolCall {
   tool_name: string
-  tool_input: ToolInput
-  tool_response: unknown
+  tool_input: unknown
+  tool_response?: unknown
   tool_use_id: string
 }
 
