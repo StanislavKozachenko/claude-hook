@@ -95,6 +95,7 @@ export interface PostToolUseFailureEvent extends BaseEvent {
   tool_input: ToolInput
   tool_use_id: string
   error: string
+  is_interrupt?: boolean
   duration_ms?: number
 }
 

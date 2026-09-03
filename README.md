@@ -163,11 +163,12 @@ hook.on('PermissionDenied', '*', (ctx) => {
 
 ```ts
 hook.on('PostToolUse', 'Bash', (ctx) => {
-  ctx.toolName    // 'Bash'
-  ctx.input       // tool input
-  ctx.output      // tool response
-  ctx.error       // error string (PostToolUseFailure only)
-  ctx.durationMs  // execution time in ms
+  ctx.toolName     // 'Bash'
+  ctx.input        // tool input
+  ctx.output       // tool response
+  ctx.error        // error string (PostToolUseFailure only)
+  ctx.isInterrupt  // true if the failure was a user interrupt (PostToolUseFailure only)
+  ctx.durationMs   // execution time in ms
   ctx.addContext('feedback for Claude')
 })
 ```
