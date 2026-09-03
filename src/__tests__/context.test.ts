@@ -544,6 +544,18 @@ describe('PostToolBatchContext', () => {
     expect(ctx._isBlocked()).toBe(true)
     expect(ctx._getBlockReason()).toBe('stop the loop')
   })
+
+  test('toolCalls tolerates a missing tool_response', () => {
+    const eventWithoutResponse: PostToolBatchEvent = {
+      ...baseEvent,
+      hook_event_name: 'PostToolBatch',
+      tool_calls: [
+        { tool_name: 'Bash', tool_input: { command: 'still running' }, tool_use_id: 'toolu_3' },
+      ],
+    }
+    const ctx = new PostToolBatchContext(eventWithoutResponse)
+    expect(ctx.toolCalls[0].tool_response).toBeUndefined()
+  })
 })
 
 describe('StopContext', () => {
