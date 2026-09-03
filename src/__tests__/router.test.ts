@@ -96,4 +96,10 @@ describe('getMatcherValue', () => {
     expect(getMatcherValue({ hook_event_name: 'PreCompact', trigger: 'auto' })).toBe('auto')
     expect(getMatcherValue({ hook_event_name: 'PreCompact' })).toBe('')
   })
+
+  test('returns trigger for Setup', () => {
+    expect(getMatcherValue({ hook_event_name: 'Setup', trigger: 'init' })).toBe('init')
+    expect(getMatcherValue({ hook_event_name: 'Setup', trigger: 'maintenance' })).toBe('maintenance')
+    expect(getMatcherValue({ hook_event_name: 'Setup' })).toBe('')
+  })
 })

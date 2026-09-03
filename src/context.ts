@@ -24,6 +24,7 @@ import type {
   ElicitationResultEvent,
   NotificationEvent,
   InstructionsLoadedEvent,
+  SetupEvent,
   TaskCreatedEvent,
   TaskCompletedEvent,
   WorktreeCreateEvent,
@@ -332,6 +333,22 @@ export class InstructionsLoadedContext extends BaseContext {
   get globs(): string[] | undefined { return this.event.globs }
   get triggerFilePath(): string | undefined { return this.event.trigger_file_path }
   get parentFilePath(): string | undefined { return this.event.parent_file_path }
+}
+
+export class SetupContext extends BaseContext {
+  declare readonly event: SetupEvent
+
+  constructor(event: SetupEvent) { super(event) }
+
+  get trigger(): 'init' | 'maintenance' { return this.event.trigger }
+
+  addContext(text: string): void {
+    this._output.hookSpecificOutput = {
+      ...this._output.hookSpecificOutput,
+      hookEventName: 'Setup',
+      additionalContext: text,
+    }
+  }
 }
 
 export class TaskCreatedContext extends BaseContext {
