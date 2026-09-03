@@ -1,5 +1,5 @@
-import { PreToolUseContext, UserPromptSubmitContext, UserPromptExpansionContext, PostToolUseContext, FileChangedContext, CwdChangedContext, ElicitationContext, SessionEndContext, SubagentStartContext, ConfigChangeContext, TeammateIdleContext, PreCompactContext, PostCompactContext, PostToolBatchContext, StopContext, StopFailureContext, ElicitationResultContext, NotificationContext, InstructionsLoadedContext, TaskCreatedContext, TaskCompletedContext, WorktreeCreateContext, WorktreeRemoveContext, SetupContext, DirectoryAddedContext, MessageDisplayContext, PreModelSwitchContext, PostModelSwitchContext, GenericContext } from '../context'
-import type { PreToolUseEvent, PostToolUseEvent, UserPromptSubmitEvent, UserPromptExpansionEvent, FileChangedEvent, CwdChangedEvent, ElicitationEvent, SessionEndEvent, SubagentStartEvent, ConfigChangeEvent, TeammateIdleEvent, PreCompactEvent, PostCompactEvent, PostToolBatchEvent, PermissionRequestEvent, PermissionDeniedEvent, StopEvent, SubagentStopEvent, StopFailureEvent, ElicitationResultEvent, NotificationEvent, InstructionsLoadedEvent, TaskCreatedEvent, TaskCompletedEvent, WorktreeCreateEvent, WorktreeRemoveEvent, SetupEvent, DirectoryAddedEvent, MessageDisplayEvent, PreModelSwitchEvent, PostModelSwitchEvent } from '../types'
+import { PreToolUseContext, UserPromptSubmitContext, UserPromptExpansionContext, PostToolUseContext, FileChangedContext, CwdChangedContext, ElicitationContext, SessionStartContext, SessionEndContext, SubagentStartContext, ConfigChangeContext, TeammateIdleContext, PreCompactContext, PostCompactContext, PostToolBatchContext, StopContext, StopFailureContext, ElicitationResultContext, NotificationContext, InstructionsLoadedContext, TaskCreatedContext, TaskCompletedContext, WorktreeCreateContext, WorktreeRemoveContext, SetupContext, DirectoryAddedContext, MessageDisplayContext, PreModelSwitchContext, PostModelSwitchContext, GenericContext } from '../context'
+import type { PreToolUseEvent, PostToolUseEvent, UserPromptSubmitEvent, UserPromptExpansionEvent, FileChangedEvent, CwdChangedEvent, ElicitationEvent, SessionStartEvent, SessionEndEvent, SubagentStartEvent, ConfigChangeEvent, TeammateIdleEvent, PreCompactEvent, PostCompactEvent, PostToolBatchEvent, PermissionRequestEvent, PermissionDeniedEvent, StopEvent, SubagentStopEvent, StopFailureEvent, ElicitationResultEvent, NotificationEvent, InstructionsLoadedEvent, TaskCreatedEvent, TaskCompletedEvent, WorktreeCreateEvent, WorktreeRemoveEvent, SetupEvent, DirectoryAddedEvent, MessageDisplayEvent, PreModelSwitchEvent, PostModelSwitchEvent } from '../types'
 
 const baseEvent = {
   session_id: 'sess1',
@@ -837,6 +837,49 @@ describe('PostModelSwitchContext', () => {
     ctx.addContext('now running on opus')
     expect(ctx._getOutput().hookSpecificOutput?.additionalContext).toBe('now running on opus')
     expect(ctx._getOutput().hookSpecificOutput?.hookEventName).toBe('PostModelSwitch')
+  })
+})
+
+describe('SessionStartContext', () => {
+  const event: SessionStartEvent = {
+    ...baseEvent,
+    hook_event_name: 'SessionStart',
+    source: 'startup',
+    model: 'claude-sonnet-5',
+  }
+
+  test('source and model accessors', () => {
+    const ctx = new SessionStartContext(event)
+    expect(ctx.source).toBe('startup')
+    expect(ctx.model).toBe('claude-sonnet-5')
+  })
+
+  test('resume-only fields are undefined on startup', () => {
+    const ctx = new SessionStartContext(event)
+    expect(ctx.sessionTitle).toBeUndefined()
+    expect(ctx.secondsSinceLastResponse).toBeUndefined()
+    expect(ctx.contextTokens).toBeUndefined()
+    expect(ctx.promptCacheLikelyExpired).toBeUndefined()
+    expect(ctx.estimatedCacheWriteUsd).toBeUndefined()
+  })
+
+  test('resume-only fields populated on resume', () => {
+    const resumeEvent: SessionStartEvent = {
+      ...baseEvent,
+      hook_event_name: 'SessionStart',
+      source: 'resume',
+      session_title: 'Fix login bug',
+      seconds_since_last_response: 42,
+      context_tokens: 15000,
+      prompt_cache_likely_expired: true,
+      estimated_cache_write_usd: 0.25,
+    }
+    const ctx = new SessionStartContext(resumeEvent)
+    expect(ctx.sessionTitle).toBe('Fix login bug')
+    expect(ctx.secondsSinceLastResponse).toBe(42)
+    expect(ctx.contextTokens).toBe(15000)
+    expect(ctx.promptCacheLikelyExpired).toBe(true)
+    expect(ctx.estimatedCacheWriteUsd).toBe(0.25)
   })
 })
 
