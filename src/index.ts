@@ -49,6 +49,8 @@ export type {
   SessionEndEvent,
   StopEvent,
   StopFailureEvent,
+  BackgroundTaskSummary,
+  SessionCronSummary,
   SubagentStartEvent,
   SubagentStopEvent,
   TaskCreatedEvent,
