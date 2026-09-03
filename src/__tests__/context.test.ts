@@ -182,6 +182,24 @@ describe('UserPromptSubmitContext', () => {
     ctx.setTitle('My Session')
     expect(ctx._getOutput().hookSpecificOutput?.sessionTitle).toBe('My Session')
   })
+
+  test('source and sessionTitle accessors', () => {
+    const ctx = new UserPromptSubmitContext({ ...promptEvent, source: 'loop_wakeup', session_title: 'Nightly check' })
+    expect(ctx.source).toBe('loop_wakeup')
+    expect(ctx.sessionTitle).toBe('Nightly check')
+  })
+
+  test('source and sessionTitle are undefined when omitted', () => {
+    const ctx = new UserPromptSubmitContext(promptEvent)
+    expect(ctx.source).toBeUndefined()
+    expect(ctx.sessionTitle).toBeUndefined()
+  })
+
+  test('suppressOriginalPrompt sets suppressOriginalPrompt in hookSpecificOutput', () => {
+    const ctx = new UserPromptSubmitContext(promptEvent)
+    ctx.suppressOriginalPrompt()
+    expect(ctx._getOutput().hookSpecificOutput?.suppressOriginalPrompt).toBe(true)
+  })
 })
 
 describe('UserPromptExpansionContext', () => {
