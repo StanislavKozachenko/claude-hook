@@ -217,8 +217,13 @@ hook.on('SubagentStop', '*', (ctx) => {
 
 ```ts
 hook.on('SessionStart', '*', (ctx) => {
-  ctx.source  // 'startup' | 'resume' | undefined
-  ctx.model   // e.g. 'claude-sonnet-4-6'
+  ctx.source                       // 'startup' | 'resume' | 'clear' | 'compact' | 'fork'
+  ctx.model                        // e.g. 'claude-sonnet-4-6'
+  ctx.sessionTitle                 // resume/fork only
+  ctx.secondsSinceLastResponse     // resume/fork only
+  ctx.contextTokens                // resume/fork only
+  ctx.promptCacheLikelyExpired     // resume/fork only
+  ctx.estimatedCacheWriteUsd       // resume/fork only
   ctx.setEnv('NODE_ENV', 'production')  // persists to CLAUDE_ENV_FILE
 })
 ```

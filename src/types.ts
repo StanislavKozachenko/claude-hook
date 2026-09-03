@@ -114,8 +114,13 @@ export interface UserPromptExpansionEvent extends BaseEvent {
 
 export interface SessionStartEvent extends BaseEvent {
   hook_event_name: 'SessionStart'
-  source?: string
+  source: 'startup' | 'resume' | 'clear' | 'compact' | 'fork'
   model?: string
+  session_title?: string
+  seconds_since_last_response?: number
+  context_tokens?: number
+  prompt_cache_likely_expired?: boolean
+  estimated_cache_write_usd?: number
 }
 
 export interface SessionEndEvent extends BaseEvent {

@@ -222,8 +222,13 @@ export class SessionStartContext extends BaseContext {
 
   constructor(event: SessionStartEvent) { super(event) }
 
-  get source(): string | undefined { return this.event.source }
+  get source(): 'startup' | 'resume' | 'clear' | 'compact' | 'fork' { return this.event.source }
   get model(): string | undefined { return this.event.model }
+  get sessionTitle(): string | undefined { return this.event.session_title }
+  get secondsSinceLastResponse(): number | undefined { return this.event.seconds_since_last_response }
+  get contextTokens(): number | undefined { return this.event.context_tokens }
+  get promptCacheLikelyExpired(): boolean | undefined { return this.event.prompt_cache_likely_expired }
+  get estimatedCacheWriteUsd(): number | undefined { return this.event.estimated_cache_write_usd }
 
   setEnv(key: string, value: string): void {
     const envFile = process.env['CLAUDE_ENV_FILE']
