@@ -118,4 +118,10 @@ describe('getMatcherValue', () => {
     expect(getMatcherValue({ hook_event_name: 'PreModelSwitch', source: 'picker' })).toBe('picker')
     expect(getMatcherValue({ hook_event_name: 'PreModelSwitch' })).toBe('')
   })
+
+  test('returns source for PostModelSwitch', () => {
+    expect(getMatcherValue({ hook_event_name: 'PostModelSwitch', source: 'auto' })).toBe('auto')
+    expect(getMatcherValue({ hook_event_name: 'PostModelSwitch', source: 'resume' })).toBe('resume')
+    expect(getMatcherValue({ hook_event_name: 'PostModelSwitch' })).toBe('')
+  })
 })
