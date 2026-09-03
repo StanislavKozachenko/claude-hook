@@ -429,6 +429,17 @@ hook.on('Setup', '*', (ctx) => {
 })
 ```
 
+### `DirectoryAddedContext`
+
+```ts
+hook.on('DirectoryAdded', '*', (ctx) => {
+  ctx.directory  // absolute path of the directory that was added
+  ctx.source     // 'slash_command' (/add-dir) | 'register_repo_root' (SDK control_request)
+})
+```
+
+> Read-only notification — no output or blocking is supported for this event.
+
 For all other events, the handler receives a `GenericContext` with `ctx.block(reason)` and base properties.
 
 ## Supported events
@@ -464,6 +475,7 @@ For all other events, the handler receives a `GenericContext` with `ctx.block(re
 | `InstructionsLoaded` | CLAUDE.md / rules loaded | no | `InstructionsLoadedContext` |
 | `Notification` | System notification | no | `NotificationContext` |
 | `Setup` | Session init/maintenance setup phase | no | `SetupContext` |
+| `DirectoryAdded` | Directory added (`/add-dir` or SDK) | no | `DirectoryAddedContext` |
 
 ## Exit codes
 

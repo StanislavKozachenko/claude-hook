@@ -28,6 +28,7 @@ export type HookEventName =
   | 'Notification'
   | 'InstructionsLoaded'
   | 'Setup'
+  | 'DirectoryAdded'
 
 export interface BaseEvent {
   session_id: string
@@ -285,6 +286,12 @@ export interface SetupEvent extends BaseEvent {
   trigger: 'init' | 'maintenance'
 }
 
+export interface DirectoryAddedEvent extends BaseEvent {
+  hook_event_name: 'DirectoryAdded'
+  directory: string
+  source: 'slash_command' | 'register_repo_root'
+}
+
 export type AnyEvent =
   | PreToolUseEvent
   | PostToolUseEvent
@@ -315,6 +322,7 @@ export type AnyEvent =
   | NotificationEvent
   | InstructionsLoadedEvent
   | SetupEvent
+  | DirectoryAddedEvent
 
 // Output
 export type PermissionDecision = 'allow' | 'deny' | 'ask' | 'defer'

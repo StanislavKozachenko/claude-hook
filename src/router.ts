@@ -47,6 +47,8 @@ export function getMatcherValue(event: Record<string, unknown>): string {
   if (name === 'PreCompact') return (event['trigger'] as string) ?? ''
   // Setup: match on trigger (init/maintenance)
   if (name === 'Setup') return (event['trigger'] as string) ?? ''
+  // DirectoryAdded: match on how the directory was added
+  if (name === 'DirectoryAdded') return (event['source'] as string) ?? ''
   // FileChanged: match on filename (basename), handling both POSIX and Windows separators
   if (name === 'FileChanged') {
     const filePath = (event['file_path'] as string) ?? ''
