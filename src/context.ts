@@ -12,6 +12,8 @@ import type {
   SessionEndEvent,
   StopEvent,
   StopFailureEvent,
+  BackgroundTaskSummary,
+  SessionCronSummary,
   SubagentStartEvent,
   SubagentStopEvent,
   FileChangedEvent,
@@ -227,6 +229,12 @@ export class StopContext extends BaseContext {
   get agentType(): string | undefined { return (this.event as unknown as { agent_type?: string }).agent_type }
   get agentTranscriptPath(): string | undefined {
     return (this.event as unknown as { agent_transcript_path?: string }).agent_transcript_path
+  }
+  get backgroundTasks(): BackgroundTaskSummary[] | undefined {
+    return (this.event as unknown as { background_tasks?: BackgroundTaskSummary[] }).background_tasks
+  }
+  get sessionCrons(): SessionCronSummary[] | undefined {
+    return (this.event as unknown as { session_crons?: SessionCronSummary[] }).session_crons
   }
 
   block(reason: string): void {

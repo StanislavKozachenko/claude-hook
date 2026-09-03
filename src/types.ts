@@ -130,10 +130,31 @@ export interface SessionEndEvent extends BaseEvent {
   reason: string
 }
 
+export interface BackgroundTaskSummary {
+  id: string
+  type: string
+  status: string
+  description: string
+  command?: string
+  agent_type?: string
+  server?: string
+  tool?: string
+  name?: string
+}
+
+export interface SessionCronSummary {
+  id: string
+  schedule: string
+  recurring: boolean
+  prompt: string
+}
+
 export interface StopEvent extends BaseEvent {
   hook_event_name: 'Stop'
   stop_hook_active: boolean
   last_assistant_message?: string
+  background_tasks?: BackgroundTaskSummary[]
+  session_crons?: SessionCronSummary[]
 }
 
 export interface StopFailureEvent extends BaseEvent {

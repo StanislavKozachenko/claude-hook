@@ -207,6 +207,8 @@ hook.on('UserPromptExpansion', '*', (ctx) => {
 ```ts
 hook.on('Stop', '*', (ctx) => {
   ctx.lastAssistantMessage  // last message Claude produced
+  ctx.backgroundTasks       // in-flight background work (Stop only), e.g. [{ id, type, status, description, ... }]
+  ctx.sessionCrons          // scheduled wakeups (CronCreate/ScheduleWakeup/loop) that will wake this session (Stop only)
   ctx.block('not done yet') // prevent Claude from stopping
 })
 
@@ -216,6 +218,8 @@ hook.on('SubagentStop', '*', (ctx) => {
   ctx.agentTranscriptPath  // path to the subagent's transcript
 })
 ```
+
+> `backgroundTasks`/`sessionCrons` are `undefined` for `SubagentStop` — they're `Stop`-only fields.
 
 ### `SessionStartContext`
 

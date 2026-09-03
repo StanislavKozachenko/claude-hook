@@ -563,6 +563,37 @@ describe('StopContext', () => {
     expect(ctx._isBlocked()).toBe(true)
     expect(ctx._getBlockReason()).toBe('keep going')
   })
+
+  test('backgroundTasks and sessionCrons accessors for Stop', () => {
+    const eventWithTasks: StopEvent = {
+      ...stopEvent,
+      background_tasks: [
+        { id: 'bg1', type: 'shell', status: 'running', description: 'npm run build', command: 'npm run build' },
+      ],
+      session_crons: [
+        { id: 'cron1', schedule: '0 9 * * 1-5', recurring: true, prompt: 'daily check' },
+      ],
+    }
+    const ctx = new StopContext(eventWithTasks)
+    expect(ctx.backgroundTasks).toEqual([
+      { id: 'bg1', type: 'shell', status: 'running', description: 'npm run build', command: 'npm run build' },
+    ])
+    expect(ctx.sessionCrons).toEqual([
+      { id: 'cron1', schedule: '0 9 * * 1-5', recurring: true, prompt: 'daily check' },
+    ])
+  })
+
+  test('backgroundTasks and sessionCrons are undefined when omitted', () => {
+    const ctx = new StopContext(stopEvent)
+    expect(ctx.backgroundTasks).toBeUndefined()
+    expect(ctx.sessionCrons).toBeUndefined()
+  })
+
+  test('backgroundTasks and sessionCrons are undefined for SubagentStop', () => {
+    const ctx = new StopContext(subagentStopEvent)
+    expect(ctx.backgroundTasks).toBeUndefined()
+    expect(ctx.sessionCrons).toBeUndefined()
+  })
 })
 
 describe('StopFailureContext', () => {
