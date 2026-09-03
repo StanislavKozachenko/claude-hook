@@ -42,6 +42,7 @@ export interface BaseEvent {
   agent_id?: string
   agent_type?: string
   prompt_id?: string
+  effort?: { level: string }
 }
 
 // Common tool inputs

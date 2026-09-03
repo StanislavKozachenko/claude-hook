@@ -44,6 +44,14 @@ describe('PreToolUseContext', () => {
     expect(ctx.promptId).toBe('prompt1')
   })
 
+  test('effort accessor inherited from BaseContext', () => {
+    const ctx = new PreToolUseContext(preToolEvent)
+    expect(ctx.effort).toBeUndefined()
+
+    const withEffort = new PreToolUseContext({ ...preToolEvent, effort: { level: 'high' } })
+    expect(withEffort.effort).toEqual({ level: 'high' })
+  })
+
   test('modify sets updatedInput in hookSpecificOutput', () => {
     const ctx = new PreToolUseContext(preToolEvent)
     ctx.modify({ command: 'echo safe' })
