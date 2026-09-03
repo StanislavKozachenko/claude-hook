@@ -101,6 +101,31 @@ describe('PreToolUseContext', () => {
     expect(ctx._getOutput().hookSpecificOutput?.hookEventName).toBe('PermissionRequest')
   })
 
+  test('permissionSuggestions accessor returns the real PermissionUpdate union shape', () => {
+    const permissionRequestEvent: PermissionRequestEvent = {
+      ...baseEvent,
+      hook_event_name: 'PermissionRequest',
+      tool_name: 'Bash',
+      tool_input: { command: 'rm -rf /tmp/foo' },
+      permission_suggestions: [
+        { type: 'addRules', rules: [{ toolName: 'Bash', ruleContent: 'rm -rf *' }], behavior: 'deny', destination: 'session' },
+        { type: 'setMode', mode: 'plan', destination: 'localSettings' },
+        { type: 'addDirectories', directories: ['/home/user/other-repo'], destination: 'cliArg' },
+      ],
+    }
+    const ctx = new PreToolUseContext(permissionRequestEvent as unknown as PreToolUseEvent)
+    const suggestions = ctx.permissionSuggestions
+    expect(suggestions).toHaveLength(3)
+    expect(suggestions?.[0]).toEqual({ type: 'addRules', rules: [{ toolName: 'Bash', ruleContent: 'rm -rf *' }], behavior: 'deny', destination: 'session' })
+    expect(suggestions?.[1]).toEqual({ type: 'setMode', mode: 'plan', destination: 'localSettings' })
+    expect(suggestions?.[2]).toEqual({ type: 'addDirectories', directories: ['/home/user/other-repo'], destination: 'cliArg' })
+  })
+
+  test('permissionSuggestions is undefined when omitted', () => {
+    const ctx = new PreToolUseContext(preToolEvent)
+    expect(ctx.permissionSuggestions).toBeUndefined()
+  })
+
   test('allow/modify/addContext report the actual event name for PermissionDenied', () => {
     const permissionDeniedEvent: PermissionDeniedEvent = {
       ...baseEvent,

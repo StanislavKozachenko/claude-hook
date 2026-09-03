@@ -188,18 +188,29 @@ export interface InstructionsLoadedEvent extends BaseEvent {
   parent_file_path?: string
 }
 
-export interface PermissionSuggestion {
-  type: string
-  mode?: string
-  destination?: string
+export interface PermissionRuleValue {
+  toolName: string
+  ruleContent?: string
 }
+
+export type PermissionBehavior = 'allow' | 'deny' | 'ask'
+export type PermissionMode = 'default' | 'acceptEdits' | 'bypassPermissions' | 'plan' | 'dontAsk' | 'auto'
+export type PermissionUpdateDestination = 'userSettings' | 'projectSettings' | 'localSettings' | 'session' | 'cliArg'
+
+export type PermissionUpdate =
+  | { type: 'addRules'; rules: PermissionRuleValue[]; behavior: PermissionBehavior; destination: PermissionUpdateDestination }
+  | { type: 'replaceRules'; rules: PermissionRuleValue[]; behavior: PermissionBehavior; destination: PermissionUpdateDestination }
+  | { type: 'removeRules'; rules: PermissionRuleValue[]; behavior: PermissionBehavior; destination: PermissionUpdateDestination }
+  | { type: 'setMode'; mode: PermissionMode; destination: PermissionUpdateDestination }
+  | { type: 'addDirectories'; directories: string[]; destination: PermissionUpdateDestination }
+  | { type: 'removeDirectories'; directories: string[]; destination: PermissionUpdateDestination }
 
 export interface PermissionRequestEvent extends BaseEvent {
   hook_event_name: 'PermissionRequest'
   tool_name: string
   tool_input: ToolInput
   tool_use_id?: string
-  permission_suggestions?: PermissionSuggestion[]
+  permission_suggestions?: PermissionUpdate[]
 }
 
 export interface PermissionDeniedEvent extends BaseEvent {

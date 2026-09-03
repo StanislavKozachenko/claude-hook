@@ -80,4 +80,9 @@ export type {
   HookOutput,
   HookSpecificOutput,
   PermissionDecision,
+  PermissionUpdate,
+  PermissionRuleValue,
+  PermissionBehavior,
+  PermissionMode,
+  PermissionUpdateDestination,
 } from './types.js'
