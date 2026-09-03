@@ -243,8 +243,8 @@ export interface CwdChangedEvent extends BaseEvent {
 
 export interface ConfigChangeEvent extends BaseEvent {
   hook_event_name: 'ConfigChange'
-  source: string
-  file_path: string
+  source: 'user_settings' | 'project_settings' | 'local_settings' | 'policy_settings' | 'skills'
+  file_path?: string
 }
 
 export interface TeammateIdleEvent extends BaseEvent {

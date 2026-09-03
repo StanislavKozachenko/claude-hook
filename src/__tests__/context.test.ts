@@ -369,6 +369,17 @@ describe('ConfigChangeContext', () => {
     expect(ctx._isBlocked()).toBe(true)
     expect(ctx._getBlockReason()).toBe('config changes not allowed')
   })
+
+  test('filePath is undefined when omitted (e.g. source: skills)', () => {
+    const skillsEvent: ConfigChangeEvent = {
+      ...baseEvent,
+      hook_event_name: 'ConfigChange',
+      source: 'skills',
+    }
+    const ctx = new ConfigChangeContext(skillsEvent)
+    expect(ctx.filePath).toBeUndefined()
+    expect(ctx.source).toBe('skills')
+  })
 })
 
 describe('TeammateIdleContext', () => {
