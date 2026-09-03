@@ -420,6 +420,15 @@ hook.on('PostToolBatch', '*', (ctx) => {
 })
 ```
 
+### `SetupContext`
+
+```ts
+hook.on('Setup', '*', (ctx) => {
+  ctx.trigger       // 'init' | 'maintenance'
+  ctx.addContext('extra setup info')  // feeds additionalContext back to Claude
+})
+```
+
 For all other events, the handler receives a `GenericContext` with `ctx.block(reason)` and base properties.
 
 ## Supported events
@@ -454,6 +463,7 @@ For all other events, the handler receives a `GenericContext` with `ctx.block(re
 | `ElicitationResult` | Elicitation answer received | yes | `ElicitationResultContext` |
 | `InstructionsLoaded` | CLAUDE.md / rules loaded | no | `InstructionsLoadedContext` |
 | `Notification` | System notification | no | `NotificationContext` |
+| `Setup` | Session init/maintenance setup phase | no | `SetupContext` |
 
 ## Exit codes
 

@@ -27,6 +27,7 @@ export type HookEventName =
   | 'ElicitationResult'
   | 'Notification'
   | 'InstructionsLoaded'
+  | 'Setup'
 
 export interface BaseEvent {
   session_id: string
@@ -279,6 +280,11 @@ export interface ElicitationResultEvent extends BaseEvent {
   content?: Record<string, unknown>
 }
 
+export interface SetupEvent extends BaseEvent {
+  hook_event_name: 'Setup'
+  trigger: 'init' | 'maintenance'
+}
+
 export type AnyEvent =
   | PreToolUseEvent
   | PostToolUseEvent
@@ -308,6 +314,7 @@ export type AnyEvent =
   | ElicitationResultEvent
   | NotificationEvent
   | InstructionsLoadedEvent
+  | SetupEvent
 
 // Output
 export type PermissionDecision = 'allow' | 'deny' | 'ask' | 'defer'

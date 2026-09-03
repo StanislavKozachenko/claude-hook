@@ -26,6 +26,7 @@ export {
   TaskCompletedContext,
   WorktreeCreateContext,
   WorktreeRemoveContext,
+  SetupContext,
   GenericContext,
 } from './context.js'
 export type {
@@ -60,6 +61,7 @@ export type {
   ElicitationResultEvent,
   NotificationEvent,
   InstructionsLoadedEvent,
+  SetupEvent,
   BashToolInput,
   EditToolInput,
   WriteToolInput,
