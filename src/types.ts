@@ -30,6 +30,7 @@ export type HookEventName =
   | 'Setup'
   | 'DirectoryAdded'
   | 'MessageDisplay'
+  | 'PreModelSwitch'
 
 export interface BaseEvent {
   session_id: string
@@ -302,6 +303,19 @@ export interface MessageDisplayEvent extends BaseEvent {
   delta: string
 }
 
+export interface PreModelSwitchEvent extends BaseEvent {
+  hook_event_name: 'PreModelSwitch'
+  from_model: string
+  to_model: string
+  requested_model: string | null
+  source: 'command' | 'picker' | 'sdk'
+  context_tokens: number
+  prompt_cache_warm: boolean
+  cache_ttl: '5m' | '1h'
+  estimated_cache_write_usd: number
+  pricing: 'configured' | 'catalog' | 'default'
+}
+
 export type AnyEvent =
   | PreToolUseEvent
   | PostToolUseEvent
@@ -334,6 +348,7 @@ export type AnyEvent =
   | SetupEvent
   | DirectoryAddedEvent
   | MessageDisplayEvent
+  | PreModelSwitchEvent
 
 // Output
 export type PermissionDecision = 'allow' | 'deny' | 'ask' | 'defer'

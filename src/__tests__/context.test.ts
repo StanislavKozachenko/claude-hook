@@ -1,5 +1,5 @@
-import { PreToolUseContext, UserPromptSubmitContext, UserPromptExpansionContext, PostToolUseContext, FileChangedContext, CwdChangedContext, ElicitationContext, SessionEndContext, SubagentStartContext, ConfigChangeContext, TeammateIdleContext, PreCompactContext, PostCompactContext, PostToolBatchContext, StopContext, StopFailureContext, ElicitationResultContext, NotificationContext, InstructionsLoadedContext, TaskCreatedContext, TaskCompletedContext, WorktreeCreateContext, WorktreeRemoveContext, SetupContext, DirectoryAddedContext, MessageDisplayContext, GenericContext } from '../context'
-import type { PreToolUseEvent, PostToolUseEvent, UserPromptSubmitEvent, UserPromptExpansionEvent, FileChangedEvent, CwdChangedEvent, ElicitationEvent, SessionEndEvent, SubagentStartEvent, ConfigChangeEvent, TeammateIdleEvent, PreCompactEvent, PostCompactEvent, PostToolBatchEvent, PermissionRequestEvent, PermissionDeniedEvent, StopEvent, SubagentStopEvent, StopFailureEvent, ElicitationResultEvent, NotificationEvent, InstructionsLoadedEvent, TaskCreatedEvent, TaskCompletedEvent, WorktreeCreateEvent, WorktreeRemoveEvent, SetupEvent, DirectoryAddedEvent, MessageDisplayEvent } from '../types'
+import { PreToolUseContext, UserPromptSubmitContext, UserPromptExpansionContext, PostToolUseContext, FileChangedContext, CwdChangedContext, ElicitationContext, SessionEndContext, SubagentStartContext, ConfigChangeContext, TeammateIdleContext, PreCompactContext, PostCompactContext, PostToolBatchContext, StopContext, StopFailureContext, ElicitationResultContext, NotificationContext, InstructionsLoadedContext, TaskCreatedContext, TaskCompletedContext, WorktreeCreateContext, WorktreeRemoveContext, SetupContext, DirectoryAddedContext, MessageDisplayContext, PreModelSwitchContext, GenericContext } from '../context'
+import type { PreToolUseEvent, PostToolUseEvent, UserPromptSubmitEvent, UserPromptExpansionEvent, FileChangedEvent, CwdChangedEvent, ElicitationEvent, SessionEndEvent, SubagentStartEvent, ConfigChangeEvent, TeammateIdleEvent, PreCompactEvent, PostCompactEvent, PostToolBatchEvent, PermissionRequestEvent, PermissionDeniedEvent, StopEvent, SubagentStopEvent, StopFailureEvent, ElicitationResultEvent, NotificationEvent, InstructionsLoadedEvent, TaskCreatedEvent, TaskCompletedEvent, WorktreeCreateEvent, WorktreeRemoveEvent, SetupEvent, DirectoryAddedEvent, MessageDisplayEvent, PreModelSwitchEvent } from '../types'
 
 const baseEvent = {
   session_id: 'sess1',
@@ -739,6 +739,49 @@ describe('MessageDisplayContext', () => {
     ctx.setDisplayContent('rewritten text')
     expect(ctx._getOutput().hookSpecificOutput?.displayContent).toBe('rewritten text')
     expect(ctx._getOutput().hookSpecificOutput?.hookEventName).toBe('MessageDisplay')
+  })
+})
+
+describe('PreModelSwitchContext', () => {
+  const event: PreModelSwitchEvent = {
+    ...baseEvent,
+    hook_event_name: 'PreModelSwitch',
+    from_model: 'claude-sonnet-4-5',
+    to_model: 'claude-opus-4-5',
+    requested_model: 'opus',
+    source: 'command',
+    context_tokens: 12000,
+    prompt_cache_warm: true,
+    cache_ttl: '5m',
+    estimated_cache_write_usd: 0.42,
+    pricing: 'catalog',
+  }
+
+  test('accessors', () => {
+    const ctx = new PreModelSwitchContext(event)
+    expect(ctx.fromModel).toBe('claude-sonnet-4-5')
+    expect(ctx.toModel).toBe('claude-opus-4-5')
+    expect(ctx.requestedModel).toBe('opus')
+    expect(ctx.source).toBe('command')
+    expect(ctx.contextTokens).toBe(12000)
+    expect(ctx.promptCacheWarm).toBe(true)
+    expect(ctx.cacheTtl).toBe('5m')
+    expect(ctx.estimatedCacheWriteUsd).toBe(0.42)
+    expect(ctx.pricing).toBe('catalog')
+  })
+
+  test('block sets _blocked and _blockReason', () => {
+    const ctx = new PreModelSwitchContext(event)
+    ctx.block('avoid mid-task model switch')
+    expect(ctx._isBlocked()).toBe(true)
+    expect(ctx._getBlockReason()).toBe('avoid mid-task model switch')
+  })
+
+  test('allow sets permissionDecision', () => {
+    const ctx = new PreModelSwitchContext(event)
+    ctx.allow()
+    expect(ctx._getOutput().hookSpecificOutput?.permissionDecision).toBe('allow')
+    expect(ctx._getOutput().hookSpecificOutput?.hookEventName).toBe('PreModelSwitch')
   })
 })
 
