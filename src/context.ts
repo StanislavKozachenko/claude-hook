@@ -143,6 +143,8 @@ export class UserPromptSubmitContext extends BaseContext {
   constructor(event: UserPromptSubmitEvent) { super(event) }
 
   get prompt(): string { return this.event.prompt }
+  get source(): 'user' | 'sdk' | 'system' | 'loop_wakeup' | 'schedule_wakeup' | 'poll_event' | undefined { return this.event.source }
+  get sessionTitle(): string | undefined { return this.event.session_title }
 
   block(reason: string): void {
     this._blocked = true
@@ -162,6 +164,14 @@ export class UserPromptSubmitContext extends BaseContext {
       ...this._output.hookSpecificOutput,
       hookEventName: 'UserPromptSubmit',
       sessionTitle: title,
+    }
+  }
+
+  suppressOriginalPrompt(): void {
+    this._output.hookSpecificOutput = {
+      ...this._output.hookSpecificOutput,
+      hookEventName: 'UserPromptSubmit',
+      suppressOriginalPrompt: true,
     }
   }
 }

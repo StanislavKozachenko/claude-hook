@@ -101,6 +101,8 @@ export interface PostToolUseFailureEvent extends BaseEvent {
 export interface UserPromptSubmitEvent extends BaseEvent {
   hook_event_name: 'UserPromptSubmit'
   prompt: string
+  source?: 'user' | 'sdk' | 'system' | 'loop_wakeup' | 'schedule_wakeup' | 'poll_event'
+  session_title?: string
 }
 
 export interface UserPromptExpansionEvent extends BaseEvent {
@@ -384,6 +386,7 @@ export interface HookSpecificOutput {
   updatedMCPToolOutput?: string
   retry?: boolean
   displayContent?: string
+  suppressOriginalPrompt?: boolean
 }
 
 export interface HookOutput {

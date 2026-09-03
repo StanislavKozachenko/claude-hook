@@ -176,10 +176,13 @@ hook.on('PostToolUse', 'Bash', (ctx) => {
 
 ```ts
 hook.on('UserPromptSubmit', '*', (ctx) => {
-  ctx.prompt             // user message text
+  ctx.prompt                    // user message text
+  ctx.source                    // 'user' | 'sdk' | 'system' | 'loop_wakeup' | 'schedule_wakeup' | 'poll_event' | undefined
+  ctx.sessionTitle              // undefined unless already set
   ctx.block('reason')
   ctx.addContext('extra context injected before Claude sees the prompt')
   ctx.setTitle('Session title')
+  ctx.suppressOriginalPrompt()  // when blocking, omit the original prompt from the block message
 })
 ```
 
