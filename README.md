@@ -416,6 +416,7 @@ hook.on('SessionEnd', 'logout', (ctx) => {
 hook.on('SubagentStart', '*', (ctx) => {
   ctx.agentId    // subagent identifier
   ctx.agentType  // e.g. 'Explore'
+  ctx.addContext('extra briefing for the subagent')
 })
 ```
 
