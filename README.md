@@ -290,6 +290,8 @@ hook.on('ElicitationResult', '*', (ctx) => {
   ctx.mcpServerName  // which MCP server asked
   ctx.action         // 'accept' | 'decline' | 'cancel'
   ctx.content        // the user's answer, if accepted
+  // Override the already-given answer before it's sent to the MCP server
+  ctx.overrideAction('decline')
 })
 ```
 

@@ -392,6 +392,15 @@ export class ElicitationResultContext extends BaseContext {
     this._blocked = true
     this._blockReason = reason
   }
+
+  overrideAction(action: 'accept' | 'decline' | 'cancel', content?: Record<string, unknown>): void {
+    this._output.hookSpecificOutput = {
+      ...this._output.hookSpecificOutput,
+      hookEventName: 'ElicitationResult',
+      action,
+      content,
+    }
+  }
 }
 
 export class NotificationContext extends BaseContext {
