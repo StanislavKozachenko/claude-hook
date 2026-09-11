@@ -12,6 +12,7 @@ import type {
   SessionEndEvent,
   StopEvent,
   StopFailureEvent,
+  SDKAssistantMessageError,
   BackgroundTaskSummary,
   SessionCronSummary,
   SubagentStartEvent,
@@ -330,7 +331,9 @@ export class StopFailureContext extends BaseContext {
 
   constructor(event: StopFailureEvent) { super(event) }
 
-  get error(): string { return this.event.error }
+  get error(): SDKAssistantMessageError { return this.event.error }
+  get errorDetails(): string | undefined { return this.event.error_details }
+  get lastAssistantMessage(): string | undefined { return this.event.last_assistant_message }
 }
 
 export class ElicitationResultContext extends BaseContext {

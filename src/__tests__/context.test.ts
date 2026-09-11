@@ -668,12 +668,26 @@ describe('StopFailureContext', () => {
   const event: StopFailureEvent = {
     ...baseEvent,
     hook_event_name: 'StopFailure',
-    error: 'stop hook crashed',
+    error: 'overloaded',
+    error_details: 'upstream returned 529',
+    last_assistant_message: 'partial response before failure',
   }
 
   test('error accessor', () => {
     const ctx = new StopFailureContext(event)
-    expect(ctx.error).toBe('stop hook crashed')
+    expect(ctx.error).toBe('overloaded')
+  })
+
+  test('errorDetails and lastAssistantMessage accessors', () => {
+    const ctx = new StopFailureContext(event)
+    expect(ctx.errorDetails).toBe('upstream returned 529')
+    expect(ctx.lastAssistantMessage).toBe('partial response before failure')
+  })
+
+  test('errorDetails and lastAssistantMessage are undefined when absent', () => {
+    const ctx = new StopFailureContext({ ...baseEvent, hook_event_name: 'StopFailure', error: 'unknown' })
+    expect(ctx.errorDetails).toBeUndefined()
+    expect(ctx.lastAssistantMessage).toBeUndefined()
   })
 })
 
