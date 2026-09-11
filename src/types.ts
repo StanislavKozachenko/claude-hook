@@ -193,6 +193,7 @@ export interface NotificationEvent extends BaseEvent {
   hook_event_name: 'Notification'
   notification_type: string
   message: string
+  title?: string
 }
 
 export interface InstructionsLoadedEvent extends BaseEvent {

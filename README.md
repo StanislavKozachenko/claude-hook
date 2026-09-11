@@ -304,6 +304,8 @@ hook.on('StopFailure', '*', (ctx) => {
 hook.on('Notification', '*', (ctx) => {
   ctx.notificationType  // e.g. 'info' | 'warning' | 'error'
   ctx.message           // notification text
+  ctx.title             // string | undefined — notification title, when present
+  ctx.addContext('note for Claude')  // non-error feedback delivered to the model
 })
 ```
 
