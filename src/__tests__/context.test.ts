@@ -519,6 +519,12 @@ describe('SubagentStartContext', () => {
     expect(ctx.agentId).toBe('agent-1')
     expect(ctx.agentType).toBe('Explore')
   })
+
+  test('addContext sets additionalContext in hookSpecificOutput', () => {
+    const ctx = new SubagentStartContext(event)
+    ctx.addContext('extra briefing')
+    expect(ctx._getOutput().hookSpecificOutput?.additionalContext).toBe('extra briefing')
+  })
 })
 
 describe('ConfigChangeContext', () => {

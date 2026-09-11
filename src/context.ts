@@ -704,6 +704,14 @@ export class SubagentStartContext extends BaseContext {
 
   get agentId(): string { return this.event.agent_id }
   get agentType(): string { return this.event.agent_type }
+
+  addContext(text: string): void {
+    this._output.hookSpecificOutput = {
+      ...this._output.hookSpecificOutput,
+      hookEventName: 'SubagentStart',
+      additionalContext: text,
+    }
+  }
 }
 
 export class ConfigChangeContext extends BaseContext {
