@@ -758,6 +758,20 @@ describe('StopContext', () => {
     expect(ctx.backgroundTasks).toBeUndefined()
     expect(ctx.sessionCrons).toBeUndefined()
   })
+
+  test('addContext sets additionalContext for Stop', () => {
+    const ctx = new StopContext(stopEvent)
+    ctx.addContext('non-error feedback')
+    expect(ctx._getOutput().hookSpecificOutput?.hookEventName).toBe('Stop')
+    expect(ctx._getOutput().hookSpecificOutput?.additionalContext).toBe('non-error feedback')
+  })
+
+  test('addContext reports the actual event name for SubagentStop', () => {
+    const ctx = new StopContext(subagentStopEvent)
+    ctx.addContext('non-error feedback')
+    expect(ctx._getOutput().hookSpecificOutput?.hookEventName).toBe('SubagentStop')
+    expect(ctx._getOutput().hookSpecificOutput?.additionalContext).toBe('non-error feedback')
+  })
 })
 
 describe('StopFailureContext', () => {
