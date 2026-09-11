@@ -759,6 +759,20 @@ describe('ElicitationResultContext', () => {
     expect(ctx._isBlocked()).toBe(true)
     expect(ctx._getBlockReason()).toBe('decline the result')
   })
+
+  test('overrideAction sets action and content in hookSpecificOutput', () => {
+    const ctx = new ElicitationResultContext(event)
+    ctx.overrideAction('decline', { reason: 'policy' })
+    expect(ctx._getOutput().hookSpecificOutput?.action).toBe('decline')
+    expect(ctx._getOutput().hookSpecificOutput?.content).toEqual({ reason: 'policy' })
+  })
+
+  test('overrideAction with no content', () => {
+    const ctx = new ElicitationResultContext(event)
+    ctx.overrideAction('cancel')
+    expect(ctx._getOutput().hookSpecificOutput?.action).toBe('cancel')
+    expect(ctx._getOutput().hookSpecificOutput?.content).toBeUndefined()
+  })
 })
 
 describe('NotificationContext', () => {
