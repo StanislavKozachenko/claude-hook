@@ -252,6 +252,24 @@ describe('PostToolUseContext', () => {
     const ctx = new PostToolUseContext(failureEvent)
     expect(ctx.isInterrupt).toBeUndefined()
   })
+
+  test('setClassifierContext sets classifierContext in hookSpecificOutput', () => {
+    const ctx = new PostToolUseContext(postToolEvent)
+    ctx.setClassifierContext('user confirmed this destination')
+    expect(ctx._getOutput().hookSpecificOutput?.classifierContext).toBe('user confirmed this destination')
+  })
+
+  test('setUpdatedToolOutput sets updatedToolOutput in hookSpecificOutput', () => {
+    const ctx = new PostToolUseContext(postToolEvent)
+    ctx.setUpdatedToolOutput({ redacted: true })
+    expect(ctx._getOutput().hookSpecificOutput?.updatedToolOutput).toEqual({ redacted: true })
+  })
+
+  test('setUpdatedMCPToolOutput sets updatedMCPToolOutput in hookSpecificOutput', () => {
+    const ctx = new PostToolUseContext(postToolEvent)
+    ctx.setUpdatedMCPToolOutput({ redacted: true })
+    expect(ctx._getOutput().hookSpecificOutput?.updatedMCPToolOutput).toEqual({ redacted: true })
+  })
 })
 
 describe('UserPromptSubmitContext', () => {

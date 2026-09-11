@@ -185,6 +185,9 @@ hook.on('PostToolUse', 'Bash', (ctx) => {
   ctx.isInterrupt  // true if the failure was a user interrupt (PostToolUseFailure only)
   ctx.durationMs   // execution time in ms
   ctx.addContext('feedback for Claude')
+  ctx.setClassifierContext('user confirmed this destination')  // seen by the auto-mode permission classifier
+  ctx.setUpdatedToolOutput({ redacted: true })     // replaces the output sent to the model (any tool)
+  ctx.setUpdatedMCPToolOutput({ redacted: true })  // same, but MCP tools only — prefer setUpdatedToolOutput
 })
 ```
 
