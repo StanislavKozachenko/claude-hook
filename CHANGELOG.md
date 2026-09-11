@@ -6,6 +6,30 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ---
 
+## [0.7.0] - 2026-09-11
+
+### Added
+
+- add addContext() to StopContext (#155)
+- add addContext() to SubagentStartContext (#153)
+- add setClassifierContext/setUpdatedToolOutput/setUpdatedMCPToolOutput to PostToolUseContext (#151)
+- add provideWorktreePath() to WorktreeCreateContext (#149)
+- add addContext/setInitialUserMessage/setTitle/setWatchPaths/reloadSkills to SessionStartContext (#147)
+- add overrideAction() to ElicitationResultContext (#143)
+- add accept()/decline()/cancel() to ElicitationContext (#141)
+- add title field to NotificationEvent, addContext() to NotificationContext (#139)
+- add setWatchPaths() to CwdChangedContext (#137)
+- add setWatchPaths() to FileChangedContext (#135)
+
+### Fixed
+
+- add background_tasks/session_crons to SubagentStopEvent (#157)
+- PermissionRequest gets dedicated context with correct decision output shape (#145)
+- type StopFailureEvent.error as SDKAssistantMessageError, add error_details/last_assistant_message (#133)
+
+---
+
+
 ## [0.6.0] - 2026-09-03
 
 ### Added
