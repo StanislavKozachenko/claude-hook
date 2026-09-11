@@ -438,7 +438,7 @@ export interface HookSpecificOutput {
   updatedInput?: Record<string, unknown>
   additionalContext?: string
   sessionTitle?: string
-  updatedMCPToolOutput?: string
+  updatedMCPToolOutput?: unknown
   retry?: boolean
   displayContent?: string
   suppressOriginalPrompt?: boolean
@@ -449,6 +449,8 @@ export interface HookSpecificOutput {
   initialUserMessage?: string
   reloadSkills?: boolean
   worktreePath?: string
+  classifierContext?: string
+  updatedToolOutput?: unknown
 }
 
 export interface HookOutput {

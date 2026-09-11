@@ -171,6 +171,30 @@ export class PostToolUseContext<T extends ToolInput = ToolInput> extends BaseCon
       additionalContext: text,
     }
   }
+
+  setClassifierContext(text: string): void {
+    this._output.hookSpecificOutput = {
+      ...this._output.hookSpecificOutput,
+      hookEventName: this.event.hook_event_name,
+      classifierContext: text,
+    }
+  }
+
+  setUpdatedToolOutput(output: unknown): void {
+    this._output.hookSpecificOutput = {
+      ...this._output.hookSpecificOutput,
+      hookEventName: this.event.hook_event_name,
+      updatedToolOutput: output,
+    }
+  }
+
+  setUpdatedMCPToolOutput(output: unknown): void {
+    this._output.hookSpecificOutput = {
+      ...this._output.hookSpecificOutput,
+      hookEventName: this.event.hook_event_name,
+      updatedMCPToolOutput: output,
+    }
+  }
 }
 
 export class UserPromptSubmitContext extends BaseContext {
