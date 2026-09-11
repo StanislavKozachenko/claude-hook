@@ -248,7 +248,12 @@ hook.on('SessionStart', '*', (ctx) => {
   ctx.contextTokens                // resume/fork only
   ctx.promptCacheLikelyExpired     // resume/fork only
   ctx.estimatedCacheWriteUsd       // resume/fork only
-  ctx.setEnv('NODE_ENV', 'production')  // persists to CLAUDE_ENV_FILE
+  ctx.setEnv('NODE_ENV', 'production')     // persists to CLAUDE_ENV_FILE
+  ctx.addContext('info for Claude')
+  ctx.setInitialUserMessage('Continue where we left off')  // seeds the first turn
+  ctx.setTitle('Fix login bug')
+  ctx.setWatchPaths(['src/**/*.ts'])       // paths that trigger future FileChanged events
+  ctx.reloadSkills()                       // re-scan skill/command dirs after this hook runs
 })
 ```
 
