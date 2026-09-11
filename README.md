@@ -145,17 +145,32 @@ hook.on('PreToolUse', 'Bash', (ctx) => {
   ctx.addContext('info for Claude')
 })
 
-// On PermissionRequest events, suggestions from Claude Code are also available:
-hook.on('PermissionRequest', '*', (ctx) => {
-  ctx.permissionSuggestions  // e.g. [{ type: 'setMode', mode: 'acceptEdits', destination: 'session' }]
-})
-
 // PermissionDenied also reuses PreToolUseContext; the denial already happened
 // (`.block()`/`.allow()`/`.modify()` have no effect), but `.retry()` tells
 // Claude Code the model may retry the denied tool call.
 hook.on('PermissionDenied', '*', (ctx) => {
   ctx.reason  // why the permission was denied
   ctx.retry()
+})
+```
+
+### `PermissionRequestContext`
+
+`PermissionRequest` has its own output contract, so it gets its own context class
+instead of reusing `PreToolUseContext`: exit code 2 is **not** honored for this
+event, and the decision is a nested `decision` object rather than a flat
+`permissionDecision` field.
+
+```ts
+hook.on('PermissionRequest', '*', (ctx) => {
+  ctx.toolName               // tool awaiting the permission prompt
+  ctx.input                  // its tool input
+  ctx.permissionSuggestions  // e.g. [{ type: 'setMode', mode: 'acceptEdits', destination: 'session' }]
+
+  ctx.allow()                                          // skip the interactive prompt
+  ctx.allow({ updatedInput: { command: 'echo safe' } }) // ...with rewritten input
+  ctx.deny('too dangerous')                             // deny with a reason
+  ctx.deny('too dangerous', { interrupt: true })        // ...and interrupt the current turn
 })
 ```
 
@@ -528,7 +543,7 @@ For all other events, the handler receives a `GenericContext` with `ctx.block(re
 | `PostToolUse` | After successful tool call | no | `PostToolUseContext` |
 | `PostToolUseFailure` | After failed tool call | no | `PostToolUseContext` |
 | `PostToolBatch` | After a batch of tool calls | yes | `PostToolBatchContext` |
-| `PermissionRequest` | When permission dialog shows | yes | `PreToolUseContext` |
+| `PermissionRequest` | When permission dialog shows | via `decision`, not exit code | `PermissionRequestContext` |
 | `PermissionDenied` | After permission denied | no | `PreToolUseContext` |
 | `UserPromptSubmit` | Before Claude sees your message | yes | `UserPromptSubmitContext` |
 | `UserPromptExpansion` | When a slash command expands | yes | `UserPromptExpansionContext` |

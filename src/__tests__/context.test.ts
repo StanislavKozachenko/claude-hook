@@ -1,4 +1,4 @@
-import { PreToolUseContext, UserPromptSubmitContext, UserPromptExpansionContext, PostToolUseContext, FileChangedContext, CwdChangedContext, ElicitationContext, SessionStartContext, SessionEndContext, SubagentStartContext, ConfigChangeContext, TeammateIdleContext, PreCompactContext, PostCompactContext, PostToolBatchContext, StopContext, StopFailureContext, ElicitationResultContext, NotificationContext, InstructionsLoadedContext, TaskCreatedContext, TaskCompletedContext, WorktreeCreateContext, WorktreeRemoveContext, SetupContext, DirectoryAddedContext, MessageDisplayContext, PreModelSwitchContext, PostModelSwitchContext, GenericContext } from '../context'
+import { PreToolUseContext, PermissionRequestContext, UserPromptSubmitContext, UserPromptExpansionContext, PostToolUseContext, FileChangedContext, CwdChangedContext, ElicitationContext, SessionStartContext, SessionEndContext, SubagentStartContext, ConfigChangeContext, TeammateIdleContext, PreCompactContext, PostCompactContext, PostToolBatchContext, StopContext, StopFailureContext, ElicitationResultContext, NotificationContext, InstructionsLoadedContext, TaskCreatedContext, TaskCompletedContext, WorktreeCreateContext, WorktreeRemoveContext, SetupContext, DirectoryAddedContext, MessageDisplayContext, PreModelSwitchContext, PostModelSwitchContext, GenericContext } from '../context'
 import type { PreToolUseEvent, PostToolUseEvent, PostToolUseFailureEvent, UserPromptSubmitEvent, UserPromptExpansionEvent, FileChangedEvent, CwdChangedEvent, ElicitationEvent, SessionStartEvent, SessionEndEvent, SubagentStartEvent, ConfigChangeEvent, TeammateIdleEvent, PreCompactEvent, PostCompactEvent, PostToolBatchEvent, PermissionRequestEvent, PermissionDeniedEvent, StopEvent, SubagentStopEvent, StopFailureEvent, ElicitationResultEvent, NotificationEvent, InstructionsLoadedEvent, TaskCreatedEvent, TaskCompletedEvent, WorktreeCreateEvent, WorktreeRemoveEvent, SetupEvent, DirectoryAddedEvent, MessageDisplayEvent, PreModelSwitchEvent, PostModelSwitchEvent } from '../types'
 
 const baseEvent = {
@@ -82,45 +82,6 @@ describe('PreToolUseContext', () => {
     expect(ctx.input.command).toBe('rm -rf /tmp/foo')
   })
 
-  test('allow/modify/addContext report the actual event name for PermissionRequest', () => {
-    const permissionRequestEvent: PermissionRequestEvent = {
-      ...baseEvent,
-      hook_event_name: 'PermissionRequest',
-      tool_name: 'Bash',
-      tool_input: { command: 'rm -rf /tmp/foo' },
-    }
-    const ctx = new PreToolUseContext(permissionRequestEvent as unknown as PreToolUseEvent)
-
-    ctx.allow()
-    expect(ctx._getOutput().hookSpecificOutput?.hookEventName).toBe('PermissionRequest')
-
-    ctx.modify({ command: 'echo safe' })
-    expect(ctx._getOutput().hookSpecificOutput?.hookEventName).toBe('PermissionRequest')
-
-    ctx.addContext('extra info')
-    expect(ctx._getOutput().hookSpecificOutput?.hookEventName).toBe('PermissionRequest')
-  })
-
-  test('permissionSuggestions accessor returns the real PermissionUpdate union shape', () => {
-    const permissionRequestEvent: PermissionRequestEvent = {
-      ...baseEvent,
-      hook_event_name: 'PermissionRequest',
-      tool_name: 'Bash',
-      tool_input: { command: 'rm -rf /tmp/foo' },
-      permission_suggestions: [
-        { type: 'addRules', rules: [{ toolName: 'Bash', ruleContent: 'rm -rf *' }], behavior: 'deny', destination: 'session' },
-        { type: 'setMode', mode: 'plan', destination: 'localSettings' },
-        { type: 'addDirectories', directories: ['/home/user/other-repo'], destination: 'cliArg' },
-      ],
-    }
-    const ctx = new PreToolUseContext(permissionRequestEvent as unknown as PreToolUseEvent)
-    const suggestions = ctx.permissionSuggestions
-    expect(suggestions).toHaveLength(3)
-    expect(suggestions?.[0]).toEqual({ type: 'addRules', rules: [{ toolName: 'Bash', ruleContent: 'rm -rf *' }], behavior: 'deny', destination: 'session' })
-    expect(suggestions?.[1]).toEqual({ type: 'setMode', mode: 'plan', destination: 'localSettings' })
-    expect(suggestions?.[2]).toEqual({ type: 'addDirectories', directories: ['/home/user/other-repo'], destination: 'cliArg' })
-  })
-
   test('permissionSuggestions is undefined when omitted', () => {
     const ctx = new PreToolUseContext(preToolEvent)
     expect(ctx.permissionSuggestions).toBeUndefined()
@@ -173,6 +134,79 @@ describe('PreToolUseContext', () => {
   test('reason accessor is undefined for PreToolUse', () => {
     const ctx = new PreToolUseContext(preToolEvent)
     expect(ctx.reason).toBeUndefined()
+  })
+})
+
+describe('PermissionRequestContext', () => {
+  const permissionRequestEvent: PermissionRequestEvent = {
+    ...baseEvent,
+    hook_event_name: 'PermissionRequest',
+    tool_name: 'Bash',
+    tool_input: { command: 'rm -rf /tmp/foo' },
+    permission_suggestions: [
+      { type: 'addRules', rules: [{ toolName: 'Bash', ruleContent: 'rm -rf *' }], behavior: 'deny', destination: 'session' },
+      { type: 'setMode', mode: 'plan', destination: 'localSettings' },
+      { type: 'addDirectories', directories: ['/home/user/other-repo'], destination: 'cliArg' },
+    ],
+  }
+
+  test('toolName and input accessors', () => {
+    const ctx = new PermissionRequestContext(permissionRequestEvent)
+    expect(ctx.toolName).toBe('Bash')
+    expect(ctx.input.command).toBe('rm -rf /tmp/foo')
+  })
+
+  test('permissionSuggestions accessor returns the real PermissionUpdate union shape', () => {
+    const ctx = new PermissionRequestContext(permissionRequestEvent)
+    const suggestions = ctx.permissionSuggestions
+    expect(suggestions).toHaveLength(3)
+    expect(suggestions?.[0]).toEqual({ type: 'addRules', rules: [{ toolName: 'Bash', ruleContent: 'rm -rf *' }], behavior: 'deny', destination: 'session' })
+    expect(suggestions?.[1]).toEqual({ type: 'setMode', mode: 'plan', destination: 'localSettings' })
+    expect(suggestions?.[2]).toEqual({ type: 'addDirectories', directories: ['/home/user/other-repo'], destination: 'cliArg' })
+  })
+
+  test('permissionSuggestions is undefined when omitted', () => {
+    const ctx = new PermissionRequestContext({ ...permissionRequestEvent, permission_suggestions: undefined })
+    expect(ctx.permissionSuggestions).toBeUndefined()
+  })
+
+  test('allow emits the nested decision object, not flat permissionDecision', () => {
+    const ctx = new PermissionRequestContext(permissionRequestEvent)
+    ctx.allow()
+    expect(ctx._getOutput().hookSpecificOutput).toEqual({
+      hookEventName: 'PermissionRequest',
+      decision: { behavior: 'allow' },
+    })
+  })
+
+  test('allow with updatedInput and updatedPermissions', () => {
+    const ctx = new PermissionRequestContext(permissionRequestEvent)
+    ctx.allow({ updatedInput: { command: 'echo safe' }, updatedPermissions: [{ type: 'setMode', mode: 'acceptEdits', destination: 'session' }] })
+    expect(ctx._getOutput().hookSpecificOutput?.decision).toEqual({
+      behavior: 'allow',
+      updatedInput: { command: 'echo safe' },
+      updatedPermissions: [{ type: 'setMode', mode: 'acceptEdits', destination: 'session' }],
+    })
+  })
+
+  test('deny emits the nested decision object with behavior deny', () => {
+    const ctx = new PermissionRequestContext(permissionRequestEvent)
+    ctx.deny('too dangerous', { interrupt: true })
+    expect(ctx._getOutput().hookSpecificOutput?.decision).toEqual({
+      behavior: 'deny',
+      message: 'too dangerous',
+      interrupt: true,
+    })
+  })
+
+  test('deny with no arguments', () => {
+    const ctx = new PermissionRequestContext(permissionRequestEvent)
+    ctx.deny()
+    expect(ctx._getOutput().hookSpecificOutput?.decision).toEqual({
+      behavior: 'deny',
+      message: undefined,
+      interrupt: undefined,
+    })
   })
 })
 

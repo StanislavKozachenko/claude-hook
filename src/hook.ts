@@ -43,6 +43,7 @@ import type {
 import {
   BaseContext,
   PreToolUseContext,
+  PermissionRequestContext,
   PostToolUseContext,
   PostToolBatchContext,
   UserPromptSubmitContext,
@@ -88,7 +89,7 @@ function createContext(event: AnyEvent): BaseContext {
     case 'PreToolUse':
       return new PreToolUseContext(event as PreToolUseEvent)
     case 'PermissionRequest':
-      return new PreToolUseContext(event as unknown as PreToolUseEvent)
+      return new PermissionRequestContext(event as PermissionRequestEvent)
     case 'PermissionDenied':
       return new PreToolUseContext(event as unknown as PreToolUseEvent)
     case 'PostToolUse':
@@ -165,7 +166,8 @@ export class HookHandler {
   on(eventName: 'PostToolUse' | 'PostToolUseFailure', matcher: 'Edit', handler: Handler<PostToolUseContext<EditToolInput>>): this
   on(eventName: 'PostToolUse' | 'PostToolUseFailure', matcher: 'Write', handler: Handler<PostToolUseContext<WriteToolInput>>): this
   on(eventName: 'PostToolUse' | 'PostToolUseFailure', matcher: 'Read', handler: Handler<PostToolUseContext<ReadToolInput>>): this
-  on(eventName: 'PreToolUse' | 'PermissionRequest' | 'PermissionDenied', matcher: string, handler: Handler<PreToolUseContext>): this
+  on(eventName: 'PreToolUse' | 'PermissionDenied', matcher: string, handler: Handler<PreToolUseContext>): this
+  on(eventName: 'PermissionRequest', matcher: string, handler: Handler<PermissionRequestContext>): this
   on(eventName: 'PostToolUse' | 'PostToolUseFailure', matcher: string, handler: Handler<PostToolUseContext>): this
   on(eventName: 'PostToolBatch', matcher: string, handler: Handler<PostToolBatchContext>): this
   on(eventName: 'UserPromptSubmit', matcher: string, handler: Handler<UserPromptSubmitContext>): this

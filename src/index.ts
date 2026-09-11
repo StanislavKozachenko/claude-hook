@@ -3,6 +3,7 @@ export { matchMatcher } from './router.js'
 export {
   BaseContext,
   PreToolUseContext,
+  PermissionRequestContext,
   PostToolUseContext,
   UserPromptSubmitContext,
   UserPromptExpansionContext,
@@ -86,4 +87,5 @@ export type {
   PermissionBehavior,
   PermissionMode,
   PermissionUpdateDestination,
+  PermissionRequestDecision,
 } from './types.js'
