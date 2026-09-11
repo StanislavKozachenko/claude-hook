@@ -446,6 +446,8 @@ export interface HookSpecificOutput {
   action?: 'accept' | 'decline' | 'cancel'
   content?: Record<string, unknown>
   decision?: PermissionRequestDecision
+  initialUserMessage?: string
+  reloadSkills?: boolean
 }
 
 export interface HookOutput {

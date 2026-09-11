@@ -1131,6 +1131,36 @@ describe('SessionStartContext', () => {
     expect(ctx.promptCacheLikelyExpired).toBe(true)
     expect(ctx.estimatedCacheWriteUsd).toBe(0.25)
   })
+
+  test('addContext sets additionalContext in hookSpecificOutput', () => {
+    const ctx = new SessionStartContext(event)
+    ctx.addContext('extra info')
+    expect(ctx._getOutput().hookSpecificOutput?.additionalContext).toBe('extra info')
+  })
+
+  test('setInitialUserMessage sets initialUserMessage in hookSpecificOutput', () => {
+    const ctx = new SessionStartContext(event)
+    ctx.setInitialUserMessage('Continue where we left off')
+    expect(ctx._getOutput().hookSpecificOutput?.initialUserMessage).toBe('Continue where we left off')
+  })
+
+  test('setTitle sets sessionTitle in hookSpecificOutput', () => {
+    const ctx = new SessionStartContext(event)
+    ctx.setTitle('Fix login bug')
+    expect(ctx._getOutput().hookSpecificOutput?.sessionTitle).toBe('Fix login bug')
+  })
+
+  test('setWatchPaths sets watchPaths in hookSpecificOutput', () => {
+    const ctx = new SessionStartContext(event)
+    ctx.setWatchPaths(['src/**/*.ts'])
+    expect(ctx._getOutput().hookSpecificOutput?.watchPaths).toEqual(['src/**/*.ts'])
+  })
+
+  test('reloadSkills sets reloadSkills flag in hookSpecificOutput', () => {
+    const ctx = new SessionStartContext(event)
+    ctx.reloadSkills()
+    expect(ctx._getOutput().hookSpecificOutput?.reloadSkills).toBe(true)
+  })
 })
 
 describe('GenericContext', () => {

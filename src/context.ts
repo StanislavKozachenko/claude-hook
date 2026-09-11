@@ -296,6 +296,46 @@ export class SessionStartContext extends BaseContext {
       fs.appendFileSync(envFile, `export ${key}=${value}\n`)
     }
   }
+
+  addContext(text: string): void {
+    this._output.hookSpecificOutput = {
+      ...this._output.hookSpecificOutput,
+      hookEventName: 'SessionStart',
+      additionalContext: text,
+    }
+  }
+
+  setInitialUserMessage(text: string): void {
+    this._output.hookSpecificOutput = {
+      ...this._output.hookSpecificOutput,
+      hookEventName: 'SessionStart',
+      initialUserMessage: text,
+    }
+  }
+
+  setTitle(title: string): void {
+    this._output.hookSpecificOutput = {
+      ...this._output.hookSpecificOutput,
+      hookEventName: 'SessionStart',
+      sessionTitle: title,
+    }
+  }
+
+  setWatchPaths(paths: string[]): void {
+    this._output.hookSpecificOutput = {
+      ...this._output.hookSpecificOutput,
+      hookEventName: 'SessionStart',
+      watchPaths: paths,
+    }
+  }
+
+  reloadSkills(): void {
+    this._output.hookSpecificOutput = {
+      ...this._output.hookSpecificOutput,
+      hookEventName: 'SessionStart',
+      reloadSkills: true,
+    }
+  }
 }
 
 export class FileChangedContext extends BaseContext {
