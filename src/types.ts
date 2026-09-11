@@ -158,9 +158,26 @@ export interface StopEvent extends BaseEvent {
   session_crons?: SessionCronSummary[]
 }
 
+export type SDKAssistantMessageError =
+  | 'authentication_failed'
+  | 'oauth_org_not_allowed'
+  | 'account_on_hold'
+  | 'verification_required'
+  | 'billing_error'
+  | 'rate_limit'
+  | 'overloaded'
+  | 'invalid_request'
+  | 'model_not_found'
+  | 'server_error'
+  | 'unknown'
+  | 'max_output_tokens'
+  | 'cloud_credential_error'
+
 export interface StopFailureEvent extends BaseEvent {
   hook_event_name: 'StopFailure'
-  error: string
+  error: SDKAssistantMessageError
+  error_details?: string
+  last_assistant_message?: string
 }
 
 export interface SubagentStopEvent extends BaseEvent {

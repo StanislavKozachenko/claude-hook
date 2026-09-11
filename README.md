@@ -290,7 +290,9 @@ hook.on('ElicitationResult', '*', (ctx) => {
 
 ```ts
 hook.on('StopFailure', '*', (ctx) => {
-  ctx.error  // error message describing what went wrong
+  ctx.error                // SDKAssistantMessageError, e.g. 'rate_limit' | 'overloaded' | 'server_error' | ...
+  ctx.errorDetails         // string | undefined — additional detail, when available
+  ctx.lastAssistantMessage // string | undefined — last assistant text before the failure
 })
 ```
 

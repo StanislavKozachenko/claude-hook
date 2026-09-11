@@ -49,6 +49,7 @@ export type {
   SessionEndEvent,
   StopEvent,
   StopFailureEvent,
+  SDKAssistantMessageError,
   BackgroundTaskSummary,
   SessionCronSummary,
   SubagentStartEvent,
