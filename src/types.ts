@@ -439,6 +439,8 @@ export interface HookSpecificOutput {
   displayContent?: string
   suppressOriginalPrompt?: boolean
   watchPaths?: string[]
+  action?: 'accept' | 'decline' | 'cancel'
+  content?: Record<string, unknown>
 }
 
 export interface HookOutput {

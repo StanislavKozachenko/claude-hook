@@ -276,6 +276,11 @@ hook.on('Elicitation', '*', (ctx) => {
   ctx.mode           // 'form' | 'url' | undefined
   ctx.block('automated sessions do not support interactive prompts')
 })
+
+hook.on('Elicitation', '*', (ctx) => {
+  // Auto-respond instead of showing the interactive dialog
+  ctx.accept({ answer: '42' })  // or ctx.decline() / ctx.cancel()
+})
 ```
 
 ### `ElicitationResultContext`

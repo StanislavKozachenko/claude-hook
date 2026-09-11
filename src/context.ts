@@ -340,6 +340,31 @@ export class ElicitationContext extends BaseContext {
     this._blocked = true
     this._blockReason = reason
   }
+
+  accept(content?: Record<string, unknown>): void {
+    this._output.hookSpecificOutput = {
+      ...this._output.hookSpecificOutput,
+      hookEventName: 'Elicitation',
+      action: 'accept',
+      content,
+    }
+  }
+
+  decline(): void {
+    this._output.hookSpecificOutput = {
+      ...this._output.hookSpecificOutput,
+      hookEventName: 'Elicitation',
+      action: 'decline',
+    }
+  }
+
+  cancel(): void {
+    this._output.hookSpecificOutput = {
+      ...this._output.hookSpecificOutput,
+      hookEventName: 'Elicitation',
+      action: 'cancel',
+    }
+  }
 }
 
 export class StopFailureContext extends BaseContext {
