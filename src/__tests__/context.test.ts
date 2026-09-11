@@ -933,6 +933,12 @@ describe('WorktreeCreateContext', () => {
     expect(ctx._isBlocked()).toBe(true)
     expect(ctx._getBlockReason()).toBe('worktree creation failed')
   })
+
+  test('provideWorktreePath sets worktreePath in hookSpecificOutput', () => {
+    const ctx = new WorktreeCreateContext(event)
+    ctx.provideWorktreePath('/home/user/worktrees/feature-x')
+    expect(ctx._getOutput().hookSpecificOutput?.worktreePath).toBe('/home/user/worktrees/feature-x')
+  })
 })
 
 describe('WorktreeRemoveContext', () => {

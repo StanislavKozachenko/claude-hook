@@ -647,6 +647,14 @@ export class WorktreeCreateContext extends BaseContext {
     this._blocked = true
     this._blockReason = reason
   }
+
+  provideWorktreePath(path: string): void {
+    this._output.hookSpecificOutput = {
+      ...this._output.hookSpecificOutput,
+      hookEventName: 'WorktreeCreate',
+      worktreePath: path,
+    }
+  }
 }
 
 export class WorktreeRemoveContext extends BaseContext {
