@@ -40,6 +40,7 @@ import type {
   HookEventName,
   ToolInput,
   PermissionUpdate,
+  PermissionRequestEvent,
 } from './types.js'
 
 export class BaseContext {
@@ -116,6 +117,37 @@ export class PreToolUseContext<T extends ToolInput = ToolInput> extends BaseCont
       ...this._output.hookSpecificOutput,
       hookEventName: this.event.hook_event_name,
       retry: true,
+    }
+  }
+}
+
+/**
+ * PermissionRequest has its own output contract: exit code 2 (`.block()`) is not honored for
+ * this event, and Claude Code reads a nested `decision` object, not the flat `permissionDecision`
+ * field PreToolUseContext uses — confirmed against both the SDK types and the official hooks docs.
+ */
+export class PermissionRequestContext<T extends ToolInput = ToolInput> extends BaseContext {
+  declare readonly event: PermissionRequestEvent
+
+  constructor(event: PermissionRequestEvent) { super(event) }
+
+  get toolName(): string { return this.event.tool_name }
+  get input(): T { return this.event.tool_input as T }
+  get permissionSuggestions(): PermissionUpdate[] | undefined { return this.event.permission_suggestions }
+
+  allow(options?: { updatedInput?: Record<string, unknown>; updatedPermissions?: PermissionUpdate[] }): void {
+    this._output.hookSpecificOutput = {
+      ...this._output.hookSpecificOutput,
+      hookEventName: 'PermissionRequest',
+      decision: { behavior: 'allow', ...options },
+    }
+  }
+
+  deny(message?: string, options?: { interrupt?: boolean }): void {
+    this._output.hookSpecificOutput = {
+      ...this._output.hookSpecificOutput,
+      hookEventName: 'PermissionRequest',
+      decision: { behavior: 'deny', message, interrupt: options?.interrupt },
     }
   }
 }

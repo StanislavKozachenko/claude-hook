@@ -223,6 +223,10 @@ export type PermissionUpdate =
   | { type: 'addDirectories'; directories: string[]; destination: PermissionUpdateDestination }
   | { type: 'removeDirectories'; directories: string[]; destination: PermissionUpdateDestination }
 
+export type PermissionRequestDecision =
+  | { behavior: 'allow'; updatedInput?: Record<string, unknown>; updatedPermissions?: PermissionUpdate[] }
+  | { behavior: 'deny'; message?: string; interrupt?: boolean }
+
 export interface PermissionRequestEvent extends BaseEvent {
   hook_event_name: 'PermissionRequest'
   tool_name: string
@@ -441,6 +445,7 @@ export interface HookSpecificOutput {
   watchPaths?: string[]
   action?: 'accept' | 'decline' | 'cancel'
   content?: Record<string, unknown>
+  decision?: PermissionRequestDecision
 }
 
 export interface HookOutput {
