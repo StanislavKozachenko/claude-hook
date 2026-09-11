@@ -187,6 +187,8 @@ export interface SubagentStopEvent extends BaseEvent {
   agent_type: string
   agent_transcript_path: string
   last_assistant_message?: string
+  background_tasks?: BackgroundTaskSummary[]
+  session_crons?: SessionCronSummary[]
 }
 
 export interface NotificationEvent extends BaseEvent {

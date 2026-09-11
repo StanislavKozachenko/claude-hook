@@ -753,10 +753,29 @@ describe('StopContext', () => {
     expect(ctx.sessionCrons).toBeUndefined()
   })
 
-  test('backgroundTasks and sessionCrons are undefined for SubagentStop', () => {
+  test('backgroundTasks and sessionCrons are undefined for SubagentStop when omitted', () => {
     const ctx = new StopContext(subagentStopEvent)
     expect(ctx.backgroundTasks).toBeUndefined()
     expect(ctx.sessionCrons).toBeUndefined()
+  })
+
+  test('backgroundTasks and sessionCrons accessors for SubagentStop', () => {
+    const eventWithTasks: SubagentStopEvent = {
+      ...subagentStopEvent,
+      background_tasks: [
+        { id: 'bg1', type: 'shell', status: 'running', description: 'npm run build', command: 'npm run build' },
+      ],
+      session_crons: [
+        { id: 'cron1', schedule: '0 9 * * 1-5', recurring: true, prompt: 'daily check' },
+      ],
+    }
+    const ctx = new StopContext(eventWithTasks)
+    expect(ctx.backgroundTasks).toEqual([
+      { id: 'bg1', type: 'shell', status: 'running', description: 'npm run build', command: 'npm run build' },
+    ])
+    expect(ctx.sessionCrons).toEqual([
+      { id: 'cron1', schedule: '0 9 * * 1-5', recurring: true, prompt: 'daily check' },
+    ])
   })
 
   test('addContext sets additionalContext for Stop', () => {
