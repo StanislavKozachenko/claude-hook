@@ -310,6 +310,14 @@ export class CwdChangedContext extends BaseContext {
     }
   }
 
+  setWatchPaths(paths: string[]): void {
+    this._output.hookSpecificOutput = {
+      ...this._output.hookSpecificOutput,
+      hookEventName: 'CwdChanged',
+      watchPaths: paths,
+    }
+  }
+
   block(reason: string): void {
     this._blocked = true
     this._blockReason = reason

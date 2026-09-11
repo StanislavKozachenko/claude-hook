@@ -367,6 +367,12 @@ describe('CwdChangedContext', () => {
     ctx.block('not allowed')
     expect(ctx._isBlocked()).toBe(true)
   })
+
+  test('setWatchPaths sets watchPaths in hookSpecificOutput', () => {
+    const ctx = new CwdChangedContext(event)
+    ctx.setWatchPaths(['**/*.ts'])
+    expect(ctx._getOutput().hookSpecificOutput?.watchPaths).toEqual(['**/*.ts'])
+  })
 })
 
 describe('ElicitationContext', () => {

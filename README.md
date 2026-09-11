@@ -259,6 +259,7 @@ hook.on('FileChanged', '.env|.envrc', (ctx) => {
 hook.on('CwdChanged', '*', (ctx) => {
   ctx.oldCwd  // previous working directory
   ctx.newCwd  // new working directory
+  ctx.setWatchPaths(['src/**/*.ts'])  // change which paths trigger future FileChanged events
 })
 ```
 
