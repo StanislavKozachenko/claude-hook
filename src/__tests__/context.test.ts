@@ -403,6 +403,32 @@ describe('ElicitationContext', () => {
     expect(ctx._isBlocked()).toBe(true)
     expect(ctx._getBlockReason()).toBe('no elicitation in automated sessions')
   })
+
+  test('accept sets action and content in hookSpecificOutput', () => {
+    const ctx = new ElicitationContext(event)
+    ctx.accept({ answer: '42' })
+    expect(ctx._getOutput().hookSpecificOutput?.action).toBe('accept')
+    expect(ctx._getOutput().hookSpecificOutput?.content).toEqual({ answer: '42' })
+  })
+
+  test('accept with no content', () => {
+    const ctx = new ElicitationContext(event)
+    ctx.accept()
+    expect(ctx._getOutput().hookSpecificOutput?.action).toBe('accept')
+    expect(ctx._getOutput().hookSpecificOutput?.content).toBeUndefined()
+  })
+
+  test('decline sets action in hookSpecificOutput', () => {
+    const ctx = new ElicitationContext(event)
+    ctx.decline()
+    expect(ctx._getOutput().hookSpecificOutput?.action).toBe('decline')
+  })
+
+  test('cancel sets action in hookSpecificOutput', () => {
+    const ctx = new ElicitationContext(event)
+    ctx.cancel()
+    expect(ctx._getOutput().hookSpecificOutput?.action).toBe('cancel')
+  })
 })
 
 describe('SessionEndContext', () => {
