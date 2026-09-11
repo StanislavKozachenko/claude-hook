@@ -340,6 +340,12 @@ describe('FileChangedContext', () => {
     expect(ctx._isBlocked()).toBe(true)
     expect(ctx._getBlockReason()).toBe('env changed')
   })
+
+  test('setWatchPaths sets watchPaths in hookSpecificOutput', () => {
+    const ctx = new FileChangedContext(event)
+    ctx.setWatchPaths(['src/**/*.ts', 'README.md'])
+    expect(ctx._getOutput().hookSpecificOutput?.watchPaths).toEqual(['src/**/*.ts', 'README.md'])
+  })
 })
 
 describe('CwdChangedContext', () => {

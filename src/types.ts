@@ -437,6 +437,7 @@ export interface HookSpecificOutput {
   retry?: boolean
   displayContent?: string
   suppressOriginalPrompt?: boolean
+  watchPaths?: string[]
 }
 
 export interface HookOutput {
