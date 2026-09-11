@@ -281,6 +281,14 @@ export class FileChangedContext extends BaseContext {
     }
   }
 
+  setWatchPaths(paths: string[]): void {
+    this._output.hookSpecificOutput = {
+      ...this._output.hookSpecificOutput,
+      hookEventName: 'FileChanged',
+      watchPaths: paths,
+    }
+  }
+
   block(reason: string): void {
     this._blocked = true
     this._blockReason = reason
