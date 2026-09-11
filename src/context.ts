@@ -299,6 +299,14 @@ export class StopContext extends BaseContext {
     this._blocked = true
     this._blockReason = reason
   }
+
+  addContext(text: string): void {
+    this._output.hookSpecificOutput = {
+      ...this._output.hookSpecificOutput,
+      hookEventName: this.event.hook_event_name,
+      additionalContext: text,
+    }
+  }
 }
 
 export class SessionStartContext extends BaseContext {

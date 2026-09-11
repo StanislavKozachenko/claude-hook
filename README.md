@@ -229,12 +229,14 @@ hook.on('Stop', '*', (ctx) => {
   ctx.backgroundTasks       // in-flight background work (Stop only), e.g. [{ id, type, status, description, ... }]
   ctx.sessionCrons          // scheduled wakeups (CronCreate/ScheduleWakeup/loop) that will wake this session (Stop only)
   ctx.block('not done yet') // prevent Claude from stopping
+  ctx.addContext('non-error feedback')  // conversation continues so the model can act on it
 })
 
 hook.on('SubagentStop', '*', (ctx) => {
   ctx.agentId              // subagent identifier
   ctx.agentType            // e.g. 'Explore'
   ctx.agentTranscriptPath  // path to the subagent's transcript
+  ctx.addContext('non-error feedback')  // delivered to the subagent, which continues
 })
 ```
 
