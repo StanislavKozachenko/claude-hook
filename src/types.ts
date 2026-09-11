@@ -448,6 +448,7 @@ export interface HookSpecificOutput {
   decision?: PermissionRequestDecision
   initialUserMessage?: string
   reloadSkills?: boolean
+  worktreePath?: string
 }
 
 export interface HookOutput {
