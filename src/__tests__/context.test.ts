@@ -748,6 +748,22 @@ describe('NotificationContext', () => {
     expect(ctx.notificationType).toBe('permission_prompt')
     expect(ctx.message).toBe('Waiting for permission')
   })
+
+  test('title accessor is undefined when absent', () => {
+    const ctx = new NotificationContext(event)
+    expect(ctx.title).toBeUndefined()
+  })
+
+  test('title accessor when present', () => {
+    const ctx = new NotificationContext({ ...event, title: 'Permission needed' })
+    expect(ctx.title).toBe('Permission needed')
+  })
+
+  test('addContext sets additionalContext in hookSpecificOutput', () => {
+    const ctx = new NotificationContext(event)
+    ctx.addContext('extra info')
+    expect(ctx._getOutput().hookSpecificOutput?.additionalContext).toBe('extra info')
+  })
 })
 
 describe('InstructionsLoadedContext', () => {

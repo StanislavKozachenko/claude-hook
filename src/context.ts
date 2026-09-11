@@ -376,6 +376,15 @@ export class NotificationContext extends BaseContext {
 
   get notificationType(): string { return this.event.notification_type }
   get message(): string { return this.event.message }
+  get title(): string | undefined { return this.event.title }
+
+  addContext(text: string): void {
+    this._output.hookSpecificOutput = {
+      ...this._output.hookSpecificOutput,
+      hookEventName: 'Notification',
+      additionalContext: text,
+    }
+  }
 }
 
 export class InstructionsLoadedContext extends BaseContext {
