@@ -139,6 +139,7 @@ All contexts expose:
 hook.on('PreToolUse', 'Bash', (ctx) => {
   ctx.toolName             // 'Bash'
   ctx.input                // { command: string, description?: string }
+  ctx.mcpServer            // { name, source } when the tool belongs to an MCP server, else undefined
   ctx.block('reason')      // exit 2, block the tool call
   ctx.allow()              // explicitly allow (skip permission prompt)
   ctx.modify({ command: 'echo safe' })  // rewrite tool input
@@ -165,6 +166,7 @@ event, and the decision is a nested `decision` object rather than a flat
 hook.on('PermissionRequest', '*', (ctx) => {
   ctx.toolName               // tool awaiting the permission prompt
   ctx.input                  // its tool input
+  ctx.mcpServer              // { name, source } when the tool belongs to an MCP server, else undefined
   ctx.permissionSuggestions  // e.g. [{ type: 'setMode', mode: 'acceptEdits', destination: 'session' }]
 
   ctx.allow()                                          // skip the interactive prompt
@@ -184,6 +186,7 @@ hook.on('PostToolUse', 'Bash', (ctx) => {
   ctx.error        // error string (PostToolUseFailure only)
   ctx.isInterrupt  // true if the failure was a user interrupt (PostToolUseFailure only)
   ctx.durationMs   // execution time in ms
+  ctx.mcpServer    // { name, source } when the tool belongs to an MCP server, else undefined
   ctx.addContext('feedback for Claude')
   ctx.setClassifierContext('user confirmed this destination')  // seen by the auto-mode permission classifier
   ctx.setUpdatedToolOutput({ redacted: true })     // replaces the output sent to the model (any tool)

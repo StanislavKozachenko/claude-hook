@@ -135,6 +135,16 @@ describe('PreToolUseContext', () => {
     const ctx = new PreToolUseContext(preToolEvent)
     expect(ctx.reason).toBeUndefined()
   })
+
+  test('mcpServer accessor is undefined when omitted', () => {
+    const ctx = new PreToolUseContext(preToolEvent)
+    expect(ctx.mcpServer).toBeUndefined()
+  })
+
+  test('mcpServer accessor returns name/source when present', () => {
+    const ctx = new PreToolUseContext({ ...preToolEvent, mcp_server: { name: 'github', source: 'user' } })
+    expect(ctx.mcpServer).toEqual({ name: 'github', source: 'user' })
+  })
 })
 
 describe('PermissionRequestContext', () => {
@@ -208,6 +218,16 @@ describe('PermissionRequestContext', () => {
       interrupt: undefined,
     })
   })
+
+  test('mcpServer accessor is undefined when omitted', () => {
+    const ctx = new PermissionRequestContext(permissionRequestEvent)
+    expect(ctx.mcpServer).toBeUndefined()
+  })
+
+  test('mcpServer accessor returns name/source when present', () => {
+    const ctx = new PermissionRequestContext({ ...permissionRequestEvent, mcp_server: { name: 'github', source: 'plugin' } })
+    expect(ctx.mcpServer).toEqual({ name: 'github', source: 'plugin' })
+  })
 })
 
 describe('PostToolUseContext', () => {
@@ -269,6 +289,16 @@ describe('PostToolUseContext', () => {
     const ctx = new PostToolUseContext(postToolEvent)
     ctx.setUpdatedMCPToolOutput({ redacted: true })
     expect(ctx._getOutput().hookSpecificOutput?.updatedMCPToolOutput).toEqual({ redacted: true })
+  })
+
+  test('mcpServer accessor is undefined when omitted', () => {
+    const ctx = new PostToolUseContext(postToolEvent)
+    expect(ctx.mcpServer).toBeUndefined()
+  })
+
+  test('mcpServer accessor returns name/source when present', () => {
+    const ctx = new PostToolUseContext({ ...postToolEvent, mcp_server: { name: 'github', source: 'project' } })
+    expect(ctx.mcpServer).toEqual({ name: 'github', source: 'project' })
   })
 })
 
