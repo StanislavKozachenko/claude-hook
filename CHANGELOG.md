@@ -6,6 +6,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ---
 
+## [0.7.1] - 2026-09-28
+
+### Added
+
+- add mcp_server provenance to PreToolUse/PostToolUse/PermissionRequest events (#159)
+
+---
+
+
 ## [0.7.0] - 2026-09-11
 
 ### Added
