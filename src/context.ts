@@ -41,6 +41,7 @@ import type {
   ToolInput,
   PermissionUpdate,
   PermissionRequestEvent,
+  McpServerProvenance,
 } from './types.js'
 
 export class BaseContext {
@@ -82,6 +83,8 @@ export class PreToolUseContext<T extends ToolInput = ToolInput> extends BaseCont
   get reason(): string | undefined {
     return (this.event as unknown as { reason?: string }).reason
   }
+
+  get mcpServer(): McpServerProvenance | undefined { return this.event.mcp_server }
 
   block(reason: string): void {
     this._blocked = true
@@ -134,6 +137,7 @@ export class PermissionRequestContext<T extends ToolInput = ToolInput> extends B
   get toolName(): string { return this.event.tool_name }
   get input(): T { return this.event.tool_input as T }
   get permissionSuggestions(): PermissionUpdate[] | undefined { return this.event.permission_suggestions }
+  get mcpServer(): McpServerProvenance | undefined { return this.event.mcp_server }
 
   allow(options?: { updatedInput?: Record<string, unknown>; updatedPermissions?: PermissionUpdate[] }): void {
     this._output.hookSpecificOutput = {
@@ -163,6 +167,7 @@ export class PostToolUseContext<T extends ToolInput = ToolInput> extends BaseCon
   get error(): string | undefined { return 'error' in this.event ? this.event.error : undefined }
   get isInterrupt(): boolean | undefined { return 'is_interrupt' in this.event ? this.event.is_interrupt : undefined }
   get durationMs(): number | undefined { return this.event.duration_ms }
+  get mcpServer(): McpServerProvenance | undefined { return this.event.mcp_server }
 
   addContext(text: string): void {
     this._output.hookSpecificOutput = {

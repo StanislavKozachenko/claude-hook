@@ -79,6 +79,7 @@ export type {
   WriteToolInput,
   ReadToolInput,
   ToolInput,
+  McpServerProvenance,
   HookOutput,
   HookSpecificOutput,
   PermissionDecision,

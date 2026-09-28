@@ -72,12 +72,20 @@ export interface ReadToolInput {
 
 export type ToolInput = BashToolInput | EditToolInput | WriteToolInput | ReadToolInput | Record<string, unknown>
 
+/** Identifies the MCP server a tool call belongs to, and how that server was configured. */
+export interface McpServerProvenance {
+  name: string
+  /** sdk | plugin | user | project | local | dynamic | managed | enterprise | claudeai | agent — open set, treat unknown values as unrecognized, never as sdk */
+  source: string
+}
+
 // Events
 export interface PreToolUseEvent extends BaseEvent {
   hook_event_name: 'PreToolUse'
   tool_name: string
   tool_input: ToolInput
   tool_use_id: string
+  mcp_server?: McpServerProvenance
 }
 
 export interface PostToolUseEvent extends BaseEvent {
@@ -87,6 +95,7 @@ export interface PostToolUseEvent extends BaseEvent {
   tool_use_id: string
   tool_response: unknown
   duration_ms?: number
+  mcp_server?: McpServerProvenance
 }
 
 export interface PostToolUseFailureEvent extends BaseEvent {
@@ -97,6 +106,7 @@ export interface PostToolUseFailureEvent extends BaseEvent {
   error: string
   is_interrupt?: boolean
   duration_ms?: number
+  mcp_server?: McpServerProvenance
 }
 
 export interface UserPromptSubmitEvent extends BaseEvent {
@@ -235,6 +245,7 @@ export interface PermissionRequestEvent extends BaseEvent {
   tool_input: ToolInput
   tool_use_id?: string
   permission_suggestions?: PermissionUpdate[]
+  mcp_server?: McpServerProvenance
 }
 
 export interface PermissionDeniedEvent extends BaseEvent {
@@ -243,6 +254,7 @@ export interface PermissionDeniedEvent extends BaseEvent {
   tool_input: ToolInput
   tool_use_id: string
   reason: string
+  mcp_server?: McpServerProvenance
 }
 
 export interface PostToolBatchToolCall {
