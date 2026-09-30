@@ -565,6 +565,13 @@ export class SetupContext extends BaseContext {
       additionalContext: text,
     }
   }
+
+  setEnv(key: string, value: string): void {
+    const envFile = process.env['CLAUDE_ENV_FILE']
+    if (envFile) {
+      fs.appendFileSync(envFile, `export ${key}=${value}\n`)
+    }
+  }
 }
 
 export class DirectoryAddedContext extends BaseContext {
