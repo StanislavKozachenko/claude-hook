@@ -224,7 +224,7 @@ export class HookHandler {
     const matching = this.registrations.filter(
       (r) =>
         (r.eventName === event.hook_event_name || r.eventName === '*') &&
-        matchMatcher(matcherValue, r.matcher),
+        matchMatcher(matcherValue, r.matcher, event.hook_event_name),
     )
 
     if (matching.length === 0) {

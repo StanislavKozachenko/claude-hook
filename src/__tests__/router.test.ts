@@ -31,6 +31,44 @@ describe('matchMatcher', () => {
   test('invalid regex falls back to false', () => {
     expect(matchMatcher('Bash', '[')).toBe(false)
   })
+
+  test('comma-separated OR list (general events)', () => {
+    expect(matchMatcher('Edit', 'Edit, Write')).toBe(true)
+    expect(matchMatcher('Write', 'Edit, Write')).toBe(true)
+    expect(matchMatcher('Bash', 'Edit, Write')).toBe(false)
+    expect(matchMatcher('Edit', 'Edit,Write')).toBe(true)
+  })
+
+  test('hyphenated exact match (general events)', () => {
+    expect(matchMatcher('code-reviewer', 'code-reviewer')).toBe(true)
+    expect(matchMatcher('security-reviewer', 'code-reviewer')).toBe(false)
+    // exact match, not substring: a naive unanchored regex would wrongly match this
+    expect(matchMatcher('not-code-reviewer-elite', 'code-reviewer')).toBe(false)
+  })
+
+  test('space and mixed pipe/comma separators (general events)', () => {
+    expect(matchMatcher('claude-opus-5', 'claude-opus-4-6|claude-opus-5')).toBe(true)
+    expect(matchMatcher('general-purpose', 'general-purpose, Explore')).toBe(true)
+    expect(matchMatcher('Explore', 'general-purpose, Explore')).toBe(true)
+  })
+
+  test('FileChanged/StopFailure use the narrower exact-match set: hyphen/space/comma push to regex', () => {
+    // narrow class rejects '-', so 'a-b' as a matcher falls to regex evaluation for these events
+    expect(matchMatcher('a-b', 'a-b', 'FileChanged')).toBe(true) // regex 'a-b' still matches the literal string
+    expect(matchMatcher('xa-by', 'a-b', 'FileChanged')).toBe(true) // unanchored regex match, unlike exact-match
+    expect(matchMatcher('.envrc', '.envrc|.env', 'FileChanged')).toBe(true)
+    expect(matchMatcher('.env', '.envrc|.env', 'StopFailure')).toBe(true)
+  })
+
+  test('eventName omitted defaults to the general (wide) character class', () => {
+    expect(matchMatcher('code-reviewer', 'code-reviewer')).toBe(true)
+    expect(matchMatcher('Edit', 'Edit, Write')).toBe(true)
+  })
+
+  test('non-narrow events use the wide class even with a matching event name check', () => {
+    expect(matchMatcher('code-reviewer', 'code-reviewer', 'SubagentStart')).toBe(true)
+    expect(matchMatcher('not-code-reviewer-elite', 'code-reviewer', 'SubagentStart')).toBe(false)
+  })
 })
 
 describe('getMatcherValue', () => {
