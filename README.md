@@ -537,6 +537,10 @@ hook.on('PreModelSwitch', '*', (ctx) => {
   ctx.allow()                 // skips the interactive cache-miss confirm
   ctx.block('reason')         // exit 2, cancels the switch
 })
+
+hook.on('PreModelSwitch', 'claude-opus-5', (ctx) => {
+  // matcher filters on ctx.toModel, not ctx.source
+})
 ```
 
 ### `PostModelSwitchContext`
