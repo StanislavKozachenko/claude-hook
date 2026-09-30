@@ -157,15 +157,15 @@ describe('getMatcherValue', () => {
     expect(getMatcherValue({ hook_event_name: 'MessageDisplay', turn_id: 't1', message_id: 'm1' })).toBe('')
   })
 
-  test('returns source for PreModelSwitch', () => {
-    expect(getMatcherValue({ hook_event_name: 'PreModelSwitch', source: 'command' })).toBe('command')
-    expect(getMatcherValue({ hook_event_name: 'PreModelSwitch', source: 'picker' })).toBe('picker')
+  test('returns to_model for PreModelSwitch', () => {
+    expect(getMatcherValue({ hook_event_name: 'PreModelSwitch', to_model: 'claude-opus-5', source: 'command' })).toBe('claude-opus-5')
+    expect(getMatcherValue({ hook_event_name: 'PreModelSwitch', to_model: 'claude-sonnet-5', source: 'picker' })).toBe('claude-sonnet-5')
     expect(getMatcherValue({ hook_event_name: 'PreModelSwitch' })).toBe('')
   })
 
-  test('returns source for PostModelSwitch', () => {
-    expect(getMatcherValue({ hook_event_name: 'PostModelSwitch', source: 'auto' })).toBe('auto')
-    expect(getMatcherValue({ hook_event_name: 'PostModelSwitch', source: 'resume' })).toBe('resume')
+  test('returns to_model for PostModelSwitch', () => {
+    expect(getMatcherValue({ hook_event_name: 'PostModelSwitch', to_model: 'claude-opus-5', source: 'auto' })).toBe('claude-opus-5')
+    expect(getMatcherValue({ hook_event_name: 'PostModelSwitch', to_model: 'claude-sonnet-5', source: 'resume' })).toBe('claude-sonnet-5')
     expect(getMatcherValue({ hook_event_name: 'PostModelSwitch' })).toBe('')
   })
 })
