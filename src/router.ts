@@ -53,8 +53,8 @@ export function getMatcherValue(event: Record<string, unknown>): string {
   if (name === 'SessionEnd') return (event['reason'] as string) ?? ''
   // ConfigChange: match on config source
   if (name === 'ConfigChange') return (event['source'] as string) ?? ''
-  // PreCompact: match on compaction trigger
-  if (name === 'PreCompact') return (event['trigger'] as string) ?? ''
+  // PreCompact/PostCompact: match on compaction trigger
+  if (name === 'PreCompact' || name === 'PostCompact') return (event['trigger'] as string) ?? ''
   // Setup: match on trigger (init/maintenance)
   if (name === 'Setup') return (event['trigger'] as string) ?? ''
   // DirectoryAdded: match on how the directory was added

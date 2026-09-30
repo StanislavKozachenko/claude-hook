@@ -135,6 +135,12 @@ describe('getMatcherValue', () => {
     expect(getMatcherValue({ hook_event_name: 'PreCompact' })).toBe('')
   })
 
+  test('returns trigger for PostCompact', () => {
+    expect(getMatcherValue({ hook_event_name: 'PostCompact', trigger: 'manual' })).toBe('manual')
+    expect(getMatcherValue({ hook_event_name: 'PostCompact', trigger: 'auto' })).toBe('auto')
+    expect(getMatcherValue({ hook_event_name: 'PostCompact' })).toBe('')
+  })
+
   test('returns trigger for Setup', () => {
     expect(getMatcherValue({ hook_event_name: 'Setup', trigger: 'init' })).toBe('init')
     expect(getMatcherValue({ hook_event_name: 'Setup', trigger: 'maintenance' })).toBe('maintenance')
