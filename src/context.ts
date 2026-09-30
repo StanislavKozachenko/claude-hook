@@ -64,6 +64,11 @@ export class BaseContext {
     this._output.suppressOutput = true
   }
 
+  /** OSC 0/1/2/9/99/777 or BEL only — anything else is dropped by Claude Code. Works even on events that discard systemMessage (e.g. Notification, StopFailure). */
+  setTerminalSequence(sequence: string): void {
+    this._output.terminalSequence = sequence
+  }
+
   _isBlocked(): boolean { return this._blocked }
   _getBlockReason(): string { return this._blockReason }
   _getOutput(): HookOutput { return this._output }
