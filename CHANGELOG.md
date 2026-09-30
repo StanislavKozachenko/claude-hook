@@ -6,6 +6,23 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ---
 
+## [0.8.0] - 2026-09-30
+
+### Added
+
+- add setEnv() to SetupContext (#173)
+- add permissionMode getter to BaseContext, tighten permission_mode type (#165)
+- add scratchpad_dir to BaseEvent (#163)
+
+### Fixed
+
+- PreModelSwitch/PostModelSwitch matcher routes on to_model, not source (#171)
+- add PostCompact matcher routing on trigger (#169)
+- matchMatcher supports comma separator and per-event character class (#167)
+
+---
+
+
 ## [0.7.2] - 2026-09-30
 
 ### Added
