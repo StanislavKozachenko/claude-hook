@@ -1,11 +1,21 @@
 // Mirrors Claude Code's own matcher rules:
 // "*" or "" → match all
-// only [a-zA-Z0-9_|] → exact string or pipe-separated OR list
-// anything else → JavaScript regex
-export function matchMatcher(value: string, matcher: string): boolean {
+// letters/digits/_/-/space/,/| → exact string, or list separated by "|"/","
+// FileChanged/StopFailure use a narrower exact-match set (letters/digits/_/| only) —
+// hyphen, space, and comma push them onto the regex path instead
+// anything else → JavaScript regex, unanchored
+const NARROW_MATCHER_EVENTS = new Set(['FileChanged', 'StopFailure'])
+
+export function matchMatcher(value: string, matcher: string, eventName?: string): boolean {
   if (!matcher || matcher === '*') return true
-  if (/^[a-zA-Z0-9_|]+$/.test(matcher)) {
-    return matcher.split('|').some((part) => part === value)
+  const narrow = eventName !== undefined && NARROW_MATCHER_EVENTS.has(eventName)
+  const exactPattern = narrow ? /^[a-zA-Z0-9_|]+$/ : /^[a-zA-Z0-9_\- ,|]+$/
+  if (exactPattern.test(matcher)) {
+    const separator = narrow ? /\|/ : /[|,]/
+    return matcher
+      .split(separator)
+      .map((part) => part.trim())
+      .some((part) => part === value)
   }
   try {
     return new RegExp(matcher).test(value)

@@ -110,8 +110,9 @@ Registers a handler for an event.
 - **`matcher`** — filters which tool/file/etc triggers this handler (mirrors Claude Code's own rules):
   - `'*'` — match all
   - `'Bash'` — exact match
-  - `'Edit|Write'` — pipe-separated OR list
+  - `'Edit|Write'` or `'Edit, Write'` — pipe- or comma-separated OR list
   - `'mcp__.*'` — JavaScript regex (when the string contains special characters)
+  - `FileChanged`/`StopFailure` use a narrower exact-match character set (letters, digits, `_`, `|` only) — a hyphen, space, or comma in their matcher is evaluated as regex instead
 - **`handler`** — `(ctx) => void | Promise<void>`
 
 Returns `this` for chaining.
