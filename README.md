@@ -491,6 +491,7 @@ hook.on('PostToolBatch', '*', (ctx) => {
 hook.on('Setup', '*', (ctx) => {
   ctx.trigger       // 'init' | 'maintenance'
   ctx.addContext('extra setup info')  // feeds additionalContext back to Claude
+  ctx.setEnv('MY_VAR', 'value')       // persists an env var for subsequent Bash commands
 })
 ```
 

@@ -1,3 +1,6 @@
+import * as fs from 'fs'
+import * as os from 'os'
+import * as path from 'path'
 import { PreToolUseContext, PermissionRequestContext, UserPromptSubmitContext, UserPromptExpansionContext, PostToolUseContext, FileChangedContext, CwdChangedContext, ElicitationContext, SessionStartContext, SessionEndContext, SubagentStartContext, ConfigChangeContext, TeammateIdleContext, PreCompactContext, PostCompactContext, PostToolBatchContext, StopContext, StopFailureContext, ElicitationResultContext, NotificationContext, InstructionsLoadedContext, TaskCreatedContext, TaskCompletedContext, WorktreeCreateContext, WorktreeRemoveContext, SetupContext, DirectoryAddedContext, MessageDisplayContext, PreModelSwitchContext, PostModelSwitchContext, GenericContext } from '../context'
 import type { PreToolUseEvent, PostToolUseEvent, PostToolUseFailureEvent, UserPromptSubmitEvent, UserPromptExpansionEvent, FileChangedEvent, CwdChangedEvent, ElicitationEvent, SessionStartEvent, SessionEndEvent, SubagentStartEvent, ConfigChangeEvent, TeammateIdleEvent, PreCompactEvent, PostCompactEvent, PostToolBatchEvent, PermissionRequestEvent, PermissionDeniedEvent, StopEvent, SubagentStopEvent, StopFailureEvent, ElicitationResultEvent, NotificationEvent, InstructionsLoadedEvent, TaskCreatedEvent, TaskCompletedEvent, WorktreeCreateEvent, WorktreeRemoveEvent, SetupEvent, DirectoryAddedEvent, MessageDisplayEvent, PreModelSwitchEvent, PostModelSwitchEvent } from '../types'
 
@@ -1080,6 +1083,26 @@ describe('SetupContext', () => {
     ctx.addContext('extra setup info')
     expect(ctx._getOutput().hookSpecificOutput?.additionalContext).toBe('extra setup info')
     expect(ctx._getOutput().hookSpecificOutput?.hookEventName).toBe('Setup')
+  })
+
+  test('setEnv appends an export line to CLAUDE_ENV_FILE when set', () => {
+    const envFile = path.join(os.tmpdir(), `claude-hook-test-${Date.now()}.env`)
+    fs.writeFileSync(envFile, '')
+    process.env['CLAUDE_ENV_FILE'] = envFile
+    try {
+      const ctx = new SetupContext(event)
+      ctx.setEnv('MY_VAR', 'my_value')
+      expect(fs.readFileSync(envFile, 'utf8')).toBe('export MY_VAR=my_value\n')
+    } finally {
+      delete process.env['CLAUDE_ENV_FILE']
+      fs.unlinkSync(envFile)
+    }
+  })
+
+  test('setEnv is a no-op when CLAUDE_ENV_FILE is not set', () => {
+    delete process.env['CLAUDE_ENV_FILE']
+    const ctx = new SetupContext(event)
+    expect(() => ctx.setEnv('MY_VAR', 'my_value')).not.toThrow()
   })
 })
 
