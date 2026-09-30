@@ -43,6 +43,7 @@ export interface BaseEvent {
   agent_type?: string
   prompt_id?: string
   effort?: { level: string }
+  scratchpad_dir?: string
 }
 
 // Common tool inputs

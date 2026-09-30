@@ -59,6 +59,7 @@ export class BaseContext {
   get hookEventName(): HookEventName { return this.event.hook_event_name }
   get promptId(): string | undefined { return this.event.prompt_id }
   get effort(): { level: string } | undefined { return this.event.effort }
+  get scratchpadDir(): string | undefined { return this.event.scratchpad_dir }
 
   suppress(): void {
     this._output.suppressOutput = true

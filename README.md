@@ -132,6 +132,7 @@ All contexts expose:
 | `ctx.hookEventName` | Event name |
 | `ctx.promptId` | Current prompt ID, if present |
 | `ctx.effort` | `{ level }` for the current turn, if present |
+| `ctx.scratchpadDir` | Session's scratchpad directory path, if present (Claude Code v2.1.257+) |
 | `ctx.suppress()` | Set `suppressOutput: true` |
 | `ctx.setTerminalSequence(seq)` | Emit a terminal escape sequence (desktop notification, window title, bell — OSC 0/1/2/9/99/777 or BEL only). Works on every event, even ones that discard `systemMessage` |
 

@@ -58,6 +58,14 @@ describe('PreToolUseContext', () => {
     expect(ctx._getOutput().terminalSequence).toBe('\x1b]777;notify;title;body\x07')
   })
 
+  test('scratchpadDir accessor inherited from BaseContext', () => {
+    const ctx = new PreToolUseContext(preToolEvent)
+    expect(ctx.scratchpadDir).toBeUndefined()
+
+    const withScratchpad = new PreToolUseContext({ ...preToolEvent, scratchpad_dir: '/home/user/.claude/scratch/sess1' })
+    expect(withScratchpad.scratchpadDir).toBe('/home/user/.claude/scratch/sess1')
+  })
+
   test('modify sets updatedInput in hookSpecificOutput', () => {
     const ctx = new PreToolUseContext(preToolEvent)
     ctx.modify({ command: 'echo safe' })
