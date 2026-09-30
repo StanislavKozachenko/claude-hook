@@ -66,6 +66,14 @@ describe('PreToolUseContext', () => {
     expect(withScratchpad.scratchpadDir).toBe('/home/user/.claude/scratch/sess1')
   })
 
+  test('permissionMode accessor inherited from BaseContext', () => {
+    const ctx = new PreToolUseContext(preToolEvent)
+    expect(ctx.permissionMode).toBe('default')
+
+    const planMode = new PreToolUseContext({ ...preToolEvent, permission_mode: 'plan' })
+    expect(planMode.permissionMode).toBe('plan')
+  })
+
   test('modify sets updatedInput in hookSpecificOutput', () => {
     const ctx = new PreToolUseContext(preToolEvent)
     ctx.modify({ command: 'echo safe' })

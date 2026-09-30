@@ -42,6 +42,7 @@ import type {
   PermissionUpdate,
   PermissionRequestEvent,
   McpServerProvenance,
+  PermissionMode,
 } from './types.js'
 
 export class BaseContext {
@@ -60,6 +61,7 @@ export class BaseContext {
   get promptId(): string | undefined { return this.event.prompt_id }
   get effort(): { level: string } | undefined { return this.event.effort }
   get scratchpadDir(): string | undefined { return this.event.scratchpad_dir }
+  get permissionMode(): PermissionMode | undefined { return this.event.permission_mode }
 
   suppress(): void {
     this._output.suppressOutput = true

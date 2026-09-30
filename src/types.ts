@@ -37,7 +37,7 @@ export interface BaseEvent {
   session_id: string
   transcript_path: string
   cwd: string
-  permission_mode?: string
+  permission_mode?: PermissionMode
   hook_event_name: HookEventName
   agent_id?: string
   agent_type?: string
