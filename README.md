@@ -131,7 +131,9 @@ All contexts expose:
 | `ctx.cwd` | Working directory |
 | `ctx.hookEventName` | Event name |
 | `ctx.promptId` | Current prompt ID, if present |
+| `ctx.effort` | `{ level }` for the current turn, if present |
 | `ctx.suppress()` | Set `suppressOutput: true` |
+| `ctx.setTerminalSequence(seq)` | Emit a terminal escape sequence (desktop notification, window title, bell — OSC 0/1/2/9/99/777 or BEL only). Works on every event, even ones that discard `systemMessage` |
 
 ### `PreToolUseContext`
 

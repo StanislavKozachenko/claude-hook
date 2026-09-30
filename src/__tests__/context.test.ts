@@ -52,6 +52,12 @@ describe('PreToolUseContext', () => {
     expect(withEffort.effort).toEqual({ level: 'high' })
   })
 
+  test('setTerminalSequence inherited from BaseContext sets terminalSequence on output', () => {
+    const ctx = new PreToolUseContext(preToolEvent)
+    ctx.setTerminalSequence('\x1b]777;notify;title;body\x07')
+    expect(ctx._getOutput().terminalSequence).toBe('\x1b]777;notify;title;body\x07')
+  })
+
   test('modify sets updatedInput in hookSpecificOutput', () => {
     const ctx = new PreToolUseContext(preToolEvent)
     ctx.modify({ command: 'echo safe' })

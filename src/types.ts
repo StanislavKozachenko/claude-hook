@@ -474,5 +474,7 @@ export interface HookOutput {
   systemMessage?: string
   decision?: 'block'
   reason?: string
+  /** OSC 0/1/2/9/99/777 or BEL only — Claude Code emits this on your behalf (desktop notification, window title, bell). Works even on events that discard systemMessage. */
+  terminalSequence?: string
   hookSpecificOutput?: HookSpecificOutput
 }
