@@ -36,11 +36,6 @@ jobs:
       - run: npm test
       - run: npm run build
 
-      - name: Configure git
-        run: |
-          git config user.name "Stanislav Kozachenko"
-          git config user.email "stanislav.03@list.ru"
-
       - name: Bump version
         run: npm version ${{ github.event.inputs.bump }} --no-git-tag-version
 
@@ -108,16 +103,37 @@ jobs:
               f.write(content)
           PYEOF
 
+      # The commit is made through the API rather than pushed, so GitHub signs
+      # it (Verified) like the squash merges; expectedHeadOid refuses to commit
+      # over a main that moved during the run.
       - name: Commit version bump to main
-        run: |
-          git add package.json package-lock.json CHANGELOG.md
-          git commit -m "chore: bump version to ${{ steps.version.outputs.value }}"
-          git push origin HEAD:main
+        id: commit
         env:
           GH_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+          VERSION: ${{ steps.version.outputs.value }}
+          REPO: ${{ github.repository }}
+        run: |
+          node -e '
+            const { readFileSync, writeFileSync } = require("fs")
+            const { execFileSync } = require("child_process")
+            const { VERSION, REPO } = process.env
+            const files = ["package.json", "package-lock.json", "CHANGELOG.md"]
+            const query = `mutation($input: CreateCommitOnBranchInput!) { createCommitOnBranch(input: $input) { commit { oid } } }`
+            const input = {
+              branch: { repositoryNameWithOwner: REPO, branchName: "main" },
+              message: { headline: `chore: bump version to ${VERSION}` },
+              expectedHeadOid: execFileSync("git", ["rev-parse", "HEAD"], { encoding: "utf8" }).trim(),
+              fileChanges: { additions: files.map(path => ({ path, contents: readFileSync(path).toString("base64") })) },
+            }
+            writeFileSync("commit.json", JSON.stringify({ query, variables: { input } }))
+          '
+          oid=$(gh api graphql --input commit.json --jq '.data.createCommitOnBranch.commit.oid')
+          rm commit.json
+          echo "Committed $oid"
+          echo "oid=$oid" >> "$GITHUB_OUTPUT"
 
       - name: Create GitHub release
-        run: gh release create "v${{ steps.version.outputs.value }}" --title "v${{ steps.version.outputs.value }}" --generate-notes
+        run: gh release create "v${{ steps.version.outputs.value }}" --target "${{ steps.commit.outputs.oid }}" --title "v${{ steps.version.outputs.value }}" --generate-notes
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
