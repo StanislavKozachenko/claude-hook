@@ -148,7 +148,9 @@ hook.on('PreToolUse', 'Bash', (ctx) => {
   ctx.input                // { command: string, description?: string }
   ctx.mcpServer            // { name, source } when the tool belongs to an MCP server, else undefined
   ctx.block('reason')      // exit 2, block the tool call
-  ctx.allow()              // explicitly allow (skip permission prompt)
+  ctx.allow('reason?')     // explicitly allow (skip permission prompt); reason goes to the debug log
+  ctx.ask('reason?')       // force the permission prompt; reason is shown to the user
+  ctx.defer()              // `claude -p` only: end the turn so the host can resume this tool call later
   ctx.modify({ command: 'echo safe' })  // rewrite tool input
   ctx.addContext('info for Claude')
 })
@@ -537,7 +539,8 @@ hook.on('PreModelSwitch', '*', (ctx) => {
   ctx.cacheTtl                // '5m' | '1h'
   ctx.estimatedCacheWriteUsd  // estimated cost of re-caching on the new model
   ctx.pricing                 // 'configured' | 'catalog' | 'default'
-  ctx.allow()                 // skips the interactive cache-miss confirm
+  ctx.allow('reason?')        // skips the interactive cache-miss confirm
+  ctx.ask('reason?')          // forces the confirm prompt; reason is shown to the user
   ctx.block('reason')         // exit 2, cancels the switch
 })
 

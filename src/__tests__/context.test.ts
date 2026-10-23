@@ -117,6 +117,29 @@ describe('PreToolUseContext', () => {
     expect(ctx._getOutput().hookSpecificOutput?.permissionDecision).toBe('allow')
   })
 
+  test.each(['allow', 'ask', 'defer'] as const)('%s sets permissionDecision and optional reason', (decision) => {
+    const ctx = new PreToolUseContext(preToolEvent)
+    ctx[decision]('because')
+    expect(ctx._getOutput().hookSpecificOutput).toEqual({
+      hookEventName: 'PreToolUse',
+      permissionDecision: decision,
+      permissionDecisionReason: 'because',
+    })
+  })
+
+  test('a later decision replaces the earlier decision and its reason', () => {
+    const ctx = new PreToolUseContext(preToolEvent)
+    ctx.modify({ command: 'echo safe' })
+    ctx.ask('confirm rewritten command')
+    ctx.allow()
+    const out = JSON.parse(JSON.stringify(ctx._getOutput()))
+    expect(out.hookSpecificOutput).toEqual({
+      hookEventName: 'PreToolUse',
+      updatedInput: { command: 'echo safe' },
+      permissionDecision: 'allow',
+    })
+  })
+
   test('toolName and input accessors', () => {
     const ctx = new PreToolUseContext(preToolEvent)
     expect(ctx.toolName).toBe('Bash')
@@ -1229,6 +1252,16 @@ describe('PreModelSwitchContext', () => {
     ctx.allow()
     expect(ctx._getOutput().hookSpecificOutput?.permissionDecision).toBe('allow')
     expect(ctx._getOutput().hookSpecificOutput?.hookEventName).toBe('PreModelSwitch')
+  })
+
+  test('ask sets permissionDecision ask with a reason', () => {
+    const ctx = new PreModelSwitchContext(event)
+    ctx.ask('cache is warm — switching re-caches the whole context')
+    expect(ctx._getOutput().hookSpecificOutput).toEqual({
+      hookEventName: 'PreModelSwitch',
+      permissionDecision: 'ask',
+      permissionDecisionReason: 'cache is warm — switching re-caches the whole context',
+    })
   })
 })
 
