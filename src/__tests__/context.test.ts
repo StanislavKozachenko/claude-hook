@@ -61,6 +61,22 @@ describe('PreToolUseContext', () => {
     expect(ctx._getOutput().terminalSequence).toBe('\x1b]777;notify;title;body\x07')
   })
 
+  test('setSystemMessage inherited from BaseContext sets systemMessage on output', () => {
+    const ctx = new PreToolUseContext(preToolEvent)
+    ctx.setSystemMessage('heads up')
+    expect(ctx._getOutput().systemMessage).toBe('heads up')
+  })
+
+  test('halt inherited from BaseContext sets continue: false and optional stopReason', () => {
+    const ctx = new PreToolUseContext(preToolEvent)
+    ctx.halt()
+    expect(ctx._getOutput()).toEqual({ continue: false })
+
+    const withReason = new PreToolUseContext(preToolEvent)
+    withReason.halt('budget exceeded')
+    expect(withReason._getOutput()).toEqual({ continue: false, stopReason: 'budget exceeded' })
+  })
+
   test('scratchpadDir accessor inherited from BaseContext', () => {
     const ctx = new PreToolUseContext(preToolEvent)
     expect(ctx.scratchpadDir).toBeUndefined()
