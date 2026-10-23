@@ -77,6 +77,24 @@ describe('PreToolUseContext', () => {
     expect(withReason._getOutput()).toEqual({ continue: false, stopReason: 'budget exceeded' })
   })
 
+  test('transcriptPath, agentId, agentType accessors inherited from BaseContext', () => {
+    const ctx = new PreToolUseContext(preToolEvent)
+    expect(ctx.transcriptPath).toBe('/tmp/t.jsonl')
+    expect(ctx.agentId).toBeUndefined()
+    expect(ctx.agentType).toBeUndefined()
+
+    const inSubagent = new TaskCreatedContext({
+      ...baseEvent,
+      hook_event_name: 'TaskCreated',
+      task_id: 't1',
+      task_subject: 'Write tests',
+      agent_id: 'agent-7',
+      agent_type: 'Explore',
+    })
+    expect(inSubagent.agentId).toBe('agent-7')
+    expect(inSubagent.agentType).toBe('Explore')
+  })
+
   test('scratchpadDir accessor inherited from BaseContext', () => {
     const ctx = new PreToolUseContext(preToolEvent)
     expect(ctx.scratchpadDir).toBeUndefined()

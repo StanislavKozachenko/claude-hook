@@ -71,7 +71,12 @@ export class BaseContext {
 
   get sessionId(): string { return this.event.session_id }
   get cwd(): string { return this.event.cwd }
+  get transcriptPath(): string { return this.event.transcript_path }
   get hookEventName(): HookEventName { return this.event.hook_event_name }
+  /** Present only when the hook fires inside a subagent — use it to tell subagent calls from main-thread calls. */
+  get agentId(): string | undefined { return this.event.agent_id }
+  /** Present inside a subagent, or on the main thread of a `--agent` session. */
+  get agentType(): string | undefined { return this.event.agent_type }
   get promptId(): string | undefined { return this.event.prompt_id }
   get effort(): { level: string } | undefined { return this.event.effort }
   get scratchpadDir(): string | undefined { return this.event.scratchpad_dir }

@@ -130,7 +130,10 @@ All contexts expose:
 | `ctx.event` | Raw parsed event object |
 | `ctx.sessionId` | Current session ID |
 | `ctx.cwd` | Working directory |
+| `ctx.transcriptPath` | Path to the conversation transcript (written asynchronously, may lag the current turn) |
 | `ctx.hookEventName` | Event name |
+| `ctx.agentId` | Subagent ID when the hook fires inside a subagent, else `undefined` (main thread) |
+| `ctx.agentType` | Agent name inside a subagent or a `--agent` session, else `undefined` |
 | `ctx.promptId` | Current prompt ID, if present |
 | `ctx.effort` | `{ level }` for the current turn, if present |
 | `ctx.scratchpadDir` | Session's scratchpad directory path, if present (Claude Code v2.1.257+) |
