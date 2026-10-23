@@ -45,6 +45,19 @@ import type {
   PermissionMode,
 } from './types.js'
 
+// Claude Code runs CLAUDE_ENV_FILE as shell code before each Bash command, and (v2.1.296+)
+// copies it into PowerShell commands only if every line is a plain assignment — so values
+// outside the plain-unquoted set are single-quoted, with ' written as '"'"'
+function appendEnvVar(key: string, value: string): void {
+  if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(key)) {
+    throw new Error(`claude-hook: invalid environment variable name: ${JSON.stringify(key)}`)
+  }
+  const envFile = process.env['CLAUDE_ENV_FILE']
+  if (!envFile) return
+  const quoted = /^[A-Za-z0-9_@%+=:,./-]+$/.test(value) ? value : `'${value.replace(/'/g, `'"'"'`)}'`
+  fs.appendFileSync(envFile, `export ${key}=${quoted}\n`)
+}
+
 export class BaseContext {
   readonly event: AnyEvent
   protected _output: HookOutput = {}
@@ -336,10 +349,7 @@ export class SessionStartContext extends BaseContext {
   get estimatedCacheWriteUsd(): number | undefined { return this.event.estimated_cache_write_usd }
 
   setEnv(key: string, value: string): void {
-    const envFile = process.env['CLAUDE_ENV_FILE']
-    if (envFile) {
-      fs.appendFileSync(envFile, `export ${key}=${value}\n`)
-    }
+    appendEnvVar(key, value)
   }
 
   addContext(text: string): void {
@@ -392,10 +402,7 @@ export class FileChangedContext extends BaseContext {
   get changeType(): 'change' | 'add' | 'unlink' { return this.event.event }
 
   setEnv(key: string, value: string): void {
-    const envFile = process.env['CLAUDE_ENV_FILE']
-    if (envFile) {
-      fs.appendFileSync(envFile, `export ${key}=${value}\n`)
-    }
+    appendEnvVar(key, value)
   }
 
   setWatchPaths(paths: string[]): void {
@@ -421,10 +428,7 @@ export class CwdChangedContext extends BaseContext {
   get newCwd(): string { return this.event.new_cwd }
 
   setEnv(key: string, value: string): void {
-    const envFile = process.env['CLAUDE_ENV_FILE']
-    if (envFile) {
-      fs.appendFileSync(envFile, `export ${key}=${value}\n`)
-    }
+    appendEnvVar(key, value)
   }
 
   setWatchPaths(paths: string[]): void {
@@ -567,10 +571,7 @@ export class SetupContext extends BaseContext {
   }
 
   setEnv(key: string, value: string): void {
-    const envFile = process.env['CLAUDE_ENV_FILE']
-    if (envFile) {
-      fs.appendFileSync(envFile, `export ${key}=${value}\n`)
-    }
+    appendEnvVar(key, value)
   }
 }
 

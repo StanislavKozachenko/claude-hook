@@ -1104,6 +1104,30 @@ describe('SetupContext', () => {
     const ctx = new SetupContext(event)
     expect(() => ctx.setEnv('MY_VAR', 'my_value')).not.toThrow()
   })
+
+  test.each([
+    ['hello world', `'hello world'`],
+    ['$(rm -rf ~); echo', `'$(rm -rf ~); echo'`],
+    [`it's`, `'it'"'"'s'`],
+    ['', `''`],
+    ['/usr/local/bin:./node_modules/.bin', '/usr/local/bin:./node_modules/.bin'],
+  ])('setEnv quotes %j so the shell reads it literally', (value, expected) => {
+    const envFile = path.join(os.tmpdir(), `claude-hook-test-${Date.now()}.env`)
+    fs.writeFileSync(envFile, '')
+    process.env['CLAUDE_ENV_FILE'] = envFile
+    try {
+      new SetupContext(event).setEnv('MY_VAR', value)
+      expect(fs.readFileSync(envFile, 'utf8')).toBe(`export MY_VAR=${expected}\n`)
+    } finally {
+      delete process.env['CLAUDE_ENV_FILE']
+      fs.unlinkSync(envFile)
+    }
+  })
+
+  test('setEnv rejects a key that is not a shell identifier', () => {
+    const ctx = new SetupContext(event)
+    expect(() => ctx.setEnv('BAD KEY; rm -rf ~', 'x')).toThrow(/invalid environment variable name/)
+  })
 })
 
 describe('DirectoryAddedContext', () => {
