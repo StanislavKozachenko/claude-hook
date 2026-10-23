@@ -82,6 +82,7 @@ export class BaseContext {
   get scratchpadDir(): string | undefined { return this.event.scratchpad_dir }
   get permissionMode(): PermissionMode | undefined { return this.event.permission_mode }
 
+  /** @deprecated Claude Code accepts `suppressOutput` but doesn't act on it — a successful hook's stdout is never shown in the transcript anyway. */
   suppress(): void {
     this._output.suppressOutput = true
   }
@@ -595,6 +596,7 @@ export class SetupContext extends BaseContext {
 
   get trigger(): 'init' | 'maintenance' { return this.event.trigger }
 
+  /** @deprecated Claude Code discards a Setup hook's JSON output, including `additionalContext`. Use `SessionStartContext.addContext()` instead. */
   addContext(text: string): void {
     this._output.hookSpecificOutput = {
       ...this._output.hookSpecificOutput,
