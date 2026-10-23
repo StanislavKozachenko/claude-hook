@@ -6,6 +6,25 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ---
 
+## [0.9.0] - 2026-10-23
+
+### Added
+
+- add transcriptPath, agentId, agentType getters to BaseContext (#183)
+- add ask()/defer() and decision reasons to PreToolUse and PreModelSwitch contexts (#181)
+- add setSystemMessage() and halt() to BaseContext (#179)
+
+### Fixed
+
+- setEnv() shell-quotes values and validates keys (#177)
+
+### Changed
+
+- deprecate no-op suppress() and SetupContext.addContext() (#185)
+
+---
+
+
 ## [0.8.1] - 2026-10-05
 
 ### Changed
