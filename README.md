@@ -138,7 +138,7 @@ All contexts expose:
 | `ctx.effort` | `{ level }` for the current turn, if present |
 | `ctx.scratchpadDir` | Session's scratchpad directory path, if present (Claude Code v2.1.257+) |
 | `ctx.permissionMode` | `'default' \| 'plan' \| 'acceptEdits' \| 'auto' \| 'dontAsk' \| 'bypassPermissions'`, if present |
-| `ctx.suppress()` | Set `suppressOutput: true` |
+| `ctx.suppress()` | **Deprecated** — sets `suppressOutput: true`, which Claude Code ignores |
 | `ctx.setTerminalSequence(seq)` | Emit a terminal escape sequence (desktop notification, window title, bell — OSC 0/1/2/9/99/777 or BEL only). Works on every event, even ones that discard `systemMessage` |
 | `ctx.setSystemMessage(msg)` | Show a warning to the user (`systemMessage`). Some events discard it (e.g. `Setup`, `SessionEnd`, `PreCompact`, `ConfigChange`) |
 | `ctx.halt(stopReason?)` | Set `continue: false` — Claude stops processing entirely, overriding any event-specific decision; `stopReason` is shown to the user |
@@ -497,8 +497,8 @@ hook.on('PostToolBatch', '*', (ctx) => {
 ```ts
 hook.on('Setup', '*', (ctx) => {
   ctx.trigger       // 'init' | 'maintenance'
-  ctx.addContext('extra setup info')  // feeds additionalContext back to Claude
   ctx.setEnv('MY_VAR', 'value')       // persists an env var for subsequent Bash commands
+  // ctx.addContext() is deprecated: Claude Code discards all Setup JSON output
 })
 ```
 
