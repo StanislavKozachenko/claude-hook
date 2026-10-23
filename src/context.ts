@@ -43,6 +43,7 @@ import type {
   PermissionRequestEvent,
   McpServerProvenance,
   PermissionMode,
+  PermissionDecision,
 } from './types.js'
 
 // Claude Code runs CLAUDE_ENV_FILE as shell code before each Bash command, and (v2.1.296+)
@@ -123,11 +124,27 @@ export class PreToolUseContext<T extends ToolInput = ToolInput> extends BaseCont
     this._blockReason = reason
   }
 
-  allow(): void {
+  /** Skip the permission prompt. `reason` goes to the debug log only. */
+  allow(reason?: string): void {
+    this.setPermissionDecision('allow', reason)
+  }
+
+  /** Force the permission prompt. `reason` is shown to the user in the prompt. */
+  ask(reason?: string): void {
+    this.setPermissionDecision('ask', reason)
+  }
+
+  /** End the turn with `stop_reason: "tool_deferred"` so a `claude -p` host can resume later. Ignored in interactive sessions. */
+  defer(reason?: string): void {
+    this.setPermissionDecision('defer', reason)
+  }
+
+  private setPermissionDecision(decision: PermissionDecision, reason: string | undefined): void {
     this._output.hookSpecificOutput = {
       ...this._output.hookSpecificOutput,
       hookEventName: this.event.hook_event_name,
-      permissionDecision: 'allow',
+      permissionDecision: decision,
+      permissionDecisionReason: reason,
     }
   }
 
@@ -635,11 +652,22 @@ export class PreModelSwitchContext extends BaseContext {
     this._blockReason = reason
   }
 
-  allow(): void {
+  /** Skip the interactive cache-miss confirm. */
+  allow(reason?: string): void {
+    this.setPermissionDecision('allow', reason)
+  }
+
+  /** Force the confirm prompt. `reason` is shown to the user. */
+  ask(reason?: string): void {
+    this.setPermissionDecision('ask', reason)
+  }
+
+  private setPermissionDecision(decision: 'allow' | 'ask', reason: string | undefined): void {
     this._output.hookSpecificOutput = {
       ...this._output.hookSpecificOutput,
       hookEventName: 'PreModelSwitch',
-      permissionDecision: 'allow',
+      permissionDecision: decision,
+      permissionDecisionReason: reason,
     }
   }
 }
