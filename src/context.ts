@@ -85,6 +85,17 @@ export class BaseContext {
     this._output.terminalSequence = sequence
   }
 
+  /** Warning shown to the user. Discarded by some events (e.g. Setup, SessionEnd, PreCompact, ConfigChange). */
+  setSystemMessage(message: string): void {
+    this._output.systemMessage = message
+  }
+
+  /** Sets `continue: false` — Claude stops processing entirely, overriding any event-specific decision. `stopReason` is shown to the user. */
+  halt(stopReason?: string): void {
+    this._output.continue = false
+    if (stopReason !== undefined) this._output.stopReason = stopReason
+  }
+
   _isBlocked(): boolean { return this._blocked }
   _getBlockReason(): string { return this._blockReason }
   _getOutput(): HookOutput { return this._output }

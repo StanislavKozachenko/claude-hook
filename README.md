@@ -137,6 +137,8 @@ All contexts expose:
 | `ctx.permissionMode` | `'default' \| 'plan' \| 'acceptEdits' \| 'auto' \| 'dontAsk' \| 'bypassPermissions'`, if present |
 | `ctx.suppress()` | Set `suppressOutput: true` |
 | `ctx.setTerminalSequence(seq)` | Emit a terminal escape sequence (desktop notification, window title, bell — OSC 0/1/2/9/99/777 or BEL only). Works on every event, even ones that discard `systemMessage` |
+| `ctx.setSystemMessage(msg)` | Show a warning to the user (`systemMessage`). Some events discard it (e.g. `Setup`, `SessionEnd`, `PreCompact`, `ConfigChange`) |
+| `ctx.halt(stopReason?)` | Set `continue: false` — Claude stops processing entirely, overriding any event-specific decision; `stopReason` is shown to the user |
 
 ### `PreToolUseContext`
 
