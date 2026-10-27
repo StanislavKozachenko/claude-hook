@@ -77,7 +77,75 @@ export interface ReadToolInput {
   allow_large?: boolean
 }
 
-export type ToolInput = BashToolInput | EditToolInput | WriteToolInput | ReadToolInput | Record<string, unknown>
+export interface PowerShellToolInput {
+  command: string
+  description?: string
+  /** Milliseconds */
+  timeout?: number
+  run_in_background?: boolean
+}
+
+export interface GlobToolInput {
+  pattern: string
+  path?: string
+}
+
+export interface GrepToolInput {
+  pattern: string
+  path?: string
+  glob?: string
+  output_mode?: 'content' | 'files_with_matches' | 'count'
+  '-B'?: number
+  '-A'?: number
+  '-C'?: number
+  context?: number
+  '-n'?: boolean
+  '-i'?: boolean
+  '-o'?: boolean
+  type?: string
+  head_limit?: number
+  offset?: number
+  multiline?: boolean
+}
+
+export interface WebFetchToolInput {
+  url: string
+  prompt: string
+  offset?: number
+}
+
+export interface WebSearchToolInput {
+  query: string
+  allowed_domains?: string[]
+  blocked_domains?: string[]
+}
+
+export interface AgentToolInput {
+  description: string
+  prompt: string
+  subagent_type?: string
+  /** Model alias, e.g. 'sonnet' | 'opus' | 'haiku' */
+  model?: string
+  effort?: string
+  run_in_background?: boolean
+  name?: string
+  team_name?: string
+  mode?: PermissionMode
+  isolation?: 'worktree' | 'remote'
+}
+
+export type ToolInput =
+  | BashToolInput
+  | EditToolInput
+  | WriteToolInput
+  | ReadToolInput
+  | PowerShellToolInput
+  | GlobToolInput
+  | GrepToolInput
+  | WebFetchToolInput
+  | WebSearchToolInput
+  | AgentToolInput
+  | Record<string, unknown>
 
 /** Identifies the MCP server a tool call belongs to, and how that server was configured. */
 export interface McpServerProvenance {
