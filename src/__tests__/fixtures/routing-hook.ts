@@ -20,7 +20,7 @@ createHook()
   .on('SessionStart', 'resume', (ctx) => {
     ctx.addContext('resumed')
   })
-  .on('*' as 'Notification', '*', (ctx) => {
+  .on('*', '*', (ctx) => {
     if (ctx.hookEventName === 'Notification') ctx.setTerminalSequence('\x07')
   })
   .run()

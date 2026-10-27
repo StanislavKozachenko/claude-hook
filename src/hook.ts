@@ -236,6 +236,8 @@ export class HookHandler {
   on(eventName: 'PreModelSwitch', matcher: string, handler: Handler<PreModelSwitchContext>): this
   on(eventName: 'PostModelSwitch', matcher: string, handler: Handler<PostModelSwitchContext>): this
   on(eventName: HookEventName, matcher: string, handler: Handler<GenericContext>): this
+  /** Every event. A matcher other than '*' is applied to each event's own matcher field. */
+  on(eventName: '*', matcher: string, handler: Handler<BaseContext>): this
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   on(eventName: string, matcher: string, handler: (ctx: any) => void | Promise<void>): this {
     this.registrations.push({ eventName, matcher, handler })
