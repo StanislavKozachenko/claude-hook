@@ -2,7 +2,7 @@ import * as fs from 'fs'
 import * as os from 'os'
 import * as path from 'path'
 import { PreToolUseContext, PermissionRequestContext, UserPromptSubmitContext, UserPromptExpansionContext, PostToolUseContext, FileChangedContext, CwdChangedContext, ElicitationContext, SessionStartContext, SessionEndContext, SubagentStartContext, ConfigChangeContext, TeammateIdleContext, PreCompactContext, PostCompactContext, PostToolBatchContext, StopContext, StopFailureContext, ElicitationResultContext, NotificationContext, InstructionsLoadedContext, TaskCreatedContext, TaskCompletedContext, WorktreeCreateContext, WorktreeRemoveContext, SetupContext, DirectoryAddedContext, MessageDisplayContext, PreModelSwitchContext, PostModelSwitchContext, GenericContext } from '../context'
-import type { PreToolUseEvent, PostToolUseEvent, PostToolUseFailureEvent, UserPromptSubmitEvent, UserPromptExpansionEvent, FileChangedEvent, CwdChangedEvent, ElicitationEvent, SessionStartEvent, SessionEndEvent, SubagentStartEvent, ConfigChangeEvent, TeammateIdleEvent, PreCompactEvent, PostCompactEvent, PostToolBatchEvent, PermissionRequestEvent, PermissionDeniedEvent, StopEvent, SubagentStopEvent, StopFailureEvent, ElicitationResultEvent, NotificationEvent, InstructionsLoadedEvent, TaskCreatedEvent, TaskCompletedEvent, WorktreeCreateEvent, WorktreeRemoveEvent, SetupEvent, DirectoryAddedEvent, MessageDisplayEvent, PreModelSwitchEvent, PostModelSwitchEvent } from '../types'
+import type { BashToolInput, ReadToolInput, PreToolUseEvent, PostToolUseEvent, PostToolUseFailureEvent, UserPromptSubmitEvent, UserPromptExpansionEvent, FileChangedEvent, CwdChangedEvent, ElicitationEvent, SessionStartEvent, SessionEndEvent, SubagentStartEvent, ConfigChangeEvent, TeammateIdleEvent, PreCompactEvent, PostCompactEvent, PostToolBatchEvent, PermissionRequestEvent, PermissionDeniedEvent, StopEvent, SubagentStopEvent, StopFailureEvent, ElicitationResultEvent, NotificationEvent, InstructionsLoadedEvent, TaskCreatedEvent, TaskCompletedEvent, WorktreeCreateEvent, WorktreeRemoveEvent, SetupEvent, DirectoryAddedEvent, MessageDisplayEvent, PreModelSwitchEvent, PostModelSwitchEvent } from '../types'
 
 const baseEvent = {
   session_id: 'sess1',
@@ -35,6 +35,24 @@ const promptEvent: UserPromptSubmitEvent = {
 }
 
 describe('PreToolUseContext', () => {
+  test('Bash and Read inputs expose their real optional fields', () => {
+    const bash = new PreToolUseContext<BashToolInput>({
+      ...preToolEvent,
+      tool_input: { command: 'npm test', timeout: 60000, run_in_background: true, dangerouslyDisableSandbox: true },
+    })
+    expect(bash.input.timeout).toBe(60000)
+    expect(bash.input.run_in_background).toBe(true)
+    expect(bash.input.dangerouslyDisableSandbox).toBe(true)
+
+    const read = new PreToolUseContext<ReadToolInput>({
+      ...preToolEvent,
+      tool_name: 'Read',
+      tool_input: { file_path: 'spec.pdf', pages: '1-5', allow_large: true },
+    })
+    expect(read.input.pages).toBe('1-5')
+    expect(read.input.allow_large).toBe(true)
+  })
+
   test('block sets _blocked and _blockReason', () => {
     const ctx = new PreToolUseContext(preToolEvent)
     ctx.block('too dangerous')

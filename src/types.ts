@@ -49,8 +49,11 @@ export interface BaseEvent {
 // Common tool inputs
 export interface BashToolInput {
   command: string
-  restart?: boolean
   description?: string
+  /** Milliseconds */
+  timeout?: number
+  run_in_background?: boolean
+  dangerouslyDisableSandbox?: boolean
 }
 
 export interface EditToolInput {
@@ -69,6 +72,9 @@ export interface ReadToolInput {
   file_path: string
   offset?: number
   limit?: number
+  /** PDF page range, e.g. "1-5" */
+  pages?: string
+  allow_large?: boolean
 }
 
 export type ToolInput = BashToolInput | EditToolInput | WriteToolInput | ReadToolInput | Record<string, unknown>
