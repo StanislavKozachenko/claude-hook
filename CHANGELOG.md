@@ -6,6 +6,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ---
 
+## [0.10.0] - 2026-10-27
+
+### Added
+
+- type and document the '*' event wildcard in hook.on() (#195)
+- catch handler errors in run() and add onFailure option (#191)
+- typed tool inputs and on() overloads for PowerShell, Glob, Grep, WebFetch, WebSearch, Agent (#189)
+
+### Fixed
+
+- align BashToolInput and ReadToolInput with real tool schemas (#187)
+
+---
+
+
 ## [0.9.0] - 2026-10-23
 
 ### Added
