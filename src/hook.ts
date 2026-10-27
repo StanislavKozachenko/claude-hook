@@ -161,8 +161,29 @@ function createContext(event: AnyEvent): BaseContext {
   }
 }
 
+export interface HookOptions {
+  /**
+   * What happens when a handler throws or stdin isn't valid JSON.
+   * `'continue'` (default): exit 1 — a non-blocking error, the action goes ahead.
+   * `'block'`: exit 2 — fail closed on events that can block (e.g. PreToolUse).
+   */
+  onFailure?: 'continue' | 'block'
+}
+
 export class HookHandler {
   private registrations: Registration[] = []
+  private readonly onFailure: 'continue' | 'block'
+
+  constructor(options: HookOptions = {}) {
+    this.onFailure = options.onFailure ?? 'continue'
+  }
+
+  // Never prints accumulated output: with exit 1, valid JSON on stdout still applies
+  // (an earlier handler's allow() would win), so failure must leave stdout empty
+  private fail(message: string): never {
+    process.stderr.write(`claude-hook: ${message}\n`)
+    process.exit(this.onFailure === 'block' ? 2 : 1)
+  }
 
   on(eventName: 'PreToolUse', matcher: 'Bash', handler: Handler<PreToolUseContext<BashToolInput>>): this
   on(eventName: 'PreToolUse', matcher: 'Edit', handler: Handler<PreToolUseContext<EditToolInput>>): this
@@ -233,8 +254,7 @@ export class HookHandler {
     try {
       event = JSON.parse(raw) as AnyEvent
     } catch {
-      process.stderr.write('claude-hook: failed to parse stdin JSON\n')
-      process.exit(1)
+      this.fail('failed to parse stdin JSON')
     }
 
     const matcherValue = getMatcherValue(event as unknown as Record<string, unknown>)
@@ -252,7 +272,11 @@ export class HookHandler {
     const ctx = createContext(event)
 
     for (const reg of matching) {
-      await reg.handler(ctx)
+      try {
+        await reg.handler(ctx)
+      } catch (err) {
+        this.fail(`${event.hook_event_name} handler failed: ${err instanceof Error ? err.message : String(err)}`)
+      }
       if (ctx._isBlocked()) break
     }
 
@@ -270,6 +294,6 @@ export class HookHandler {
   }
 }
 
-export function createHook(): HookHandler {
-  return new HookHandler()
+export function createHook(options?: HookOptions): HookHandler {
+  return new HookHandler(options)
 }
