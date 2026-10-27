@@ -120,7 +120,7 @@ createHook({ onFailure: 'block' })
 
 Registers a handler for an event.
 
-- **`eventName`** — one of the supported event names (see table below)
+- **`eventName`** — one of the supported event names (see table below), or `'*'` for every event (`ctx` is typed as `BaseContext`; a matcher other than `'*'` is applied to each event's own matcher field)
 - **`matcher`** — filters which tool/file/etc triggers this handler (mirrors Claude Code's own rules):
   - `'*'` — match all
   - `'Bash'` — exact match
