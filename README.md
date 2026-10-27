@@ -148,7 +148,7 @@ All contexts expose:
 ```ts
 hook.on('PreToolUse', 'Bash', (ctx) => {
   ctx.toolName             // 'Bash'
-  ctx.input                // { command: string, description?: string }
+  ctx.input                // { command, description?, timeout?, run_in_background?, dangerouslyDisableSandbox? }
   ctx.mcpServer            // { name, source } when the tool belongs to an MCP server, else undefined
   ctx.block('reason')      // exit 2, block the tool call
   ctx.allow('reason?')     // explicitly allow (skip permission prompt); reason goes to the debug log
