@@ -1,4 +1,5 @@
 export { createHook, HookHandler } from './hook.js'
+export type { HookOptions } from './hook.js'
 export { matchMatcher } from './router.js'
 export {
   BaseContext,

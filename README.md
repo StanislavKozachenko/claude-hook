@@ -98,9 +98,23 @@ One script can handle multiple event types — register as many `hook.on()` call
 
 ## API
 
-### `createHook()`
+### `createHook(options?)`
 
 Returns a `HookHandler` instance.
+
+- **`options.onFailure`** — what happens when a handler throws or stdin isn't valid JSON:
+  - `'continue'` (default) — exit 1, a non-blocking error: the action goes ahead
+  - `'block'` — exit 2: fail closed on events that can block, e.g. a `PreToolUse` policy check that crashes blocks the tool call
+
+Either way a one-line `claude-hook: ...` message goes to stderr, and output set by earlier handlers is discarded.
+
+```ts
+createHook({ onFailure: 'block' })
+  .on('PreToolUse', 'Bash', (ctx) => {
+    if (isDangerous(ctx.input.command)) ctx.block('blocked by policy')  // if isDangerous() throws, the call is blocked too
+  })
+  .run()
+```
 
 ### `hook.on(eventName, matcher, handler)`
 
@@ -614,7 +628,8 @@ For all other events, the handler receives a `GenericContext` with `ctx.block(re
 | Code | Meaning |
 |---|---|
 | `0` | Continue normally |
-| `2` | Block the action (stderr message shown in transcript) |
+| `1` | A handler threw or stdin wasn't JSON (default `onFailure: 'continue'`) — non-blocking error |
+| `2` | Block the action (stderr message shown in transcript); also a handler failure with `onFailure: 'block'` |
 
 `ctx.block(reason)` sets exit code 2 automatically.
 
