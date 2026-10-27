@@ -626,6 +626,14 @@ All event payloads and context classes are fully typed. Import types directly:
 import type { PreToolUseEvent, BashToolInput } from 'claude-hook'
 ```
 
+For `PreToolUse`/`PostToolUse`/`PostToolUseFailure`, an exact tool-name matcher types `ctx.input` for `Bash`, `PowerShell`, `Edit`, `Write`, `Read`, `Glob`, `Grep`, `WebFetch`, `WebSearch`, and `Agent`:
+
+```ts
+hook.on('PreToolUse', 'WebFetch', (ctx) => {
+  ctx.input.url  // string — typed as WebFetchToolInput
+})
+```
+
 ## License
 
 MIT

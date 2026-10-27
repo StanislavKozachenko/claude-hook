@@ -39,6 +39,12 @@ import type {
   EditToolInput,
   WriteToolInput,
   ReadToolInput,
+  PowerShellToolInput,
+  GlobToolInput,
+  GrepToolInput,
+  WebFetchToolInput,
+  WebSearchToolInput,
+  AgentToolInput,
 } from './types.js'
 import {
   BaseContext,
@@ -162,10 +168,22 @@ export class HookHandler {
   on(eventName: 'PreToolUse', matcher: 'Edit', handler: Handler<PreToolUseContext<EditToolInput>>): this
   on(eventName: 'PreToolUse', matcher: 'Write', handler: Handler<PreToolUseContext<WriteToolInput>>): this
   on(eventName: 'PreToolUse', matcher: 'Read', handler: Handler<PreToolUseContext<ReadToolInput>>): this
+  on(eventName: 'PreToolUse', matcher: 'PowerShell', handler: Handler<PreToolUseContext<PowerShellToolInput>>): this
+  on(eventName: 'PreToolUse', matcher: 'Glob', handler: Handler<PreToolUseContext<GlobToolInput>>): this
+  on(eventName: 'PreToolUse', matcher: 'Grep', handler: Handler<PreToolUseContext<GrepToolInput>>): this
+  on(eventName: 'PreToolUse', matcher: 'WebFetch', handler: Handler<PreToolUseContext<WebFetchToolInput>>): this
+  on(eventName: 'PreToolUse', matcher: 'WebSearch', handler: Handler<PreToolUseContext<WebSearchToolInput>>): this
+  on(eventName: 'PreToolUse', matcher: 'Agent', handler: Handler<PreToolUseContext<AgentToolInput>>): this
   on(eventName: 'PostToolUse' | 'PostToolUseFailure', matcher: 'Bash', handler: Handler<PostToolUseContext<BashToolInput>>): this
   on(eventName: 'PostToolUse' | 'PostToolUseFailure', matcher: 'Edit', handler: Handler<PostToolUseContext<EditToolInput>>): this
   on(eventName: 'PostToolUse' | 'PostToolUseFailure', matcher: 'Write', handler: Handler<PostToolUseContext<WriteToolInput>>): this
   on(eventName: 'PostToolUse' | 'PostToolUseFailure', matcher: 'Read', handler: Handler<PostToolUseContext<ReadToolInput>>): this
+  on(eventName: 'PostToolUse' | 'PostToolUseFailure', matcher: 'PowerShell', handler: Handler<PostToolUseContext<PowerShellToolInput>>): this
+  on(eventName: 'PostToolUse' | 'PostToolUseFailure', matcher: 'Glob', handler: Handler<PostToolUseContext<GlobToolInput>>): this
+  on(eventName: 'PostToolUse' | 'PostToolUseFailure', matcher: 'Grep', handler: Handler<PostToolUseContext<GrepToolInput>>): this
+  on(eventName: 'PostToolUse' | 'PostToolUseFailure', matcher: 'WebFetch', handler: Handler<PostToolUseContext<WebFetchToolInput>>): this
+  on(eventName: 'PostToolUse' | 'PostToolUseFailure', matcher: 'WebSearch', handler: Handler<PostToolUseContext<WebSearchToolInput>>): this
+  on(eventName: 'PostToolUse' | 'PostToolUseFailure', matcher: 'Agent', handler: Handler<PostToolUseContext<AgentToolInput>>): this
   on(eventName: 'PreToolUse' | 'PermissionDenied', matcher: string, handler: Handler<PreToolUseContext>): this
   on(eventName: 'PermissionRequest', matcher: string, handler: Handler<PermissionRequestContext>): this
   on(eventName: 'PostToolUse' | 'PostToolUseFailure', matcher: string, handler: Handler<PostToolUseContext>): this

@@ -2,7 +2,7 @@ import * as fs from 'fs'
 import * as os from 'os'
 import * as path from 'path'
 import { PreToolUseContext, PermissionRequestContext, UserPromptSubmitContext, UserPromptExpansionContext, PostToolUseContext, FileChangedContext, CwdChangedContext, ElicitationContext, SessionStartContext, SessionEndContext, SubagentStartContext, ConfigChangeContext, TeammateIdleContext, PreCompactContext, PostCompactContext, PostToolBatchContext, StopContext, StopFailureContext, ElicitationResultContext, NotificationContext, InstructionsLoadedContext, TaskCreatedContext, TaskCompletedContext, WorktreeCreateContext, WorktreeRemoveContext, SetupContext, DirectoryAddedContext, MessageDisplayContext, PreModelSwitchContext, PostModelSwitchContext, GenericContext } from '../context'
-import type { BashToolInput, ReadToolInput, PreToolUseEvent, PostToolUseEvent, PostToolUseFailureEvent, UserPromptSubmitEvent, UserPromptExpansionEvent, FileChangedEvent, CwdChangedEvent, ElicitationEvent, SessionStartEvent, SessionEndEvent, SubagentStartEvent, ConfigChangeEvent, TeammateIdleEvent, PreCompactEvent, PostCompactEvent, PostToolBatchEvent, PermissionRequestEvent, PermissionDeniedEvent, StopEvent, SubagentStopEvent, StopFailureEvent, ElicitationResultEvent, NotificationEvent, InstructionsLoadedEvent, TaskCreatedEvent, TaskCompletedEvent, WorktreeCreateEvent, WorktreeRemoveEvent, SetupEvent, DirectoryAddedEvent, MessageDisplayEvent, PreModelSwitchEvent, PostModelSwitchEvent } from '../types'
+import type { BashToolInput, ReadToolInput, WebFetchToolInput, AgentToolInput, PreToolUseEvent, PostToolUseEvent, PostToolUseFailureEvent, UserPromptSubmitEvent, UserPromptExpansionEvent, FileChangedEvent, CwdChangedEvent, ElicitationEvent, SessionStartEvent, SessionEndEvent, SubagentStartEvent, ConfigChangeEvent, TeammateIdleEvent, PreCompactEvent, PostCompactEvent, PostToolBatchEvent, PermissionRequestEvent, PermissionDeniedEvent, StopEvent, SubagentStopEvent, StopFailureEvent, ElicitationResultEvent, NotificationEvent, InstructionsLoadedEvent, TaskCreatedEvent, TaskCompletedEvent, WorktreeCreateEvent, WorktreeRemoveEvent, SetupEvent, DirectoryAddedEvent, MessageDisplayEvent, PreModelSwitchEvent, PostModelSwitchEvent } from '../types'
 
 const baseEvent = {
   session_id: 'sess1',
@@ -51,6 +51,23 @@ describe('PreToolUseContext', () => {
     })
     expect(read.input.pages).toBe('1-5')
     expect(read.input.allow_large).toBe(true)
+  })
+
+  test('WebFetch and Agent inputs are typed', () => {
+    const fetch = new PreToolUseContext<WebFetchToolInput>({
+      ...preToolEvent,
+      tool_name: 'WebFetch',
+      tool_input: { url: 'https://example.com', prompt: 'summarize', offset: 100 },
+    })
+    expect(fetch.input.url).toBe('https://example.com')
+
+    const agent = new PreToolUseContext<AgentToolInput>({
+      ...preToolEvent,
+      tool_name: 'Agent',
+      tool_input: { description: 'find bugs', prompt: 'p', subagent_type: 'Explore', isolation: 'worktree', mode: 'plan' },
+    })
+    expect(agent.input.subagent_type).toBe('Explore')
+    expect(agent.input.isolation).toBe('worktree')
   })
 
   test('block sets _blocked and _blockReason', () => {
