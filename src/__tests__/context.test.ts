@@ -158,6 +158,15 @@ describe('PreToolUseContext', () => {
     expect(ctx._getOutput().hookSpecificOutput?.additionalContext).toBe('extra info')
   })
 
+  test('addContext called again appends instead of replacing', () => {
+    const ctx = new PreToolUseContext(preToolEvent)
+    ctx.addContext('from the first handler')
+    ctx.allow()
+    ctx.addContext('from the second handler')
+    expect(ctx._getOutput().hookSpecificOutput?.additionalContext).toBe('from the first handler\nfrom the second handler')
+    expect(ctx._getOutput().hookSpecificOutput?.permissionDecision).toBe('allow')
+  })
+
   test('retry sets retry flag in hookSpecificOutput', () => {
     const ctx = new PreToolUseContext(preToolEvent)
     ctx.retry()

@@ -135,6 +135,8 @@ Returns `this` for chaining.
 
 Reads stdin, routes to matching handlers, writes output, exits. Call once at the end of your script.
 
+Every handler that matches an event runs in registration order on one shared `ctx`, and their output merges into a single JSON object. `ctx.block()` stops the chain. Setters like `allow()` or `setTitle()` keep the last call; `addContext()` appends, so each handler's text reaches Claude (joined with newlines).
+
 ## Context API
 
 All contexts expose:
