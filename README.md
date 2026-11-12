@@ -489,6 +489,9 @@ hook.on('PreCompact', '*', (ctx) => {
   ctx.trigger            // 'manual' | 'auto'
   ctx.customInstructions // string | null
   ctx.block('not now')   // exit 2, blocks compaction
+  ctx.addInstructions('Keep the list of open TODOs and exact file paths')
+  // ↑ steers the compaction summary: printed as plain-text stdout (cut at 10,000 chars),
+  //   repeated calls append; other JSON output (e.g. setTerminalSequence) is then not printed
 })
 
 hook.on('PreCompact', 'manual', (ctx) => {

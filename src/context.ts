@@ -73,6 +73,8 @@ export class BaseContext {
   protected _output: HookOutput = {}
   protected _blocked = false
   protected _blockReason = ''
+  // Plain-text stdout for events that read it instead of JSON (PreCompact instructions)
+  protected _plainOutput: string | undefined
 
   constructor(event: AnyEvent) {
     this.event = event
@@ -121,6 +123,7 @@ export class BaseContext {
   _isBlocked(): boolean { return this._blocked }
   _getBlockReason(): string { return this._blockReason }
   _getOutput(): HookOutput { return this._output }
+  _getPlainOutput(): string | undefined { return this._plainOutput }
 }
 
 export class PreToolUseContext<T extends ToolInput = ToolInput> extends BaseContext {
@@ -852,6 +855,15 @@ export class PreCompactContext extends BaseContext {
   block(reason: string): void {
     this._blocked = true
     this._blockReason = reason
+  }
+
+  /**
+   * Instructions for the compaction summary, e.g. what to preserve. Printed as plain-text stdout
+   * (Claude Code cuts it at 10,000 characters); repeated calls append. When set, JSON output such
+   * as `setTerminalSequence()` is not printed — Claude Code discards PreCompact's other JSON fields.
+   */
+  addInstructions(text: string): void {
+    this._plainOutput = this._plainOutput === undefined ? text : `${this._plainOutput}\n${text}`
   }
 }
 
