@@ -6,6 +6,28 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ---
 
+## [1.0.0] - 2026-11-12
+
+### Breaking
+
+- remove deprecated suppress() and SetupContext.addContext() (#217)
+- remove no-op block() from FileChangedContext and CwdChangedContext (#215)
+- PermissionDenied handlers get a dedicated PermissionDeniedContext (#211)
+
+### Added
+
+- typed ctx.input on PermissionRequest via ToolInputMap overloads (#221)
+- add WorktreeRemoveContext.block() to keep a worktree (#219)
+
+### Changed
+
+- add upgrade guide for 1.0 (#225)
+- type-check tests and add compile-time checks of the public typings (#223)
+- collect breaking (!) commits into a Breaking CHANGELOG section (#213)
+
+---
+
+
 ## [0.11.0] - 2026-11-12
 
 ### Added
