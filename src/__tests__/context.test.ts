@@ -1170,6 +1170,13 @@ describe('WorktreeRemoveContext', () => {
     const ctx = new WorktreeRemoveContext(event)
     expect(ctx.worktreePath).toBe('/home/user/.worktrees/feature-x')
   })
+
+  test('block keeps the worktree via exit 2', () => {
+    const ctx = new WorktreeRemoveContext(event)
+    ctx.block('uncommitted work')
+    expect(ctx._isBlocked()).toBe(true)
+    expect(ctx._getBlockReason()).toBe('uncommitted work')
+  })
 })
 
 describe('SetupContext', () => {

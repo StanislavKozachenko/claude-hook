@@ -782,6 +782,15 @@ export class WorktreeRemoveContext extends BaseContext {
   constructor(event: WorktreeRemoveEvent) { super(event) }
 
   get worktreePath(): string { return this.event.worktree_path }
+
+  /**
+   * Keep the worktree: exit 2 fails the removal as long as the directory still exists, with no git fallback.
+   * `reason` goes to the debug log (and is quoted in agent view when deleting a background session).
+   */
+  block(reason: string): void {
+    this._blocked = true
+    this._blockReason = reason
+  }
 }
 
 export class SessionEndContext extends BaseContext {
