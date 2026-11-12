@@ -45,6 +45,9 @@ import type {
   WebFetchToolInput,
   WebSearchToolInput,
   AgentToolInput,
+  MonitorToolInput,
+  AskUserQuestionToolInput,
+  ExitPlanModeToolInput,
 } from './types.js'
 import {
   BaseContext,
@@ -208,6 +211,9 @@ export class HookHandler {
   on(eventName: 'PreToolUse', matcher: 'WebFetch', handler: Handler<PreToolUseContext<WebFetchToolInput>>): this
   on(eventName: 'PreToolUse', matcher: 'WebSearch', handler: Handler<PreToolUseContext<WebSearchToolInput>>): this
   on(eventName: 'PreToolUse', matcher: 'Agent', handler: Handler<PreToolUseContext<AgentToolInput>>): this
+  on(eventName: 'PreToolUse', matcher: 'Monitor', handler: Handler<PreToolUseContext<MonitorToolInput>>): this
+  on(eventName: 'PreToolUse', matcher: 'AskUserQuestion', handler: Handler<PreToolUseContext<AskUserQuestionToolInput>>): this
+  on(eventName: 'PreToolUse', matcher: 'ExitPlanMode', handler: Handler<PreToolUseContext<ExitPlanModeToolInput>>): this
   on(eventName: 'PostToolUse' | 'PostToolUseFailure', matcher: 'Bash', handler: Handler<PostToolUseContext<BashToolInput>>): this
   on(eventName: 'PostToolUse' | 'PostToolUseFailure', matcher: 'Edit', handler: Handler<PostToolUseContext<EditToolInput>>): this
   on(eventName: 'PostToolUse' | 'PostToolUseFailure', matcher: 'Write', handler: Handler<PostToolUseContext<WriteToolInput>>): this
@@ -218,6 +224,9 @@ export class HookHandler {
   on(eventName: 'PostToolUse' | 'PostToolUseFailure', matcher: 'WebFetch', handler: Handler<PostToolUseContext<WebFetchToolInput>>): this
   on(eventName: 'PostToolUse' | 'PostToolUseFailure', matcher: 'WebSearch', handler: Handler<PostToolUseContext<WebSearchToolInput>>): this
   on(eventName: 'PostToolUse' | 'PostToolUseFailure', matcher: 'Agent', handler: Handler<PostToolUseContext<AgentToolInput>>): this
+  on(eventName: 'PostToolUse' | 'PostToolUseFailure', matcher: 'Monitor', handler: Handler<PostToolUseContext<MonitorToolInput>>): this
+  on(eventName: 'PostToolUse' | 'PostToolUseFailure', matcher: 'AskUserQuestion', handler: Handler<PostToolUseContext<AskUserQuestionToolInput>>): this
+  on(eventName: 'PostToolUse' | 'PostToolUseFailure', matcher: 'ExitPlanMode', handler: Handler<PostToolUseContext<ExitPlanModeToolInput>>): this
   on(eventName: 'PreToolUse' | 'PermissionDenied', matcher: string, handler: Handler<PreToolUseContext>): this
   on(eventName: 'PermissionRequest', matcher: string, handler: Handler<PermissionRequestContext>): this
   on(eventName: 'PostToolUse' | 'PostToolUseFailure', matcher: string, handler: Handler<PostToolUseContext>): this
