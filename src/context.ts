@@ -103,6 +103,12 @@ export class BaseContext {
     if (stopReason !== undefined) this._output.stopReason = stopReason
   }
 
+  // Every handler matching an event shares one ctx — append so each one's context survives
+  protected appendContext(text: string): string {
+    const previous = this._output.hookSpecificOutput?.additionalContext
+    return previous === undefined ? text : `${previous}\n${text}`
+  }
+
   _isBlocked(): boolean { return this._blocked }
   _getBlockReason(): string { return this._blockReason }
   _getOutput(): HookOutput { return this._output }
@@ -166,7 +172,7 @@ export class PreToolUseContext<T extends ToolInput = ToolInput> extends BaseCont
     this._output.hookSpecificOutput = {
       ...this._output.hookSpecificOutput,
       hookEventName: this.event.hook_event_name,
-      additionalContext: text,
+      additionalContext: this.appendContext(text),
     }
   }
 
@@ -228,7 +234,7 @@ export class PostToolUseContext<T extends ToolInput = ToolInput> extends BaseCon
     this._output.hookSpecificOutput = {
       ...this._output.hookSpecificOutput,
       hookEventName: this.event.hook_event_name,
-      additionalContext: text,
+      additionalContext: this.appendContext(text),
     }
   }
 
@@ -275,7 +281,7 @@ export class UserPromptSubmitContext extends BaseContext {
     this._output.hookSpecificOutput = {
       ...this._output.hookSpecificOutput,
       hookEventName: 'UserPromptSubmit',
-      additionalContext: text,
+      additionalContext: this.appendContext(text),
     }
   }
 
@@ -316,7 +322,7 @@ export class UserPromptExpansionContext extends BaseContext {
     this._output.hookSpecificOutput = {
       ...this._output.hookSpecificOutput,
       hookEventName: 'UserPromptExpansion',
-      additionalContext: text,
+      additionalContext: this.appendContext(text),
     }
   }
 
@@ -364,7 +370,7 @@ export class StopContext extends BaseContext {
     this._output.hookSpecificOutput = {
       ...this._output.hookSpecificOutput,
       hookEventName: this.event.hook_event_name,
-      additionalContext: text,
+      additionalContext: this.appendContext(text),
     }
   }
 }
@@ -390,7 +396,7 @@ export class SessionStartContext extends BaseContext {
     this._output.hookSpecificOutput = {
       ...this._output.hookSpecificOutput,
       hookEventName: 'SessionStart',
-      additionalContext: text,
+      additionalContext: this.appendContext(text),
     }
   }
 
@@ -571,7 +577,7 @@ export class NotificationContext extends BaseContext {
     this._output.hookSpecificOutput = {
       ...this._output.hookSpecificOutput,
       hookEventName: 'Notification',
-      additionalContext: text,
+      additionalContext: this.appendContext(text),
     }
   }
 }
@@ -601,7 +607,7 @@ export class SetupContext extends BaseContext {
     this._output.hookSpecificOutput = {
       ...this._output.hookSpecificOutput,
       hookEventName: 'Setup',
-      additionalContext: text,
+      additionalContext: this.appendContext(text),
     }
   }
 
@@ -698,7 +704,7 @@ export class PostModelSwitchContext extends BaseContext {
     this._output.hookSpecificOutput = {
       ...this._output.hookSpecificOutput,
       hookEventName: 'PostModelSwitch',
-      additionalContext: text,
+      additionalContext: this.appendContext(text),
     }
   }
 }
@@ -784,7 +790,7 @@ export class SubagentStartContext extends BaseContext {
     this._output.hookSpecificOutput = {
       ...this._output.hookSpecificOutput,
       hookEventName: 'SubagentStart',
-      additionalContext: text,
+      additionalContext: this.appendContext(text),
     }
   }
 }

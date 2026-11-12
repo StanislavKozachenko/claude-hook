@@ -104,6 +104,11 @@ describe('run() routing, blocking and output', () => {
     expect(runHook('routing-hook.ts', event({ hook_event_name: 'SessionStart', source: 'startup' })).stdout).toBe('')
   })
 
+  test('addContext from several matching handlers is joined, not overwritten', () => {
+    const { stdout } = runHook('routing-hook.ts', event({ hook_event_name: 'SessionStart', source: 'compact' }))
+    expect(JSON.parse(stdout).hookSpecificOutput.additionalContext).toBe('fresh context\nafter compaction')
+  })
+
   test("a '*' event registration receives every event", () => {
     const { stdout } = runHook('routing-hook.ts', event({ hook_event_name: 'Notification', notification_type: 'idle_prompt', message: 'm' }))
     expect(JSON.parse(stdout)).toEqual({ terminalSequence: '\x07' })

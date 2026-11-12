@@ -17,6 +17,12 @@ createHook()
   .on('PreToolUse', 'Read', () => {
     // matches but sets nothing
   })
+  .on('SessionStart', 'compact|clear', (ctx) => {
+    ctx.addContext('fresh context')
+  })
+  .on('SessionStart', 'compact', (ctx) => {
+    ctx.addContext('after compaction')
+  })
   .on('SessionStart', 'resume', (ctx) => {
     ctx.addContext('resumed')
   })
