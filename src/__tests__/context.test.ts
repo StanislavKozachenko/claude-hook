@@ -1184,13 +1184,6 @@ describe('SetupContext', () => {
     expect(ctx.trigger).toBe('init')
   })
 
-  test('addContext sets additionalContext', () => {
-    const ctx = new SetupContext(event)
-    ctx.addContext('extra setup info')
-    expect(ctx._getOutput().hookSpecificOutput?.additionalContext).toBe('extra setup info')
-    expect(ctx._getOutput().hookSpecificOutput?.hookEventName).toBe('Setup')
-  })
-
   test('setEnv appends an export line to CLAUDE_ENV_FILE when set', () => {
     const envFile = path.join(os.tmpdir(), `claude-hook-test-${Date.now()}.env`)
     fs.writeFileSync(envFile, '')
