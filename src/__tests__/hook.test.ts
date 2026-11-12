@@ -109,3 +109,20 @@ describe('run() routing, blocking and output', () => {
     expect(JSON.parse(stdout)).toEqual({ terminalSequence: '\x07' })
   })
 })
+
+describe('run() output over the pipe buffer', () => {
+  // Pipe writes are async on POSIX — exiting before they flush cut output at 64 KB on Linux
+  const size = 1_000_000
+
+  test('large JSON output reaches stdout in full', () => {
+    const { code, stdout } = runHook('large-output-hook.ts', toolEvent('Read', { file_path: 'a.ts' }), { HOOK_OUTPUT_SIZE: String(size) })
+    expect(code).toBe(0)
+    expect(JSON.parse(stdout).hookSpecificOutput.additionalContext).toHaveLength(size)
+  })
+
+  test('a large block reason reaches stderr in full', () => {
+    const { code, stderr } = runHook('large-output-hook.ts', toolEvent('Bash', { command: 'ls' }), { HOOK_OUTPUT_SIZE: String(size) })
+    expect(code).toBe(2)
+    expect(stderr).toHaveLength(size + 1)
+  })
+})
