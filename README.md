@@ -79,7 +79,7 @@ hook.run()
     "PreToolUse": [
       {
         "matcher": "Bash",
-        "hooks": [{ "type": "command", "command": "npx claude-hook run .claude/hooks/index.ts" }]
+        "hooks": [{ "type": "command", "command": "npx claude-hook run ${CLAUDE_PROJECT_DIR}/.claude/hooks/index.ts" }]
       }
     ]
   }
@@ -89,12 +89,24 @@ hook.run()
 Or with pnpm / yarn / bun:
 
 ```json
-{ "type": "command", "command": "pnpm dlx claude-hook run .claude/hooks/index.ts" }
-{ "type": "command", "command": "yarn dlx claude-hook run .claude/hooks/index.ts" }
-{ "type": "command", "command": "bunx claude-hook run .claude/hooks/index.ts" }
+{ "type": "command", "command": "pnpm dlx claude-hook run ${CLAUDE_PROJECT_DIR}/.claude/hooks/index.ts" }
+{ "type": "command", "command": "yarn dlx claude-hook run ${CLAUDE_PROJECT_DIR}/.claude/hooks/index.ts" }
+{ "type": "command", "command": "bunx claude-hook run ${CLAUDE_PROJECT_DIR}/.claude/hooks/index.ts" }
 ```
 
+`${CLAUDE_PROJECT_DIR}` is the project root, so the script is still found after Claude changes directory during the session.
+
 One script can handle multiple event types — register as many `hook.on()` calls as you need.
+
+### Fail closed
+
+By default, when a hook fails (it crashes, times out, or can't even start), Claude Code goes ahead with the action, so a broken policy script lets everything through. For policy hooks, add `"onFailure": "block"` to the hook entry (Claude Code v2.1.295+):
+
+```json
+{ "type": "command", "command": "npx claude-hook run ${CLAUDE_PROJECT_DIR}/.claude/hooks/index.ts", "onFailure": "block" }
+```
+
+A failure then acts like exit code 2 on that event (a `PreToolUse` failure blocks the tool call, a `PermissionRequest` failure denies it). This covers a handler that throws (claude-hook exits 1), and also what claude-hook can't catch itself: a timeout, a missing script, or `npx` failing to start. It has no effect on `Stop`, `SubagentStop`, `TaskCompleted`, `TeammateIdle`, or `async` hooks. On older Claude Code versions, use [`createHook({ onFailure: 'block' })`](#createhookoptions) instead, which covers handler errors only.
 
 ## API
 
