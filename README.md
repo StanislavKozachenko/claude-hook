@@ -324,13 +324,12 @@ hook.on('FileChanged', '.env|.envrc', (ctx) => {
   ctx.changeType // 'change' | 'add' | 'unlink'
   ctx.setEnv('UPDATED', '1')
   ctx.setWatchPaths(['src/**/*.ts'])  // change which paths trigger future FileChanged events
-  ctx.block('env file changed, session restart recommended')
+  ctx.setSystemMessage('env file changed, session restart recommended')  // brief terminal notification
 })
 ```
 
-> `FileChanged` fires after the file has already changed on disk, so `ctx.block()`
-> can't undo it. Claude Code only shows the reason to the user; it doesn't stop
-> anything.
+> `FileChanged` fires after the file has already changed on disk, so there is no
+> `block()` — to tell the user something, use `ctx.setSystemMessage()`.
 
 ### `CwdChangedContext`
 
@@ -342,9 +341,8 @@ hook.on('CwdChanged', '*', (ctx) => {
 })
 ```
 
-> `CwdChanged` fires after the directory has already changed, so `ctx.block()`
-> can't undo it. Claude Code only shows the reason to the user; it doesn't stop
-> anything.
+> `CwdChanged` fires after the directory has already changed, so there is no
+> `block()` — to tell the user something, use `ctx.setSystemMessage()`.
 
 ### `ElicitationContext`
 

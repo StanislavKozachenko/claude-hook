@@ -481,11 +481,6 @@ export class FileChangedContext extends BaseContext {
       watchPaths: paths,
     }
   }
-
-  block(reason: string): void {
-    this._blocked = true
-    this._blockReason = reason
-  }
 }
 
 export class CwdChangedContext extends BaseContext {
@@ -506,11 +501,6 @@ export class CwdChangedContext extends BaseContext {
       hookEventName: 'CwdChanged',
       watchPaths: paths,
     }
-  }
-
-  block(reason: string): void {
-    this._blocked = true
-    this._blockReason = reason
   }
 }
 
