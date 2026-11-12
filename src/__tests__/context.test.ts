@@ -537,17 +537,15 @@ describe('FileChangedContext', () => {
     expect(ctx.changeType).toBe('change')
   })
 
-  test('block sets _blocked', () => {
-    const ctx = new FileChangedContext(event)
-    ctx.block('env changed')
-    expect(ctx._isBlocked()).toBe(true)
-    expect(ctx._getBlockReason()).toBe('env changed')
-  })
-
   test('setWatchPaths sets watchPaths in hookSpecificOutput', () => {
     const ctx = new FileChangedContext(event)
     ctx.setWatchPaths(['src/**/*.ts', 'README.md'])
     expect(ctx._getOutput().hookSpecificOutput?.watchPaths).toEqual(['src/**/*.ts', 'README.md'])
+  })
+
+  test('has no block(): the change already happened, and exit 2 would drop watchPaths', () => {
+    const ctx = new FileChangedContext(event) as unknown as Record<string, unknown>
+    expect(ctx['block']).toBeUndefined()
   })
 })
 
@@ -563,12 +561,6 @@ describe('CwdChangedContext', () => {
     const ctx = new CwdChangedContext(event)
     expect(ctx.oldCwd).toBe('/old')
     expect(ctx.newCwd).toBe('/new')
-  })
-
-  test('block sets _blocked', () => {
-    const ctx = new CwdChangedContext(event)
-    ctx.block('not allowed')
-    expect(ctx._isBlocked()).toBe(true)
   })
 
   test('setWatchPaths sets watchPaths in hookSpecificOutput', () => {
