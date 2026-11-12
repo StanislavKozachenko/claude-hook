@@ -2,7 +2,7 @@ import * as fs from 'fs'
 import * as os from 'os'
 import * as path from 'path'
 import { PreToolUseContext, PermissionRequestContext, UserPromptSubmitContext, UserPromptExpansionContext, PostToolUseContext, FileChangedContext, CwdChangedContext, ElicitationContext, SessionStartContext, SessionEndContext, SubagentStartContext, ConfigChangeContext, TeammateIdleContext, PreCompactContext, PostCompactContext, PostToolBatchContext, StopContext, StopFailureContext, ElicitationResultContext, NotificationContext, InstructionsLoadedContext, TaskCreatedContext, TaskCompletedContext, WorktreeCreateContext, WorktreeRemoveContext, SetupContext, DirectoryAddedContext, MessageDisplayContext, PreModelSwitchContext, PostModelSwitchContext, GenericContext } from '../context'
-import type { BashToolInput, ReadToolInput, WebFetchToolInput, WebSearchToolInput, AgentToolInput, PreToolUseEvent, PostToolUseEvent, PostToolUseFailureEvent, UserPromptSubmitEvent, UserPromptExpansionEvent, FileChangedEvent, CwdChangedEvent, ElicitationEvent, SessionStartEvent, SessionEndEvent, SubagentStartEvent, ConfigChangeEvent, TeammateIdleEvent, PreCompactEvent, PostCompactEvent, PostToolBatchEvent, PermissionRequestEvent, PermissionDeniedEvent, StopEvent, SubagentStopEvent, StopFailureEvent, ElicitationResultEvent, NotificationEvent, InstructionsLoadedEvent, TaskCreatedEvent, TaskCompletedEvent, WorktreeCreateEvent, WorktreeRemoveEvent, SetupEvent, DirectoryAddedEvent, MessageDisplayEvent, PreModelSwitchEvent, PostModelSwitchEvent } from '../types'
+import type { BashToolInput, ReadToolInput, WebFetchToolInput, WebSearchToolInput, AgentToolInput, MonitorToolInput, AskUserQuestionToolInput, ExitPlanModeToolInput, PreToolUseEvent, PostToolUseEvent, PostToolUseFailureEvent, UserPromptSubmitEvent, UserPromptExpansionEvent, FileChangedEvent, CwdChangedEvent, ElicitationEvent, SessionStartEvent, SessionEndEvent, SubagentStartEvent, ConfigChangeEvent, TeammateIdleEvent, PreCompactEvent, PostCompactEvent, PostToolBatchEvent, PermissionRequestEvent, PermissionDeniedEvent, StopEvent, SubagentStopEvent, StopFailureEvent, ElicitationResultEvent, NotificationEvent, InstructionsLoadedEvent, TaskCreatedEvent, TaskCompletedEvent, WorktreeCreateEvent, WorktreeRemoveEvent, SetupEvent, DirectoryAddedEvent, MessageDisplayEvent, PreModelSwitchEvent, PostModelSwitchEvent } from '../types'
 
 const baseEvent = {
   session_id: 'sess1',
@@ -77,6 +77,33 @@ describe('PreToolUseContext', () => {
       tool_input: { query: 'claude hooks', mode: 'standard' },
     })
     expect(search.input.mode).toBe('standard')
+  })
+
+  test('Monitor, AskUserQuestion and ExitPlanMode inputs are typed', () => {
+    const monitor = new PreToolUseContext<MonitorToolInput>({
+      ...preToolEvent,
+      tool_name: 'Monitor',
+      tool_input: { description: 'watch logs', timeout_ms: 60000, command: 'tail -f app.log' },
+    })
+    expect(monitor.input.command).toBe('tail -f app.log')
+
+    const ask = new PreToolUseContext<AskUserQuestionToolInput>({
+      ...preToolEvent,
+      tool_name: 'AskUserQuestion',
+      tool_input: {
+        questions: [{ question: 'Which DB?', header: 'DB', multiSelect: false, options: [{ label: 'Postgres', description: 'SQL' }, { label: 'Mongo', description: 'NoSQL' }] }],
+      },
+    })
+    ask.modify({ ...ask.input, answers: { 'Which DB?': ask.input.questions[0].options[0].label } })
+    ask.allow()
+    expect(ask._getOutput().hookSpecificOutput).toMatchObject({ permissionDecision: 'allow', updatedInput: { answers: { 'Which DB?': 'Postgres' } } })
+
+    const plan = new PreToolUseContext<ExitPlanModeToolInput>({
+      ...preToolEvent,
+      tool_name: 'ExitPlanMode',
+      tool_input: { plan: '## Plan', planFilePath: '/p/plan.md' },
+    })
+    expect(plan.input.planFilePath).toBe('/p/plan.md')
   })
 
   test('block sets _blocked and _blockReason', () => {

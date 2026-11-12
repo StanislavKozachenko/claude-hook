@@ -643,13 +643,22 @@ All event payloads and context classes are fully typed. Import types directly:
 import type { PreToolUseEvent, BashToolInput } from 'claude-hook'
 ```
 
-For `PreToolUse`/`PostToolUse`/`PostToolUseFailure`, an exact tool-name matcher types `ctx.input` for `Bash`, `PowerShell`, `Edit`, `Write`, `Read`, `Glob`, `Grep`, `WebFetch`, `WebSearch`, and `Agent`:
+For `PreToolUse`/`PostToolUse`/`PostToolUseFailure`, an exact tool-name matcher types `ctx.input` for `Bash`, `PowerShell`, `Edit`, `Write`, `Read`, `Glob`, `Grep`, `WebFetch`, `WebSearch`, `Agent`, `Monitor`, `AskUserQuestion`, and `ExitPlanMode`:
 
 ```ts
 hook.on('PreToolUse', 'WebFetch', (ctx) => {
   ctx.input.url  // string — typed as WebFetchToolInput
 })
+
+// Answer AskUserQuestion without showing the dialog: updatedInput paired with allow
+hook.on('PreToolUse', 'AskUserQuestion', (ctx) => {
+  const answers = Object.fromEntries(ctx.input.questions.map((q) => [q.question, q.options[0].label]))
+  ctx.modify({ ...ctx.input, answers })
+  ctx.allow()
+})
 ```
+
+> **Monitor commands:** on `PreToolUse` and `PermissionRequest`, a `Bash` matcher (also `Bash|PowerShell`, `^Bash$`, `Bash.*`) runs for shell commands Claude starts with the Monitor tool too (Claude Code v2.1.314+). The handler then sees a Bash call and can `block()` or `ask()`, but `allow()` and `modify()` have no effect on it. To allow or rewrite Monitor commands, match `Monitor` (or `Bash|Monitor`) — the handler then gets the Monitor call's own input (`MonitorToolInput`).
 
 ## License
 

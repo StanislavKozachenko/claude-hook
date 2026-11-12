@@ -136,6 +136,49 @@ export interface AgentToolInput {
   isolation?: 'worktree' | 'remote'
 }
 
+export interface MonitorToolInput {
+  description: string
+  /** Milliseconds; capped at 1800000 */
+  timeout_ms: number
+  /** Shell command — each stdout line is an event. Mutually exclusive with `ws` */
+  command?: string
+  /** WebSocket to watch — each text frame is an event */
+  ws?: { url: string; protocols?: string[] }
+}
+
+export interface AskUserQuestionOption {
+  label: string
+  description: string
+  preview?: string
+}
+
+export interface AskUserQuestion {
+  question: string
+  /** Short chip label, max 12 chars */
+  header: string
+  /** 2–4 options */
+  options: AskUserQuestionOption[]
+  multiSelect: boolean
+}
+
+export interface AskUserQuestionToolInput {
+  /** 1–4 questions */
+  questions: AskUserQuestion[]
+  /** Question text → chosen label (multi-select labels comma-joined). Claude never sets it — return it via `updatedInput` with `allow` to answer programmatically */
+  answers?: Record<string, string>
+  annotations?: Record<string, { preview?: string; notes?: string }>
+  metadata?: { source?: string }
+}
+
+export interface ExitPlanModeToolInput {
+  /** Plan Markdown, injected by Claude Code from the plan file */
+  plan?: string
+  /** Injected by Claude Code */
+  planFilePath?: string
+  /** @deprecated Ignored by Claude Code since v2.1.205 */
+  allowedPrompts?: { tool: 'Bash'; prompt: string }[]
+}
+
 export type ToolInput =
   | BashToolInput
   | EditToolInput
@@ -147,6 +190,9 @@ export type ToolInput =
   | WebFetchToolInput
   | WebSearchToolInput
   | AgentToolInput
+  | MonitorToolInput
+  | AskUserQuestionToolInput
+  | ExitPlanModeToolInput
   | Record<string, unknown>
 
 /** Identifies the MCP server a tool call belongs to, and how that server was configured. */
