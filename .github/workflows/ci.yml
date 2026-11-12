@@ -37,7 +37,7 @@ jobs:
           RANGE="${LAST_TAG:+${LAST_TAG}..}HEAD"
 
           HAS=$(git log $RANGE --pretty=format:"%s" \
-            | grep -qE "^(feat|fix|refactor|perf|docs|ci)(\([^)]+\))?:" && echo yes || echo no)
+            | grep -qE "^(feat|fix|refactor|perf|docs|ci)(\([^)]+\))?!?:" && echo yes || echo no)
 
           if [ "$HAS" = "no" ]; then
             echo "::error::No releasable commits (feat/fix/refactor/perf/docs/ci) found since ${LAST_TAG:-the beginning}. The next release run would emit an empty CHANGELOG. Add at least one commit with a conventional prefix."

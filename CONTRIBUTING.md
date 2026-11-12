@@ -22,6 +22,7 @@ Open an issue with a minimal reproduction: the hook handler code, the Claude Cod
 ## Commit style
 
 Short imperative message: `feat: add WorktreeCreate context` or `fix: handle empty stdin`.  
+Mark a breaking change with `!` (`feat!: ...`) — it goes under **Breaking** in the CHANGELOG.  
 No `Closes #N` in commit messages — only in the PR body.
 
 ## Release
