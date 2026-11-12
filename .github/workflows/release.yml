@@ -49,20 +49,22 @@ jobs:
           DATE=$(date +%Y-%m-%d)
           LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
 
+          # $2 = "!" selects only breaking commits (feat!: ...), "" only non-breaking ones
           get_section() {
-            local prefix=$1
+            local prefix=$1 bang=$2
             if [ -n "$LAST_TAG" ]; then
               git log "${LAST_TAG}..HEAD" --pretty=format:"%s" \
-                | grep -E "^(${prefix})(\([^)]+\))?:" \
-                | sed -E "s/^[a-z]+(\([^)]+\))?: /- /" || true
+                | grep -E "^(${prefix})(\([^)]+\))?${bang}:" \
+                | sed -E "s/^[a-z]+(\([^)]+\))?!?: /- /" || true
             fi
           }
 
-          ADDED=$(get_section "feat")
-          FIXED=$(get_section "fix")
-          CHANGED=$(get_section "refactor|perf|docs|ci")
+          BREAKING=$(get_section "feat|fix|refactor|perf|docs|ci" "!")
+          ADDED=$(get_section "feat" "")
+          FIXED=$(get_section "fix" "")
+          CHANGED=$(get_section "refactor|perf|docs|ci" "")
 
-          if [ -z "$ADDED" ] && [ -z "$FIXED" ] && [ -z "$CHANGED" ]; then
+          if [ -z "$BREAKING" ] && [ -z "$ADDED" ] && [ -z "$FIXED" ] && [ -z "$CHANGED" ]; then
             echo "::error::No releasable commits (feat/fix/refactor/perf/docs/ci) found since ${LAST_TAG:-the beginning}. CHANGELOG would be empty. Add conventional commits before releasing."
             exit 1
           fi
@@ -70,6 +72,12 @@ jobs:
           {
             echo "## [${VERSION}] - ${DATE}"
             echo ""
+            if [ -n "$BREAKING" ]; then
+              echo "### Breaking"
+              echo ""
+              echo "$BREAKING"
+              echo ""
+            fi
             if [ -n "$ADDED" ]; then
               echo "### Added"
               echo ""
