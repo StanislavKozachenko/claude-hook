@@ -161,6 +161,20 @@ function createContext(event: AnyEvent): BaseContext {
   }
 }
 
+// Pipe writes are asynchronous on POSIX: exiting right after write() drops whatever didn't fit
+// the pipe buffer (64 KB on Linux), so exit only once the output has been flushed
+function write(stream: NodeJS.WriteStream, data: string): Promise<void> {
+  return new Promise((resolve) => {
+    if (!data) return resolve()
+    stream.write(data, () => resolve())
+  })
+}
+
+async function exit(code: number, stdout = '', stderr = ''): Promise<never> {
+  await Promise.all([write(process.stdout, stdout), write(process.stderr, stderr)])
+  process.exit(code)
+}
+
 export interface HookOptions {
   /**
    * What happens when a handler throws or stdin isn't valid JSON.
@@ -180,9 +194,8 @@ export class HookHandler {
 
   // Never prints accumulated output: with exit 1, valid JSON on stdout still applies
   // (an earlier handler's allow() would win), so failure must leave stdout empty
-  private fail(message: string): never {
-    process.stderr.write(`claude-hook: ${message}\n`)
-    process.exit(this.onFailure === 'block' ? 2 : 1)
+  private fail(message: string): Promise<never> {
+    return exit(this.onFailure === 'block' ? 2 : 1, '', `claude-hook: ${message}\n`)
   }
 
   on(eventName: 'PreToolUse', matcher: 'Bash', handler: Handler<PreToolUseContext<BashToolInput>>): this
@@ -256,7 +269,7 @@ export class HookHandler {
     try {
       event = JSON.parse(raw) as AnyEvent
     } catch {
-      this.fail('failed to parse stdin JSON')
+      return this.fail('failed to parse stdin JSON')
     }
 
     const matcherValue = getMatcherValue(event as unknown as Record<string, unknown>)
@@ -277,22 +290,17 @@ export class HookHandler {
       try {
         await reg.handler(ctx)
       } catch (err) {
-        this.fail(`${event.hook_event_name} handler failed: ${err instanceof Error ? err.message : String(err)}`)
+        return this.fail(`${event.hook_event_name} handler failed: ${err instanceof Error ? err.message : String(err)}`)
       }
       if (ctx._isBlocked()) break
     }
 
     if (ctx._isBlocked()) {
-      process.stderr.write(ctx._getBlockReason() + '\n')
-      process.exit(2)
+      return exit(2, '', ctx._getBlockReason() + '\n')
     }
 
     const output = ctx._getOutput()
-    const hasOutput = Object.keys(output).length > 0
-    if (hasOutput) {
-      process.stdout.write(JSON.stringify(output))
-    }
-    process.exit(0)
+    return exit(0, Object.keys(output).length > 0 ? JSON.stringify(output) : '')
   }
 }
 
