@@ -1,7 +1,7 @@
 import * as fs from 'fs'
 import * as os from 'os'
 import * as path from 'path'
-import { PreToolUseContext, PermissionRequestContext, UserPromptSubmitContext, UserPromptExpansionContext, PostToolUseContext, FileChangedContext, CwdChangedContext, ElicitationContext, SessionStartContext, SessionEndContext, SubagentStartContext, ConfigChangeContext, TeammateIdleContext, PreCompactContext, PostCompactContext, PostToolBatchContext, StopContext, StopFailureContext, ElicitationResultContext, NotificationContext, InstructionsLoadedContext, TaskCreatedContext, TaskCompletedContext, WorktreeCreateContext, WorktreeRemoveContext, SetupContext, DirectoryAddedContext, MessageDisplayContext, PreModelSwitchContext, PostModelSwitchContext, GenericContext } from '../context'
+import { PreToolUseContext, PermissionDeniedContext, PermissionRequestContext, UserPromptSubmitContext, UserPromptExpansionContext, PostToolUseContext, FileChangedContext, CwdChangedContext, ElicitationContext, SessionStartContext, SessionEndContext, SubagentStartContext, ConfigChangeContext, TeammateIdleContext, PreCompactContext, PostCompactContext, PostToolBatchContext, StopContext, StopFailureContext, ElicitationResultContext, NotificationContext, InstructionsLoadedContext, TaskCreatedContext, TaskCompletedContext, WorktreeCreateContext, WorktreeRemoveContext, SetupContext, DirectoryAddedContext, MessageDisplayContext, PreModelSwitchContext, PostModelSwitchContext, GenericContext } from '../context'
 import type { BashToolInput, ReadToolInput, WebFetchToolInput, WebSearchToolInput, AgentToolInput, MonitorToolInput, AskUserQuestionToolInput, ExitPlanModeToolInput, PreToolUseEvent, PostToolUseEvent, PostToolUseFailureEvent, UserPromptSubmitEvent, UserPromptExpansionEvent, FileChangedEvent, CwdChangedEvent, ElicitationEvent, SessionStartEvent, SessionEndEvent, SubagentStartEvent, ConfigChangeEvent, TeammateIdleEvent, PreCompactEvent, PostCompactEvent, PostToolBatchEvent, PermissionRequestEvent, PermissionDeniedEvent, StopEvent, SubagentStopEvent, StopFailureEvent, ElicitationResultEvent, NotificationEvent, InstructionsLoadedEvent, TaskCreatedEvent, TaskCompletedEvent, WorktreeCreateEvent, WorktreeRemoveEvent, SetupEvent, DirectoryAddedEvent, MessageDisplayEvent, PreModelSwitchEvent, PostModelSwitchEvent } from '../types'
 
 const baseEvent = {
@@ -203,12 +203,6 @@ describe('PreToolUseContext', () => {
     expect(ctx._getOutput().hookSpecificOutput?.permissionDecision).toBe('allow')
   })
 
-  test('retry sets retry flag in hookSpecificOutput', () => {
-    const ctx = new PreToolUseContext(preToolEvent)
-    ctx.retry()
-    expect(ctx._getOutput().hookSpecificOutput?.retry).toBe(true)
-  })
-
   test('allow sets permissionDecision', () => {
     const ctx = new PreToolUseContext(preToolEvent)
     ctx.allow()
@@ -261,55 +255,6 @@ describe('PreToolUseContext', () => {
   test('permissionSuggestions is undefined when omitted', () => {
     const ctx = new PreToolUseContext(preToolEvent)
     expect(ctx.permissionSuggestions).toBeUndefined()
-  })
-
-  test('allow/modify/addContext report the actual event name for PermissionDenied', () => {
-    const permissionDeniedEvent: PermissionDeniedEvent = {
-      ...baseEvent,
-      hook_event_name: 'PermissionDenied',
-      tool_name: 'Bash',
-      tool_input: { command: 'rm -rf /tmp/foo' },
-      tool_use_id: 'toolu_1',
-      reason: 'matched a deny rule',
-    }
-    const ctx = new PreToolUseContext(permissionDeniedEvent as unknown as PreToolUseEvent)
-
-    ctx.addContext('denied context')
-    expect(ctx._getOutput().hookSpecificOutput?.hookEventName).toBe('PermissionDenied')
-  })
-
-  test('retry reports the actual event name for PermissionDenied', () => {
-    const permissionDeniedEvent: PermissionDeniedEvent = {
-      ...baseEvent,
-      hook_event_name: 'PermissionDenied',
-      tool_name: 'Bash',
-      tool_input: { command: 'rm -rf /tmp/foo' },
-      tool_use_id: 'toolu_1',
-      reason: 'matched a deny rule',
-    }
-    const ctx = new PreToolUseContext(permissionDeniedEvent as unknown as PreToolUseEvent)
-
-    ctx.retry()
-    expect(ctx._getOutput().hookSpecificOutput?.hookEventName).toBe('PermissionDenied')
-    expect(ctx._getOutput().hookSpecificOutput?.retry).toBe(true)
-  })
-
-  test('reason accessor for PermissionDenied', () => {
-    const permissionDeniedEvent: PermissionDeniedEvent = {
-      ...baseEvent,
-      hook_event_name: 'PermissionDenied',
-      tool_name: 'Bash',
-      tool_input: { command: 'rm -rf /tmp/foo' },
-      tool_use_id: 'toolu_1',
-      reason: 'matched a deny rule',
-    }
-    const ctx = new PreToolUseContext(permissionDeniedEvent as unknown as PreToolUseEvent)
-    expect(ctx.reason).toBe('matched a deny rule')
-  })
-
-  test('reason accessor is undefined for PreToolUse', () => {
-    const ctx = new PreToolUseContext(preToolEvent)
-    expect(ctx.reason).toBeUndefined()
   })
 
   test('mcpServer accessor is undefined when omitted', () => {
@@ -1530,5 +1475,40 @@ describe('GenericContext', () => {
     const ctx = new GenericContext(event)
     expect(ctx.hookEventName).toBe('ConfigChange')
     expect(ctx.sessionId).toBe('sess1')
+  })
+})
+
+describe('PermissionDeniedContext', () => {
+  const event: PermissionDeniedEvent = {
+    ...baseEvent,
+    hook_event_name: 'PermissionDenied',
+    tool_name: 'Bash',
+    tool_input: { command: 'rm -rf /tmp/build' },
+    tool_use_id: 'toolu_1',
+    reason: '[Irreversible Local Destruction]',
+    mcp_server: { name: 'gh', source: 'user' },
+  }
+
+  test('accessors', () => {
+    const ctx = new PermissionDeniedContext<BashToolInput>(event)
+    expect(ctx.toolName).toBe('Bash')
+    expect(ctx.input.command).toBe('rm -rf /tmp/build')
+    expect(ctx.toolUseId).toBe('toolu_1')
+    expect(ctx.reason).toBe('[Irreversible Local Destruction]')
+    expect(ctx.mcpServer).toEqual({ name: 'gh', source: 'user' })
+    expect(ctx.hookEventName).toBe('PermissionDenied')
+  })
+
+  test('retry sets the only output PermissionDenied has', () => {
+    const ctx = new PermissionDeniedContext(event)
+    ctx.retry()
+    expect(ctx._getOutput()).toEqual({ hookSpecificOutput: { hookEventName: 'PermissionDenied', retry: true } })
+  })
+
+  test('exposes no blocking or decision methods', () => {
+    const ctx = new PermissionDeniedContext(event) as unknown as Record<string, unknown>
+    for (const method of ['block', 'allow', 'ask', 'defer', 'modify', 'addContext']) {
+      expect(ctx[method]).toBeUndefined()
+    }
   })
 })

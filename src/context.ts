@@ -41,6 +41,7 @@ import type {
   ToolInput,
   PermissionUpdate,
   PermissionRequestEvent,
+  PermissionDeniedEvent,
   McpServerProvenance,
   PermissionMode,
   PermissionDecision,
@@ -137,10 +138,7 @@ export class PreToolUseContext<T extends ToolInput = ToolInput> extends BaseCont
     return (this.event as unknown as { permission_suggestions?: PermissionUpdate[] }).permission_suggestions
   }
 
-  get reason(): string | undefined {
-    return (this.event as unknown as { reason?: string }).reason
-  }
-
+  get toolUseId(): string { return this.event.tool_use_id }
   get mcpServer(): McpServerProvenance | undefined { return this.event.mcp_server }
 
   block(reason: string): void {
@@ -188,11 +186,29 @@ export class PreToolUseContext<T extends ToolInput = ToolInput> extends BaseCont
       additionalContext: this.appendContext(text),
     }
   }
+}
 
+/**
+ * PermissionDenied fires after auto mode has already denied the tool call: it can't block,
+ * allow or rewrite anything. Its only output is `retry` — a note telling Claude it may try again.
+ */
+export class PermissionDeniedContext<T extends ToolInput = ToolInput> extends BaseContext {
+  declare readonly event: PermissionDeniedEvent
+
+  constructor(event: PermissionDeniedEvent) { super(event) }
+
+  get toolName(): string { return this.event.tool_name }
+  get input(): T { return this.event.tool_input as T }
+  get toolUseId(): string { return this.event.tool_use_id }
+  /** Why auto mode denied it, e.g. `[Data Exfiltration]` */
+  get reason(): string { return this.event.reason }
+  get mcpServer(): McpServerProvenance | undefined { return this.event.mcp_server }
+
+  /** Tell Claude it may retry the call. The denial itself stands; ignored when the classifier gave no verdict. */
   retry(): void {
     this._output.hookSpecificOutput = {
       ...this._output.hookSpecificOutput,
-      hookEventName: this.event.hook_event_name,
+      hookEventName: 'PermissionDenied',
       retry: true,
     }
   }

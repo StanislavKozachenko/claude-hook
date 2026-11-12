@@ -26,6 +26,9 @@ createHook()
   .on('SessionStart', 'resume', (ctx) => {
     ctx.addContext('resumed')
   })
+  .on('PermissionDenied', 'Bash', (ctx) => {
+    if (ctx.input.command.startsWith('rm -rf ./dist')) ctx.retry()
+  })
   .on('PreCompact', 'manual', (ctx) => {
     ctx.addInstructions('Keep the list of open TODOs')
   })

@@ -179,6 +179,23 @@ export interface ExitPlanModeToolInput {
   allowedPrompts?: { tool: 'Bash'; prompt: string }[]
 }
 
+/** Tool name → its input type, for matchers that name exactly one tool */
+export interface ToolInputMap {
+  Bash: BashToolInput
+  PowerShell: PowerShellToolInput
+  Edit: EditToolInput
+  Write: WriteToolInput
+  Read: ReadToolInput
+  Glob: GlobToolInput
+  Grep: GrepToolInput
+  WebFetch: WebFetchToolInput
+  WebSearch: WebSearchToolInput
+  Agent: AgentToolInput
+  Monitor: MonitorToolInput
+  AskUserQuestion: AskUserQuestionToolInput
+  ExitPlanMode: ExitPlanModeToolInput
+}
+
 export type ToolInput =
   | BashToolInput
   | EditToolInput

@@ -109,6 +109,15 @@ describe('run() routing, blocking and output', () => {
     expect(JSON.parse(stdout).hookSpecificOutput.additionalContext).toBe('fresh context\nafter compaction')
   })
 
+  test('PermissionDenied handlers get a typed PermissionDeniedContext that can only retry', () => {
+    const denied = (command: string) =>
+      event({ hook_event_name: 'PermissionDenied', tool_name: 'Bash', tool_input: { command }, reason: '[Irreversible Local Destruction]' })
+    const retried = runHook('routing-hook.ts', denied('rm -rf ./dist'))
+    expect(retried.code).toBe(0)
+    expect(JSON.parse(retried.stdout)).toEqual({ hookSpecificOutput: { hookEventName: 'PermissionDenied', retry: true } })
+    expect(runHook('routing-hook.ts', denied('rm -rf /')).stdout).toBe('')
+  })
+
   test('PreCompact instructions go to stdout as plain text, not JSON', () => {
     const { code, stdout } = runHook('routing-hook.ts', event({ hook_event_name: 'PreCompact', trigger: 'manual', custom_instructions: null }))
     expect(code).toBe(0)

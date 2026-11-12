@@ -187,13 +187,20 @@ hook.on('PreToolUse', 'Bash', (ctx) => {
   ctx.modify({ command: 'echo safe' })  // rewrite tool input
   ctx.addContext('info for Claude')
 })
+```
 
-// PermissionDenied also reuses PreToolUseContext; the denial already happened
-// (`.block()`/`.allow()`/`.modify()` have no effect), but `.retry()` tells
-// Claude Code the model may retry the denied tool call.
-hook.on('PermissionDenied', '*', (ctx) => {
-  ctx.reason  // why the permission was denied
-  ctx.retry()
+### `PermissionDeniedContext`
+
+Fires after auto mode has already denied a tool call, so there is nothing to block, allow or rewrite. The only output is `retry()`:
+
+```ts
+hook.on('PermissionDenied', 'Bash', (ctx) => {
+  ctx.toolName    // 'Bash'
+  ctx.input       // the denied call's input
+  ctx.toolUseId
+  ctx.reason      // e.g. '[Irreversible Local Destruction]'
+  ctx.mcpServer   // { name, source } for MCP tools, else undefined
+  if (ctx.input.command.startsWith('rm -rf ./dist')) ctx.retry()  // tell Claude it may try again; the denial itself stands
 })
 ```
 
@@ -613,7 +620,7 @@ For all other events, the handler receives a `GenericContext` with `ctx.block(re
 | `PostToolUseFailure` | After failed tool call | no | `PostToolUseContext` |
 | `PostToolBatch` | After a batch of tool calls | yes | `PostToolBatchContext` |
 | `PermissionRequest` | When permission dialog shows | via `decision`, not exit code | `PermissionRequestContext` |
-| `PermissionDenied` | After permission denied | no | `PreToolUseContext` |
+| `PermissionDenied` | After auto mode denies a tool call | no | `PermissionDeniedContext` |
 | `UserPromptSubmit` | Before Claude sees your message | yes | `UserPromptSubmitContext` |
 | `UserPromptExpansion` | When a slash command expands | yes | `UserPromptExpansionContext` |
 | `SessionStart` | Session begins or resumes | no | `SessionStartContext` |
