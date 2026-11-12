@@ -6,6 +6,27 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ---
 
+## [0.11.0] - 2026-11-12
+
+### Added
+
+- add PreCompactContext.addInstructions() to steer the compaction summary (#207)
+- typed inputs for Monitor, AskUserQuestion and ExitPlanMode (#203)
+
+### Fixed
+
+- resolve conflicting handler decisions with Claude Code's precedence (#205)
+- add mode to WebSearchToolInput (#201)
+- addContext() appends so every matching handler's context is kept (#199)
+- flush hook output before exit so it isn't cut at 64 KB on POSIX (#197)
+
+### Changed
+
+- use CLAUDE_PROJECT_DIR in settings examples and document onFailure: block (#209)
+
+---
+
+
 ## [0.10.0] - 2026-10-27
 
 ### Added
