@@ -433,6 +433,8 @@ hook.on('WorktreeCreate', '*', (ctx) => {
 
 hook.on('WorktreeRemove', '*', (ctx) => {
   ctx.worktreePath  // absolute path to the worktree
+  // Delete it yourself (Claude Code reads nothing else from the hook), or keep it:
+  if (hasUnsavedWork(ctx.worktreePath)) ctx.block('uncommitted work in a non-git checkout')
 })
 ```
 
@@ -443,8 +445,9 @@ hook.on('WorktreeRemove', '*', (ctx) => {
 > (a plain shell-command hook, instead, would print the path to stdout with
 > nothing else on it — `provideWorktreePath()` is the JSON-output equivalent).
 >
-> `WorktreeRemove` failures are only logged in debug mode; there's no way to
-> block or stop the removal, so `WorktreeRemoveContext` has no `.block()`.
+> On `WorktreeRemove`, `ctx.block()` (exit 2) fails the removal as long as the
+> directory still exists — the worktree stays on disk with no git fallback. The
+> reason goes to the debug log; Claude Code discards the hook's JSON output.
 
 ### `SessionEndContext`
 
@@ -629,7 +632,7 @@ For all other events, the handler receives a `GenericContext` with `ctx.block(re
 | `TaskCreated` | Task created | yes | `TaskCreatedContext` |
 | `TaskCompleted` | Task completed | yes | `TaskCompletedContext` |
 | `WorktreeCreate` | Git worktree created | yes | `WorktreeCreateContext` |
-| `WorktreeRemove` | Git worktree removed | no | `WorktreeRemoveContext` |
+| `WorktreeRemove` | Hook-created worktree being removed | yes | `WorktreeRemoveContext` |
 | `FileChanged` | Watched file changed on disk | no | `FileChangedContext` |
 | `CwdChanged` | Working directory changed | no | `CwdChangedContext` |
 | `ConfigChange` | Claude Code config changed | yes | `ConfigChangeContext` |
