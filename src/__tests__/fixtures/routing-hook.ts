@@ -26,7 +26,13 @@ createHook()
   .on('SessionStart', 'resume', (ctx) => {
     ctx.addContext('resumed')
   })
+  .on('PreCompact', 'manual', (ctx) => {
+    ctx.addInstructions('Keep the list of open TODOs')
+  })
+  .on('PreCompact', '*', (ctx) => {
+    ctx.addInstructions(`Trigger: ${ctx.trigger}`)
+  })
   .on('*', '*', (ctx) => {
-    if (ctx.hookEventName === 'Notification') ctx.setTerminalSequence('\x07')
+    if (ctx.hookEventName === 'Notification' || ctx.hookEventName === 'PreCompact') ctx.setTerminalSequence('\x07')
   })
   .run()

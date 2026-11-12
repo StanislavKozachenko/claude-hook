@@ -830,6 +830,15 @@ describe('PreCompactContext', () => {
     expect(ctx._isBlocked()).toBe(true)
     expect(ctx._getBlockReason()).toBe('not now')
   })
+
+  test('addInstructions sets plain-text output and appends on repeated calls', () => {
+    const ctx = new PreCompactContext(event)
+    expect(ctx._getPlainOutput()).toBeUndefined()
+    ctx.addInstructions('Keep the list of open TODOs')
+    ctx.addInstructions('Keep file paths verbatim')
+    expect(ctx._getPlainOutput()).toBe('Keep the list of open TODOs\nKeep file paths verbatim')
+    expect(ctx._getOutput()).toEqual({})
+  })
 })
 
 describe('PostCompactContext', () => {

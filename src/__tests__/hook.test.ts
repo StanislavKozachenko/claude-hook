@@ -109,6 +109,12 @@ describe('run() routing, blocking and output', () => {
     expect(JSON.parse(stdout).hookSpecificOutput.additionalContext).toBe('fresh context\nafter compaction')
   })
 
+  test('PreCompact instructions go to stdout as plain text, not JSON', () => {
+    const { code, stdout } = runHook('routing-hook.ts', event({ hook_event_name: 'PreCompact', trigger: 'manual', custom_instructions: null }))
+    expect(code).toBe(0)
+    expect(stdout).toBe('Keep the list of open TODOs\nTrigger: manual')
+  })
+
   test("a '*' event registration receives every event", () => {
     const { stdout } = runHook('routing-hook.ts', event({ hook_event_name: 'Notification', notification_type: 'idle_prompt', message: 'm' }))
     expect(JSON.parse(stdout)).toEqual({ terminalSequence: '\x07' })

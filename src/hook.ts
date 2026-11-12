@@ -308,6 +308,9 @@ export class HookHandler {
       return exit(2, '', ctx._getBlockReason() + '\n')
     }
 
+    const plain = ctx._getPlainOutput()
+    if (plain !== undefined) return exit(0, plain)
+
     const output = ctx._getOutput()
     return exit(0, Object.keys(output).length > 0 ? JSON.stringify(output) : '')
   }
