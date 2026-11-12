@@ -59,6 +59,15 @@ function appendEnvVar(key: string, value: string): void {
   fs.appendFileSync(envFile, `export ${key}=${quoted}\n`)
 }
 
+// Claude Code resolves conflicting decisions from several hooks as deny > defer > ask > allow
+// (deny is block(), which ends the chain). Handlers on one ctx follow the same rule, so a
+// later handler's allow() can't override an earlier handler's ask()
+const DECISION_RANK: Record<PermissionDecision, number> = { allow: 0, ask: 1, defer: 2, deny: 3 }
+
+function outranks(current: PermissionDecision | undefined, next: PermissionDecision): boolean {
+  return current !== undefined && DECISION_RANK[current] > DECISION_RANK[next]
+}
+
 export class BaseContext {
   readonly event: AnyEvent
   protected _output: HookOutput = {}
@@ -152,6 +161,7 @@ export class PreToolUseContext<T extends ToolInput = ToolInput> extends BaseCont
   }
 
   private setPermissionDecision(decision: PermissionDecision, reason: string | undefined): void {
+    if (outranks(this._output.hookSpecificOutput?.permissionDecision, decision)) return
     this._output.hookSpecificOutput = {
       ...this._output.hookSpecificOutput,
       hookEventName: this.event.hook_event_name,
@@ -503,6 +513,7 @@ export class ElicitationContext extends BaseContext {
   }
 
   accept(content?: Record<string, unknown>): void {
+    if (this.declined()) return
     this._output.hookSpecificOutput = {
       ...this._output.hookSpecificOutput,
       hookEventName: 'Elicitation',
@@ -516,10 +527,17 @@ export class ElicitationContext extends BaseContext {
       ...this._output.hookSpecificOutput,
       hookEventName: 'Elicitation',
       action: 'decline',
+      content: undefined,
     }
   }
 
+  // Claude Code lets a decline from one hook override another's accept or cancel — handlers do the same
+  private declined(): boolean {
+    return this._output.hookSpecificOutput?.action === 'decline'
+  }
+
   cancel(): void {
+    if (this.declined()) return
     this._output.hookSpecificOutput = {
       ...this._output.hookSpecificOutput,
       hookEventName: 'Elicitation',
@@ -676,6 +694,7 @@ export class PreModelSwitchContext extends BaseContext {
   }
 
   private setPermissionDecision(decision: 'allow' | 'ask', reason: string | undefined): void {
+    if (outranks(this._output.hookSpecificOutput?.permissionDecision, decision)) return
     this._output.hookSpecificOutput = {
       ...this._output.hookSpecificOutput,
       hookEventName: 'PreModelSwitch',

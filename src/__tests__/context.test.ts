@@ -225,17 +225,31 @@ describe('PreToolUseContext', () => {
     })
   })
 
-  test('a later decision replaces the earlier decision and its reason', () => {
+  test('a later decision of equal or higher precedence replaces the earlier one and its reason', () => {
     const ctx = new PreToolUseContext(preToolEvent)
     ctx.modify({ command: 'echo safe' })
+    ctx.allow('looks fine')
     ctx.ask('confirm rewritten command')
-    ctx.allow()
     const out = JSON.parse(JSON.stringify(ctx._getOutput()))
     expect(out.hookSpecificOutput).toEqual({
       hookEventName: 'PreToolUse',
       updatedInput: { command: 'echo safe' },
-      permissionDecision: 'allow',
+      permissionDecision: 'ask',
+      permissionDecisionReason: 'confirm rewritten command',
     })
+    ctx.ask()
+    expect(JSON.parse(JSON.stringify(ctx._getOutput())).hookSpecificOutput.permissionDecisionReason).toBeUndefined()
+  })
+
+  test('decisions follow Claude Code precedence: a weaker decision never overrides a stronger one', () => {
+    const ctx = new PreToolUseContext(preToolEvent)
+    ctx.ask('policy wants a human')
+    ctx.allow('another handler is fine with it')
+    expect(ctx._getOutput().hookSpecificOutput).toMatchObject({ permissionDecision: 'ask', permissionDecisionReason: 'policy wants a human' })
+    ctx.defer()
+    ctx.ask()
+    ctx.allow()
+    expect(ctx._getOutput().hookSpecificOutput?.permissionDecision).toBe('defer')
   })
 
   test('toolName and input accessors', () => {
@@ -628,6 +642,15 @@ describe('ElicitationContext', () => {
     mode: 'form',
     requested_schema: { type: 'object' },
   }
+
+  test('a decline from any handler overrides accept or cancel', () => {
+    const ctx = new ElicitationContext(event)
+    ctx.accept({ answer: 42 })
+    ctx.decline()
+    ctx.accept({ answer: 43 })
+    ctx.cancel()
+    expect(JSON.parse(JSON.stringify(ctx._getOutput())).hookSpecificOutput).toEqual({ hookEventName: 'Elicitation', action: 'decline' })
+  })
 
   test('mcpServerName and message accessors', () => {
     const ctx = new ElicitationContext(event)
@@ -1336,6 +1359,13 @@ describe('PreModelSwitchContext', () => {
     expect(ctx.cacheTtl).toBe('5m')
     expect(ctx.estimatedCacheWriteUsd).toBe(0.42)
     expect(ctx.pricing).toBe('catalog')
+  })
+
+  test('a later allow() does not override an earlier ask()', () => {
+    const ctx = new PreModelSwitchContext(event)
+    ctx.ask('expensive cache miss')
+    ctx.allow()
+    expect(ctx._getOutput().hookSpecificOutput).toMatchObject({ permissionDecision: 'ask', permissionDecisionReason: 'expensive cache miss' })
   })
 
   test('block sets _blocked and _blockReason', () => {
