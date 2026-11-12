@@ -118,6 +118,8 @@ export interface WebSearchToolInput {
   query: string
   allowed_domains?: string[]
   blocked_domains?: string[]
+  /** `'standard'` is a lighter search; absent means the full search (Claude Code v2.1.282+) */
+  mode?: 'standard' | 'extended'
 }
 
 export interface AgentToolInput {
