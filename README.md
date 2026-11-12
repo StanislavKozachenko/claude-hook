@@ -684,6 +684,18 @@ hook.on('PreToolUse', 'AskUserQuestion', (ctx) => {
 
 > **Monitor commands:** on `PreToolUse` and `PermissionRequest`, a `Bash` matcher (also `Bash|PowerShell`, `^Bash$`, `Bash.*`) runs for shell commands Claude starts with the Monitor tool too (Claude Code v2.1.314+). The handler then sees a Bash call and can `block()` or `ask()`, but `allow()` and `modify()` have no effect on it. To allow or rewrite Monitor commands, match `Monitor` (or `Bash|Monitor`) — the handler then gets the Monitor call's own input (`MonitorToolInput`).
 
+## Upgrading to 1.0
+
+1.0 removes methods that type-checked but did nothing on their event. TypeScript points at each call site:
+
+| 0.x | 1.0 |
+|---|---|
+| `PermissionDenied` handler gets `PreToolUseContext` | It gets `PermissionDeniedContext`: `toolName`, `input`, `toolUseId`, `reason`, `mcpServer`, `retry()`. Drop `block()`/`allow()`/`ask()`/`defer()`/`modify()`/`addContext()` calls — the denial had already happened, so they had no effect |
+| `PreToolUseContext.retry()` / `.reason` | Only on `PermissionDeniedContext`, the one event that uses them |
+| `FileChangedContext.block()` / `CwdChangedContext.block()` | `ctx.setSystemMessage(text)` — shows the same notice, and doesn't discard `setWatchPaths()` like exit 2 did |
+| `ctx.suppress()` | Remove it — Claude Code ignored `suppressOutput` |
+| `SetupContext.addContext()` | Use `SessionStartContext.addContext()` — Claude Code discards Setup's JSON output |
+
 ## License
 
 MIT
