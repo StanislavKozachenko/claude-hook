@@ -41,7 +41,7 @@
   "scripts": {
     "build": "tsup src/index.ts --format esm,cjs --dts --clean",
     "test": "jest",
-    "lint": "tsc --noEmit"
+    "lint": "tsc -p tsconfig.test.json"
   },
   "devDependencies": {
     "@types/jest": "^29.5.14",

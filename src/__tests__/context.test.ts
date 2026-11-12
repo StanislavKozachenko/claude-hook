@@ -8,7 +8,7 @@ const baseEvent = {
   session_id: 'sess1',
   transcript_path: '/tmp/t.jsonl',
   cwd: '/home/user',
-  permission_mode: 'default',
+  permission_mode: 'default' as const,
   tool_use_id: 'tu1',
   prompt_id: 'prompt1',
 }
@@ -247,7 +247,7 @@ describe('PreToolUseContext', () => {
   })
 
   test('toolName and input accessors', () => {
-    const ctx = new PreToolUseContext(preToolEvent)
+    const ctx = new PreToolUseContext<BashToolInput>(preToolEvent)
     expect(ctx.toolName).toBe('Bash')
     expect(ctx.input.command).toBe('rm -rf /tmp/foo')
   })
@@ -282,7 +282,7 @@ describe('PermissionRequestContext', () => {
   }
 
   test('toolName and input accessors', () => {
-    const ctx = new PermissionRequestContext(permissionRequestEvent)
+    const ctx = new PermissionRequestContext<BashToolInput>(permissionRequestEvent)
     expect(ctx.toolName).toBe('Bash')
     expect(ctx.input.command).toBe('rm -rf /tmp/foo')
   })
