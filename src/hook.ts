@@ -48,11 +48,13 @@ import type {
   MonitorToolInput,
   AskUserQuestionToolInput,
   ExitPlanModeToolInput,
+  ToolInputMap,
 } from './types.js'
 import {
   BaseContext,
   PreToolUseContext,
   PermissionRequestContext,
+  PermissionDeniedContext,
   PostToolUseContext,
   PostToolBatchContext,
   UserPromptSubmitContext,
@@ -100,7 +102,7 @@ function createContext(event: AnyEvent): BaseContext {
     case 'PermissionRequest':
       return new PermissionRequestContext(event as PermissionRequestEvent)
     case 'PermissionDenied':
-      return new PreToolUseContext(event as unknown as PreToolUseEvent)
+      return new PermissionDeniedContext(event as PermissionDeniedEvent)
     case 'PostToolUse':
     case 'PostToolUseFailure':
       return new PostToolUseContext(event as PostToolUseEvent | PostToolUseFailureEvent)
@@ -227,7 +229,9 @@ export class HookHandler {
   on(eventName: 'PostToolUse' | 'PostToolUseFailure', matcher: 'Monitor', handler: Handler<PostToolUseContext<MonitorToolInput>>): this
   on(eventName: 'PostToolUse' | 'PostToolUseFailure', matcher: 'AskUserQuestion', handler: Handler<PostToolUseContext<AskUserQuestionToolInput>>): this
   on(eventName: 'PostToolUse' | 'PostToolUseFailure', matcher: 'ExitPlanMode', handler: Handler<PostToolUseContext<ExitPlanModeToolInput>>): this
-  on(eventName: 'PreToolUse' | 'PermissionDenied', matcher: string, handler: Handler<PreToolUseContext>): this
+  on(eventName: 'PreToolUse', matcher: string, handler: Handler<PreToolUseContext>): this
+  on<K extends keyof ToolInputMap>(eventName: 'PermissionDenied', matcher: K, handler: Handler<PermissionDeniedContext<ToolInputMap[K]>>): this
+  on(eventName: 'PermissionDenied', matcher: string, handler: Handler<PermissionDeniedContext>): this
   on(eventName: 'PermissionRequest', matcher: string, handler: Handler<PermissionRequestContext>): this
   on(eventName: 'PostToolUse' | 'PostToolUseFailure', matcher: string, handler: Handler<PostToolUseContext>): this
   on(eventName: 'PostToolBatch', matcher: string, handler: Handler<PostToolBatchContext>): this
