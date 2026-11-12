@@ -35,19 +35,6 @@ import type {
   MessageDisplayEvent,
   PreModelSwitchEvent,
   PostModelSwitchEvent,
-  BashToolInput,
-  EditToolInput,
-  WriteToolInput,
-  ReadToolInput,
-  PowerShellToolInput,
-  GlobToolInput,
-  GrepToolInput,
-  WebFetchToolInput,
-  WebSearchToolInput,
-  AgentToolInput,
-  MonitorToolInput,
-  AskUserQuestionToolInput,
-  ExitPlanModeToolInput,
   ToolInputMap,
 } from './types.js'
 import {
@@ -203,34 +190,12 @@ export class HookHandler {
     return exit(this.onFailure === 'block' ? 2 : 1, '', `claude-hook: ${message}\n`)
   }
 
-  on(eventName: 'PreToolUse', matcher: 'Bash', handler: Handler<PreToolUseContext<BashToolInput>>): this
-  on(eventName: 'PreToolUse', matcher: 'Edit', handler: Handler<PreToolUseContext<EditToolInput>>): this
-  on(eventName: 'PreToolUse', matcher: 'Write', handler: Handler<PreToolUseContext<WriteToolInput>>): this
-  on(eventName: 'PreToolUse', matcher: 'Read', handler: Handler<PreToolUseContext<ReadToolInput>>): this
-  on(eventName: 'PreToolUse', matcher: 'PowerShell', handler: Handler<PreToolUseContext<PowerShellToolInput>>): this
-  on(eventName: 'PreToolUse', matcher: 'Glob', handler: Handler<PreToolUseContext<GlobToolInput>>): this
-  on(eventName: 'PreToolUse', matcher: 'Grep', handler: Handler<PreToolUseContext<GrepToolInput>>): this
-  on(eventName: 'PreToolUse', matcher: 'WebFetch', handler: Handler<PreToolUseContext<WebFetchToolInput>>): this
-  on(eventName: 'PreToolUse', matcher: 'WebSearch', handler: Handler<PreToolUseContext<WebSearchToolInput>>): this
-  on(eventName: 'PreToolUse', matcher: 'Agent', handler: Handler<PreToolUseContext<AgentToolInput>>): this
-  on(eventName: 'PreToolUse', matcher: 'Monitor', handler: Handler<PreToolUseContext<MonitorToolInput>>): this
-  on(eventName: 'PreToolUse', matcher: 'AskUserQuestion', handler: Handler<PreToolUseContext<AskUserQuestionToolInput>>): this
-  on(eventName: 'PreToolUse', matcher: 'ExitPlanMode', handler: Handler<PreToolUseContext<ExitPlanModeToolInput>>): this
-  on(eventName: 'PostToolUse' | 'PostToolUseFailure', matcher: 'Bash', handler: Handler<PostToolUseContext<BashToolInput>>): this
-  on(eventName: 'PostToolUse' | 'PostToolUseFailure', matcher: 'Edit', handler: Handler<PostToolUseContext<EditToolInput>>): this
-  on(eventName: 'PostToolUse' | 'PostToolUseFailure', matcher: 'Write', handler: Handler<PostToolUseContext<WriteToolInput>>): this
-  on(eventName: 'PostToolUse' | 'PostToolUseFailure', matcher: 'Read', handler: Handler<PostToolUseContext<ReadToolInput>>): this
-  on(eventName: 'PostToolUse' | 'PostToolUseFailure', matcher: 'PowerShell', handler: Handler<PostToolUseContext<PowerShellToolInput>>): this
-  on(eventName: 'PostToolUse' | 'PostToolUseFailure', matcher: 'Glob', handler: Handler<PostToolUseContext<GlobToolInput>>): this
-  on(eventName: 'PostToolUse' | 'PostToolUseFailure', matcher: 'Grep', handler: Handler<PostToolUseContext<GrepToolInput>>): this
-  on(eventName: 'PostToolUse' | 'PostToolUseFailure', matcher: 'WebFetch', handler: Handler<PostToolUseContext<WebFetchToolInput>>): this
-  on(eventName: 'PostToolUse' | 'PostToolUseFailure', matcher: 'WebSearch', handler: Handler<PostToolUseContext<WebSearchToolInput>>): this
-  on(eventName: 'PostToolUse' | 'PostToolUseFailure', matcher: 'Agent', handler: Handler<PostToolUseContext<AgentToolInput>>): this
-  on(eventName: 'PostToolUse' | 'PostToolUseFailure', matcher: 'Monitor', handler: Handler<PostToolUseContext<MonitorToolInput>>): this
-  on(eventName: 'PostToolUse' | 'PostToolUseFailure', matcher: 'AskUserQuestion', handler: Handler<PostToolUseContext<AskUserQuestionToolInput>>): this
-  on(eventName: 'PostToolUse' | 'PostToolUseFailure', matcher: 'ExitPlanMode', handler: Handler<PostToolUseContext<ExitPlanModeToolInput>>): this
-  on(eventName: 'PreToolUse', matcher: string, handler: Handler<PreToolUseContext>): this
+  // A matcher naming exactly one tool (a key of ToolInputMap) types ctx.input for that tool
+  on<K extends keyof ToolInputMap>(eventName: 'PreToolUse', matcher: K, handler: Handler<PreToolUseContext<ToolInputMap[K]>>): this
+  on<K extends keyof ToolInputMap>(eventName: 'PostToolUse' | 'PostToolUseFailure', matcher: K, handler: Handler<PostToolUseContext<ToolInputMap[K]>>): this
+  on<K extends keyof ToolInputMap>(eventName: 'PermissionRequest', matcher: K, handler: Handler<PermissionRequestContext<ToolInputMap[K]>>): this
   on<K extends keyof ToolInputMap>(eventName: 'PermissionDenied', matcher: K, handler: Handler<PermissionDeniedContext<ToolInputMap[K]>>): this
+  on(eventName: 'PreToolUse', matcher: string, handler: Handler<PreToolUseContext>): this
   on(eventName: 'PermissionDenied', matcher: string, handler: Handler<PermissionDeniedContext>): this
   on(eventName: 'PermissionRequest', matcher: string, handler: Handler<PermissionRequestContext>): this
   on(eventName: 'PostToolUse' | 'PostToolUseFailure', matcher: string, handler: Handler<PostToolUseContext>): this
