@@ -8,7 +8,7 @@ Open an issue with a minimal reproduction: the hook handler code, the Claude Cod
 
 1. Fork the repo and create a branch from `main`: `feat/your-feature` or `fix/your-bug`
 2. Make your changes, add tests
-3. Run `npm test` and `npm run build` — both must pass
+3. Run `npm run lint`, `npm test` and `npm run build` — all must pass (`lint` type-checks the tests too, including the compile-time API checks in `src/__tests__/types.test.ts`)
 4. Open a pull request; CI runs automatically
 5. A maintainer will review and merge
 
