@@ -171,7 +171,7 @@ All contexts expose:
 | `ctx.permissionMode` | `'default' \| 'plan' \| 'acceptEdits' \| 'auto' \| 'dontAsk' \| 'bypassPermissions'`, if present |
 | `ctx.setTerminalSequence(seq)` | Emit a terminal escape sequence (desktop notification, window title, bell — OSC 0/1/2/9/99/777 or BEL only). Works on every event, even ones that discard `systemMessage` |
 | `ctx.setSystemMessage(msg)` | Show a warning to the user (`systemMessage`). Some events discard it (e.g. `Setup`, `SessionEnd`, `PreCompact`, `ConfigChange`) |
-| `ctx.halt(stopReason?)` | Set `continue: false` — Claude stops processing entirely, overriding any event-specific decision; `stopReason` is shown to the user |
+| `ctx.halt(stopReason?)` | Set `continue: false` — Claude stops processing after the hook runs; `stopReason` is shown to the user. It doesn't block a `PreToolUse` call — add `ctx.block()` for that. On `TeammateIdle`/`TaskCompleted` the teammate goes idle instead |
 
 ### `PreToolUseContext`
 
@@ -242,6 +242,9 @@ hook.on('PostToolUse', 'Bash', (ctx) => {
   ctx.setUpdatedMCPToolOutput({ redacted: true })  // same, but MCP tools only — prefer setUpdatedToolOutput
 })
 ```
+
+> On `PostToolUseFailure`, only `addContext()` has an effect: Claude Code can't rewrite a failed
+> call's output, so `setUpdatedToolOutput()`, `setUpdatedMCPToolOutput()` and `setClassifierContext()` are ignored.
 
 ### `UserPromptSubmitContext`
 
