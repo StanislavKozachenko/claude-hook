@@ -153,6 +153,12 @@ describe('getMatcherValue', () => {
     expect(getMatcherValue({ hook_event_name: 'DirectoryAdded' })).toBe('')
   })
 
+  test('returns mcp_server_name for Elicitation and ElicitationResult', () => {
+    expect(getMatcherValue({ hook_event_name: 'Elicitation', mcp_server_name: 'my-server' })).toBe('my-server')
+    expect(getMatcherValue({ hook_event_name: 'ElicitationResult', mcp_server_name: 'jira' })).toBe('jira')
+    expect(getMatcherValue({ hook_event_name: 'Elicitation' })).toBe('')
+  })
+
   test('returns empty string for MessageDisplay (no natural discriminant)', () => {
     expect(getMatcherValue({ hook_event_name: 'MessageDisplay', turn_id: 't1', message_id: 'm1' })).toBe('')
   })

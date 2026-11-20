@@ -353,7 +353,8 @@ hook.on('Elicitation', '*', (ctx) => {
   ctx.block('automated sessions do not support interactive prompts')
 })
 
-hook.on('Elicitation', '*', (ctx) => {
+hook.on('Elicitation', 'my-server', (ctx) => {
+  // matcher filters on ctx.mcpServerName
   // Auto-respond instead of showing the interactive dialog
   ctx.accept({ answer: '42' })  // or ctx.decline() / ctx.cancel()
 })
