@@ -59,6 +59,8 @@ export function getMatcherValue(event: Record<string, unknown>): string {
   if (name === 'Setup') return (event['trigger'] as string) ?? ''
   // DirectoryAdded: match on how the directory was added
   if (name === 'DirectoryAdded') return (event['source'] as string) ?? ''
+  // Elicitation/ElicitationResult: match on the MCP server name
+  if (name === 'Elicitation' || name === 'ElicitationResult') return (event['mcp_server_name'] as string) ?? ''
   // PreModelSwitch/PostModelSwitch: match on the canonical model name being switched to
   if (name === 'PreModelSwitch' || name === 'PostModelSwitch') return (event['to_model'] as string) ?? ''
   // FileChanged: match on filename (basename), handling both POSIX and Windows separators
