@@ -104,7 +104,11 @@ export class BaseContext {
     this._output.systemMessage = message
   }
 
-  /** Sets `continue: false` — Claude stops processing entirely, overriding any event-specific decision. `stopReason` is shown to the user. */
+  /**
+   * Sets `continue: false` — Claude stops processing after the hook runs; `stopReason` is shown to the user.
+   * It doesn't block a `PreToolUse` call: also call `block()` for that. On `TeammateIdle`/`TaskCompleted`
+   * the teammate goes idle instead (ignored when a `TaskUpdate` call fired `TaskCompleted`).
+   */
   halt(stopReason?: string): void {
     this._output.continue = false
     if (stopReason !== undefined) this._output.stopReason = stopReason
@@ -262,6 +266,7 @@ export class PostToolUseContext<T extends ToolInput = ToolInput> extends BaseCon
     }
   }
 
+  /** `PostToolUse` only — ignored on `PostToolUseFailure`. Seen by the auto-mode permission classifier. */
   setClassifierContext(text: string): void {
     this._output.hookSpecificOutput = {
       ...this._output.hookSpecificOutput,
@@ -270,6 +275,7 @@ export class PostToolUseContext<T extends ToolInput = ToolInput> extends BaseCon
     }
   }
 
+  /** Replaces the tool output sent to the model. `PostToolUse` only — a failed call's output can't be rewritten. */
   setUpdatedToolOutput(output: unknown): void {
     this._output.hookSpecificOutput = {
       ...this._output.hookSpecificOutput,
@@ -278,6 +284,7 @@ export class PostToolUseContext<T extends ToolInput = ToolInput> extends BaseCon
     }
   }
 
+  /** Same as `setUpdatedToolOutput()`, MCP tools only. `PostToolUse` only. */
   setUpdatedMCPToolOutput(output: unknown): void {
     this._output.hookSpecificOutput = {
       ...this._output.hookSpecificOutput,
