@@ -148,7 +148,7 @@ Returns `this` for chaining.
 
 Reads stdin, routes to matching handlers, writes output, exits. Call once at the end of your script.
 
-Every handler that matches an event runs in registration order on one shared `ctx`, and their output merges into a single JSON object. `ctx.block()` stops the chain. Setters like `setTitle()` keep the last call; `addContext()` appends, so each handler's text reaches Claude (joined with newlines).
+Every handler that matches an event runs in registration order on one shared `ctx`, and their output merges into a single JSON object. `ctx.block()` stops the chain; output set before it is still printed, since Claude Code reads JSON on exit 2 too — so `suppressOriginalPrompt()`, `halt()` and `setSystemMessage()` work alongside a block, but no field (not even `allow()`) lets a blocked action through. Setters like `setTitle()` keep the last call; `addContext()` appends, so each handler's text reaches Claude (joined with newlines).
 
 Conflicting decisions resolve the way Claude Code resolves them across separate hooks, so a later handler can't loosen an earlier one's verdict: `defer()` > `ask()` > `allow()` on `PreToolUse` (and `ask()` > `allow()` on `PreModelSwitch`), and on `Elicitation` a `decline()` overrides `accept()`/`cancel()`.
 

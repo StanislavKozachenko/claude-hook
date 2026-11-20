@@ -79,6 +79,17 @@ describe('run() routing, blocking and output', () => {
     expect(stdout).toBe('')
   })
 
+  test('block keeps the JSON output handlers set (Claude Code reads it on exit 2)', () => {
+    const { code, stdout, stderr } = runHook('routing-hook.ts', event({ hook_event_name: 'UserPromptSubmit', prompt: 'my secret' }))
+    expect(code).toBe(2)
+    expect(stderr).toBe('prompt rejected\n')
+    expect(JSON.parse(stdout)).toEqual({
+      continue: false,
+      stopReason: 'stopped by policy',
+      hookSpecificOutput: { hookEventName: 'UserPromptSubmit', suppressOriginalPrompt: true },
+    })
+  })
+
   test('handlers after a non-blocking handler still run', () => {
     const { code, stdout } = runHook('routing-hook.ts', toolEvent('Bash', { command: 'ls' }))
     expect(code).toBe(0)

@@ -277,15 +277,19 @@ export class HookHandler {
       if (ctx._isBlocked()) break
     }
 
+    const output = ctx._getOutput()
+    const json = Object.keys(output).length > 0 ? JSON.stringify(output) : ''
+
+    // Claude Code still reads JSON stdout on exit 2 (suppressOriginalPrompt, continue: false,
+    // systemMessage...), though no field can turn the block into an allow
     if (ctx._isBlocked()) {
-      return exit(2, '', ctx._getBlockReason() + '\n')
+      return exit(2, json, ctx._getBlockReason() + '\n')
     }
 
     const plain = ctx._getPlainOutput()
     if (plain !== undefined) return exit(0, plain)
 
-    const output = ctx._getOutput()
-    return exit(0, Object.keys(output).length > 0 ? JSON.stringify(output) : '')
+    return exit(0, json)
   }
 }
 

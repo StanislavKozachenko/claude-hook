@@ -35,6 +35,12 @@ createHook()
   .on('PreCompact', '*', (ctx) => {
     ctx.addInstructions(`Trigger: ${ctx.trigger}`)
   })
+  .on('UserPromptSubmit', '*', (ctx) => {
+    if (!ctx.prompt.includes('secret')) return
+    ctx.suppressOriginalPrompt()
+    ctx.halt('stopped by policy')
+    ctx.block('prompt rejected')
+  })
   .on('Stop', 'Bash', (ctx) => {
     // Stop has no matcher support: Claude Code ignores the matcher, so this runs on every Stop
     ctx.addContext('stop handler ran')
