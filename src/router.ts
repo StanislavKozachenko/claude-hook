@@ -6,6 +6,24 @@
 // anything else → JavaScript regex, unanchored
 const NARROW_MATCHER_EVENTS = new Set(['FileChanged', 'StopFailure'])
 
+// Events with no matcher support: Claude Code ignores the matcher and always runs the hook
+const MATCHERLESS_EVENTS = new Set([
+  'UserPromptSubmit',
+  'PostToolBatch',
+  'Stop',
+  'TeammateIdle',
+  'TaskCreated',
+  'TaskCompleted',
+  'WorktreeCreate',
+  'WorktreeRemove',
+  'MessageDisplay',
+  'CwdChanged',
+])
+
+export function ignoresMatcher(eventName: string): boolean {
+  return MATCHERLESS_EVENTS.has(eventName)
+}
+
 export function matchMatcher(value: string, matcher: string, eventName?: string): boolean {
   if (!matcher || matcher === '*') return true
   const narrow = eventName !== undefined && NARROW_MATCHER_EVENTS.has(eventName)

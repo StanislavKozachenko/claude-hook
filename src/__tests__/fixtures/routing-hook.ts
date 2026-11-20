@@ -35,6 +35,14 @@ createHook()
   .on('PreCompact', '*', (ctx) => {
     ctx.addInstructions(`Trigger: ${ctx.trigger}`)
   })
+  .on('Stop', 'Bash', (ctx) => {
+    // Stop has no matcher support: Claude Code ignores the matcher, so this runs on every Stop
+    ctx.addContext('stop handler ran')
+  })
+  .on('*', 'Bash', (ctx) => {
+    // a '*' registration keeps filtering on the matcher: must not run on Stop
+    if (ctx.hookEventName === 'Stop') ctx.setSystemMessage('wildcard Bash handler ran on Stop')
+  })
   .on('*', '*', (ctx) => {
     if (ctx.hookEventName === 'Notification' || ctx.hookEventName === 'PreCompact') ctx.setTerminalSequence('\x07')
   })

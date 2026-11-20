@@ -1,4 +1,18 @@
-import { matchMatcher, getMatcherValue } from '../router'
+import { matchMatcher, getMatcherValue, ignoresMatcher } from '../router'
+
+describe('ignoresMatcher', () => {
+  test('true for events Claude Code runs regardless of matcher', () => {
+    for (const name of ['UserPromptSubmit', 'PostToolBatch', 'Stop', 'TeammateIdle', 'TaskCreated', 'TaskCompleted', 'WorktreeCreate', 'WorktreeRemove', 'MessageDisplay', 'CwdChanged']) {
+      expect(ignoresMatcher(name)).toBe(true)
+    }
+  })
+
+  test('false for events with a matcher field', () => {
+    for (const name of ['PreToolUse', 'SessionStart', 'SubagentStop', 'Elicitation', 'FileChanged', 'Notification']) {
+      expect(ignoresMatcher(name)).toBe(false)
+    }
+  })
+})
 
 describe('matchMatcher', () => {
   test('* matches everything', () => {
