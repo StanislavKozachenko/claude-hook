@@ -590,7 +590,10 @@ hook.on('PreModelSwitch', '*', (ctx) => {
 })
 
 hook.on('PreModelSwitch', 'claude-opus-5', (ctx) => {
-  // matcher filters on ctx.toModel, not ctx.source
+  // matcher filters on the canonical name of ctx.toModel, not ctx.source: like Claude Code,
+  // 'claude-opus-5' also matches claude-opus-5[1m], dated IDs, and Bedrock/Vertex IDs.
+  // A target with no canonical name (e.g. a gateway-only model ID) runs every handler
+  // regardless of matcher, so a handler that blocks should check ctx.toModel itself
 })
 ```
 

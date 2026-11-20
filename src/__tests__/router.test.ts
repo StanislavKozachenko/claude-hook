@@ -1,16 +1,54 @@
-import { matchMatcher, getMatcherValue, ignoresMatcher } from '../router'
+import { matchMatcher, getMatcherValue, ignoresMatcher, canonicalModelName } from '../router'
 
 describe('ignoresMatcher', () => {
   test('true for events Claude Code runs regardless of matcher', () => {
     for (const name of ['UserPromptSubmit', 'PostToolBatch', 'Stop', 'TeammateIdle', 'TaskCreated', 'TaskCompleted', 'WorktreeCreate', 'WorktreeRemove', 'MessageDisplay', 'CwdChanged']) {
-      expect(ignoresMatcher(name)).toBe(true)
+      expect(ignoresMatcher({ hook_event_name: name })).toBe(true)
     }
   })
 
   test('false for events with a matcher field', () => {
     for (const name of ['PreToolUse', 'SessionStart', 'SubagentStop', 'Elicitation', 'FileChanged', 'Notification']) {
-      expect(ignoresMatcher(name)).toBe(false)
+      expect(ignoresMatcher({ hook_event_name: name })).toBe(false)
     }
+  })
+
+  test('true for a model switch whose target has no canonical name', () => {
+    expect(ignoresMatcher({ hook_event_name: 'PreModelSwitch', to_model: 'my-gateway-model' })).toBe(true)
+    expect(ignoresMatcher({ hook_event_name: 'PostModelSwitch', to_model: 'opus' })).toBe(true)
+    expect(ignoresMatcher({ hook_event_name: 'PreModelSwitch', to_model: 'claude-opus-5[1m]' })).toBe(false)
+  })
+})
+
+describe('canonicalModelName', () => {
+  test('keeps a canonical name as is', () => {
+    expect(canonicalModelName('claude-opus-5')).toBe('claude-opus-5')
+    expect(canonicalModelName('claude-opus-4-6')).toBe('claude-opus-4-6')
+  })
+
+  test('drops the [1m] suffix and a date or -latest suffix', () => {
+    expect(canonicalModelName('claude-opus-5[1m]')).toBe('claude-opus-5')
+    expect(canonicalModelName('claude-sonnet-4-5-20250929')).toBe('claude-sonnet-4-5')
+    expect(canonicalModelName('claude-sonnet-4-5-20250929[1m]')).toBe('claude-sonnet-4-5')
+    expect(canonicalModelName('claude-3-5-haiku-latest')).toBe('claude-3-5-haiku')
+  })
+
+  test('resolves Bedrock IDs, inference profiles and ARNs', () => {
+    expect(canonicalModelName('anthropic.claude-opus-4-1-20250805-v1:0')).toBe('claude-opus-4-1')
+    expect(canonicalModelName('us.anthropic.claude-sonnet-4-5-20250929-v1:0')).toBe('claude-sonnet-4-5')
+    expect(canonicalModelName('global.anthropic.claude-opus-5-v1')).toBe('claude-opus-5')
+    expect(canonicalModelName('arn:aws:bedrock:us-east-1:123456789012:inference-profile/us.anthropic.claude-opus-5-v1:0')).toBe('claude-opus-5')
+  })
+
+  test('resolves Vertex IDs', () => {
+    expect(canonicalModelName('claude-opus-4-1@20250805')).toBe('claude-opus-4-1')
+    expect(canonicalModelName('claude-opus-5@default')).toBe('claude-opus-5')
+  })
+
+  test('undefined for IDs that do not resolve to a claude-* name', () => {
+    expect(canonicalModelName('my-gateway-model')).toBeUndefined()
+    expect(canonicalModelName('opus')).toBeUndefined()
+    expect(canonicalModelName('')).toBeUndefined()
   })
 })
 
@@ -187,5 +225,12 @@ describe('getMatcherValue', () => {
     expect(getMatcherValue({ hook_event_name: 'PostModelSwitch', to_model: 'claude-opus-5', source: 'auto' })).toBe('claude-opus-5')
     expect(getMatcherValue({ hook_event_name: 'PostModelSwitch', to_model: 'claude-sonnet-5', source: 'resume' })).toBe('claude-sonnet-5')
     expect(getMatcherValue({ hook_event_name: 'PostModelSwitch' })).toBe('')
+  })
+
+  test('returns the canonical model name for model switches', () => {
+    expect(getMatcherValue({ hook_event_name: 'PreModelSwitch', to_model: 'claude-opus-5[1m]' })).toBe('claude-opus-5')
+    expect(getMatcherValue({ hook_event_name: 'PostModelSwitch', to_model: 'us.anthropic.claude-opus-5-v1:0' })).toBe('claude-opus-5')
+    // unresolvable IDs fall back to the raw value (ignoresMatcher() then runs every handler)
+    expect(getMatcherValue({ hook_event_name: 'PreModelSwitch', to_model: 'my-gateway-model' })).toBe('my-gateway-model')
   })
 })
