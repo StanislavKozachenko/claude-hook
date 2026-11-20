@@ -139,6 +139,7 @@ Registers a handler for an event.
   - `'Edit|Write'` or `'Edit, Write'` — pipe- or comma-separated OR list
   - `'mcp__.*'` — JavaScript regex (when the string contains special characters)
   - `FileChanged`/`StopFailure` use a narrower exact-match character set (letters, digits, `_`, `|` only) — a hyphen, space, or comma in their matcher is evaluated as regex instead
+  - Events without matcher support ignore it, like Claude Code does: `UserPromptSubmit`, `PostToolBatch`, `Stop`, `TeammateIdle`, `TaskCreated`, `TaskCompleted`, `WorktreeCreate`, `WorktreeRemove`, `MessageDisplay`, `CwdChanged` always run (a `'*'` event registration still applies its matcher to them)
 - **`handler`** — `(ctx) => void | Promise<void>`
 
 Returns `this` for chaining.

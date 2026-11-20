@@ -124,6 +124,13 @@ describe('run() routing, blocking and output', () => {
     expect(stdout).toBe('Keep the list of open TODOs\nTrigger: manual')
   })
 
+  test("events without matcher support ignore the matcher, except on '*' registrations", () => {
+    const { code, stdout, stderr } = runHook('routing-hook.ts', event({ hook_event_name: 'Stop', stop_hook_active: false }))
+    expect(code).toBe(0)
+    expect(stderr).toBe('')
+    expect(JSON.parse(stdout)).toEqual({ hookSpecificOutput: { hookEventName: 'Stop', additionalContext: 'stop handler ran' } })
+  })
+
   test("a '*' event registration receives every event", () => {
     const { stdout } = runHook('routing-hook.ts', event({ hook_event_name: 'Notification', notification_type: 'idle_prompt', message: 'm' }))
     expect(JSON.parse(stdout)).toEqual({ terminalSequence: '\x07' })
