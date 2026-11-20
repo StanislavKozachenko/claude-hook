@@ -6,6 +6,26 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ---
 
+## [1.1.0] - 2026-11-20
+
+### Added
+
+- match model switches on the canonical model name (#231)
+
+### Fixed
+
+- keep JSON output on block() since Claude Code reads it on exit 2 (#233)
+- ignore the matcher on events without matcher support (#229)
+- match Elicitation/ElicitationResult on mcp_server_name (#227)
+
+### Changed
+
+- test on Windows and Node 18-24 (#237)
+- halt() doesn't block PreToolUse; PostToolUse-only setters on PostToolUseFailure (#235)
+
+---
+
+
 ## [1.0.0] - 2026-11-12
 
 ### Breaking
