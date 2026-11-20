@@ -20,8 +20,29 @@ const MATCHERLESS_EVENTS = new Set([
   'CwdChanged',
 ])
 
-export function ignoresMatcher(eventName: string): boolean {
-  return MATCHERLESS_EVENTS.has(eventName)
+const MODEL_SWITCH_EVENTS = new Set(['PreModelSwitch', 'PostModelSwitch'])
+
+// Claude Code runs the hook regardless of matcher on events without matcher support, and on a
+// model switch whose target has no canonical name (e.g. a model only an LLM gateway knows)
+export function ignoresMatcher(event: Record<string, unknown>): boolean {
+  const name = event['hook_event_name'] as string
+  if (MATCHERLESS_EVENTS.has(name)) return true
+  if (MODEL_SWITCH_EVENTS.has(name)) return canonicalModelName((event['to_model'] as string) ?? '') === undefined
+  return false
+}
+
+// Model-switch matchers compare against the canonical model name, so every spelling of one model
+// matches it: a [1m] suffix, a dated or -latest ID, a Bedrock ID or ARN, a Vertex ID.
+// undefined when the ID doesn't resolve to a claude-* name
+export function canonicalModelName(model: string): string | undefined {
+  let name = model.trim().toLowerCase()
+  name = name.replace(/\[[^\]]*\]$/, '') // claude-opus-5[1m]
+  name = name.slice(name.lastIndexOf('/') + 1) // arn:aws:bedrock:…:inference-profile/<id>
+  name = name.replace(/^(?:[a-z-]+\.)?anthropic\./, '') // Bedrock: [us.|eu.|global.]anthropic.<id>
+  name = name.replace(/@.*$/, '') // Vertex: <id>@20261101
+  name = name.replace(/-v\d+(?::\d+)?$/, '') // Bedrock: <id>-v1:0
+  name = name.replace(/-(?:\d{8}|latest)$/, '') // claude-opus-5-20261101, claude-opus-5-latest
+  return /^claude-[a-z0-9-]+$/.test(name) ? name : undefined
 }
 
 export function matchMatcher(value: string, matcher: string, eventName?: string): boolean {
@@ -80,7 +101,10 @@ export function getMatcherValue(event: Record<string, unknown>): string {
   // Elicitation/ElicitationResult: match on the MCP server name
   if (name === 'Elicitation' || name === 'ElicitationResult') return (event['mcp_server_name'] as string) ?? ''
   // PreModelSwitch/PostModelSwitch: match on the canonical model name being switched to
-  if (name === 'PreModelSwitch' || name === 'PostModelSwitch') return (event['to_model'] as string) ?? ''
+  if (MODEL_SWITCH_EVENTS.has(name)) {
+    const toModel = (event['to_model'] as string) ?? ''
+    return canonicalModelName(toModel) ?? toModel
+  }
   // FileChanged: match on filename (basename), handling both POSIX and Windows separators
   if (name === 'FileChanged') {
     const filePath = (event['file_path'] as string) ?? ''

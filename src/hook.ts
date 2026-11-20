@@ -251,12 +251,13 @@ export class HookHandler {
     }
 
     const matcherValue = getMatcherValue(event as unknown as Record<string, unknown>)
+    const anyMatcher = ignoresMatcher(event as unknown as Record<string, unknown>)
 
     // A handler registered by event name ignores its matcher where Claude Code does;
     // a '*' registration keeps filtering on it
     const matching = this.registrations.filter(
       (r) =>
-        (r.eventName === event.hook_event_name && ignoresMatcher(event.hook_event_name)) ||
+        (r.eventName === event.hook_event_name && anyMatcher) ||
         ((r.eventName === event.hook_event_name || r.eventName === '*') &&
           matchMatcher(matcherValue, r.matcher, event.hook_event_name)),
     )
