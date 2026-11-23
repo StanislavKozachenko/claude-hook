@@ -271,10 +271,12 @@ hook.on('UserPromptExpansion', '*', (ctx) => {
   ctx.expansionType              // 'slash_command' | 'mcp_prompt'
   ctx.block('reason')
   ctx.addContext('extra context')
-  ctx.setTitle('Session title')
   ctx.suppressOriginalPrompt()  // when blocking, omit the original prompt from the block message
 })
 ```
+
+> `setTitle()` is deprecated here — Claude Code ignores `sessionTitle` on this event. `UserPromptSubmit`
+> also fires for slash commands, so set the title from a `UserPromptSubmit` handler instead.
 
 ### `StopContext`
 
