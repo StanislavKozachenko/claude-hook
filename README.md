@@ -446,9 +446,10 @@ hook.on('WorktreeRemove', '*', (ctx) => {
 > Configuring a `WorktreeCreate` hook makes Claude Code delegate worktree
 > creation to it entirely (even inside a git repo) — `.block()` still works
 > to reject the request, but to *allow* it your hook must create the
-> worktree itself and report its absolute path via `ctx.provideWorktreePath()`
-> (a plain shell-command hook, instead, would print the path to stdout with
-> nothing else on it — `provideWorktreePath()` is the JSON-output equivalent).
+> worktree itself and report its absolute path via `ctx.provideWorktreePath()`,
+> which prints the path as plain stdout — Claude Code reads a command hook's
+> stdout as the path, so JSON setters (`setSystemMessage()`, ...) are not
+> printed on this event.
 >
 > On `WorktreeRemove`, `ctx.block()` (exit 2) fails the removal as long as the
 > directory still exists — the worktree stays on disk with no git fallback. The

@@ -1152,10 +1152,12 @@ describe('WorktreeCreateContext', () => {
     expect(ctx._getBlockReason()).toBe('worktree creation failed')
   })
 
-  test('provideWorktreePath sets worktreePath in hookSpecificOutput', () => {
+  test('provideWorktreePath prints the path as plain stdout, not JSON', () => {
     const ctx = new WorktreeCreateContext(event)
+    ctx.provideWorktreePath('/home/user/worktrees/old')
     ctx.provideWorktreePath('/home/user/worktrees/feature-x')
-    expect(ctx._getOutput().hookSpecificOutput?.worktreePath).toBe('/home/user/worktrees/feature-x')
+    expect(ctx._getPlainOutput()).toBe('/home/user/worktrees/feature-x')
+    expect(ctx._getOutput().hookSpecificOutput).toBeUndefined()
   })
 })
 
