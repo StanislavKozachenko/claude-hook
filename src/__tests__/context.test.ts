@@ -820,6 +820,13 @@ describe('PostToolBatchContext', () => {
     expect(ctx.toolCalls[1].tool_use_id).toBe('toolu_2')
   })
 
+  test('addContext appends under hookSpecificOutput', () => {
+    const ctx = new PostToolBatchContext(event)
+    ctx.addContext('first')
+    ctx.addContext('second')
+    expect(ctx._getOutput().hookSpecificOutput).toEqual({ hookEventName: 'PostToolBatch', additionalContext: 'first\nsecond' })
+  })
+
   test('block sets _blocked and _blockReason', () => {
     const ctx = new PostToolBatchContext(event)
     ctx.block('stop the loop')
