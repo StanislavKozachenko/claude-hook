@@ -6,6 +6,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ---
 
+## [1.2.1] - 2026-11-23
+
+### Changed
+
+- bump release workflow actions to v7 (#255)
+
+---
+
+
 ## [1.2.0] - 2026-11-23
 
 ### Added
