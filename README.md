@@ -148,7 +148,7 @@ Returns `this` for chaining.
 
 Reads stdin, routes to matching handlers, writes output, exits. Call once at the end of your script.
 
-Every handler that matches an event runs in registration order on one shared `ctx`, and their output merges into a single JSON object. `ctx.block()` stops the chain; output set before it is still printed, since Claude Code reads JSON on exit 2 too — so `suppressOriginalPrompt()`, `halt()` and `setSystemMessage()` work alongside a block, but no field (not even `allow()`) lets a blocked action through. Setters like `setTitle()` keep the last call; `addContext()` appends, so each handler's text reaches Claude (joined with newlines).
+Every handler that matches an event runs in registration order on one shared `ctx`, and their output merges into a single JSON object. `ctx.block()` stops the chain; output set before it is still printed, since Claude Code reads JSON on exit 2 too — so `suppressOriginalPrompt()`, `halt()` and `setSystemMessage()` work alongside a block, but no field (not even `allow()`) lets a blocked action through. The exception runs the other way: on `Stop`, `SubagentStop`, `TeammateIdle` and `TaskCompleted`, `halt()` wins over `block()` — Claude (or the teammate) stops instead of continuing. Setters like `setTitle()` keep the last call; `addContext()` appends, so each handler's text reaches Claude (joined with newlines).
 
 Conflicting decisions resolve the way Claude Code resolves them across separate hooks, so a later handler can't loosen an earlier one's verdict: `defer()` > `ask()` > `allow()` on `PreToolUse` (and `ask()` > `allow()` on `PreModelSwitch`), and on `Elicitation` a `decline()` overrides `accept()`/`cancel()`.
 
@@ -293,13 +293,13 @@ hook.on('SubagentStop', '*', (ctx) => {
   ctx.agentId              // subagent identifier
   ctx.agentType            // e.g. 'Explore'
   ctx.agentTranscriptPath  // path to the subagent's transcript
-  ctx.backgroundTasks       // in-flight background work registered by the subagent
-  ctx.sessionCrons          // scheduled wakeups that will wake this session
+  ctx.backgroundTasks       // in-flight background work of the parent session
+  ctx.sessionCrons          // scheduled wakeups that will wake the parent session
   ctx.addContext('non-error feedback')  // delivered to the subagent, which continues
 })
 ```
 
-> `backgroundTasks`/`sessionCrons` are `undefined` for `SubagentStop` — they're `Stop`-only fields.
+> On `SubagentStop`, `backgroundTasks`/`sessionCrons` are scoped to the parent session, not the subagent.
 
 ### `SessionStartContext`
 
@@ -316,7 +316,7 @@ hook.on('SessionStart', '*', (ctx) => {
   ctx.addContext('info for Claude')
   ctx.setInitialUserMessage('Continue where we left off')  // seeds the first turn
   ctx.setTitle('Fix login bug')
-  ctx.setWatchPaths(['src/**/*.ts'])       // paths that trigger future FileChanged events
+  ctx.setWatchPaths([`${ctx.cwd}/.env`])  // absolute file paths that trigger future FileChanged events
   ctx.reloadSkills()                       // re-scan skill/command dirs after this hook runs
 })
 ```
@@ -328,7 +328,7 @@ hook.on('FileChanged', '.env|.envrc', (ctx) => {
   ctx.filePath   // absolute path to changed file
   ctx.changeType // 'change' | 'add' | 'unlink'
   ctx.setEnv('UPDATED', '1')
-  ctx.setWatchPaths(['src/**/*.ts'])  // change which paths trigger future FileChanged events
+  ctx.setWatchPaths([`${ctx.cwd}/.env`])  // absolute file paths; replaces the watch list
   ctx.setSystemMessage('env file changed, session restart recommended')  // brief terminal notification
 })
 ```
@@ -342,7 +342,7 @@ hook.on('FileChanged', '.env|.envrc', (ctx) => {
 hook.on('CwdChanged', '*', (ctx) => {
   ctx.oldCwd  // previous working directory
   ctx.newCwd  // new working directory
-  ctx.setWatchPaths(['src/**/*.ts'])  // change which paths trigger future FileChanged events
+  ctx.setWatchPaths([`${ctx.newCwd}/.env`])  // absolute file paths; replaces the watch list
 })
 ```
 
@@ -392,7 +392,7 @@ hook.on('StopFailure', '*', (ctx) => {
 
 ```ts
 hook.on('Notification', '*', (ctx) => {
-  ctx.notificationType  // e.g. 'info' | 'warning' | 'error'
+  ctx.notificationType  // e.g. 'permission_prompt' | 'idle_prompt' | 'auth_success' | 'elicitation_dialog'
   ctx.message           // notification text
   ctx.title             // string | undefined — notification title, when present
   ctx.addContext('note for Claude')  // non-error feedback delivered to the model
@@ -695,6 +695,8 @@ hook.on('PreToolUse', 'AskUserQuestion', (ctx) => {
 ```
 
 > **Monitor commands:** on `PreToolUse` and `PermissionRequest`, a `Bash` matcher (also `Bash|PowerShell`, `^Bash$`, `Bash.*`) runs for shell commands Claude starts with the Monitor tool too (Claude Code v2.1.314+). The handler then sees a Bash call and can `block()` or `ask()`, but `allow()` and `modify()` have no effect on it. To allow or rewrite Monitor commands, match `Monitor` (or `Bash|Monitor`) — the handler then gets the Monitor call's own input (`MonitorToolInput`).
+>
+> Which of the two arrives depends on the matcher in **settings.json**, not on the one in `hook.on()`: with `"matcher": "Bash"` Claude Code sends a `Bash` call, so a `hook.on('PreToolUse', 'Monitor', ...)` handler never runs; with `"Bash|Monitor"`, `".*"` or no matcher it sends a `Monitor` call, which a `hook.on('PreToolUse', 'Bash', ...)` handler doesn't match. To cover Monitor commands from one script, use `Bash|Monitor` in both places.
 
 ## Upgrading to 1.0
 
