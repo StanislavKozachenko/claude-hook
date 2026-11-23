@@ -357,6 +357,10 @@ export class UserPromptExpansionContext extends BaseContext {
     }
   }
 
+  /**
+   * @deprecated Claude Code ignores `sessionTitle` on `UserPromptExpansion`. `UserPromptSubmit` also
+   * fires for slash commands — call `setTitle()` there. Will be removed in the next major.
+   */
   setTitle(title: string): void {
     this._output.hookSpecificOutput = {
       ...this._output.hookSpecificOutput,
