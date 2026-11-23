@@ -896,6 +896,15 @@ export class PostToolBatchContext extends BaseContext {
     this._blocked = true
     this._blockReason = reason
   }
+
+  /** Injected once before the next model call. */
+  addContext(text: string): void {
+    this._output.hookSpecificOutput = {
+      ...this._output.hookSpecificOutput,
+      hookEventName: 'PostToolBatch',
+      additionalContext: this.appendContext(text),
+    }
+  }
 }
 
 export class GenericContext extends BaseContext {

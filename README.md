@@ -534,6 +534,7 @@ hook.on('PostCompact', '*', (ctx) => {
 ```ts
 hook.on('PostToolBatch', '*', (ctx) => {
   ctx.toolCalls  // [{ tool_name, tool_input, tool_response, tool_use_id }, ...]
+  ctx.addContext('2 files changed, run the tests')  // injected once before the next model call
   ctx.block('reason')  // exit 2, stops the loop before the next model call
 })
 ```
