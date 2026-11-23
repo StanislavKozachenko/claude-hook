@@ -1,4 +1,6 @@
 import { spawnSync } from 'child_process'
+import { createHook } from '../hook'
+import type { HookOptions } from '../hook'
 import * as path from 'path'
 
 const runJs = path.join(__dirname, '..', '..', 'bin', 'run.js')
@@ -162,5 +164,55 @@ describe('run() output over the pipe buffer', () => {
     const { code, stderr } = runHook('large-output-hook.ts', toolEvent('Bash', { command: 'ls' }), { HOOK_OUTPUT_SIZE: String(size) })
     expect(code).toBe(2)
     expect(stderr).toHaveLength(size + 1)
+  })
+})
+
+describe('dispatch()', () => {
+  const event = {
+    session_id: 's',
+    transcript_path: 't',
+    cwd: '.',
+    hook_event_name: 'PreToolUse' as const,
+    tool_name: 'Bash',
+    tool_input: { command: 'rm -rf /' },
+    tool_use_id: 'tu1',
+  }
+
+  test('returns exit code, stdout and stderr without touching the process', async () => {
+    const hook = createHook().on('PreToolUse', 'Bash', (ctx) => {
+      ctx.addContext('checked')
+      if (ctx.input.command.startsWith('rm')) ctx.block('no rm')
+    })
+    expect(await hook.dispatch(event)).toEqual({
+      exitCode: 2,
+      stdout: JSON.stringify({ hookSpecificOutput: { hookEventName: 'PreToolUse', additionalContext: 'checked' } }),
+      stderr: 'no rm\n',
+    })
+  })
+
+  test('accepts raw JSON text and returns an empty result when nothing matches', async () => {
+    const hook = createHook().on('PreToolUse', 'Edit', (ctx) => ctx.allow())
+    expect(await hook.dispatch(JSON.stringify(event))).toEqual({ exitCode: 0, stdout: '', stderr: '' })
+  })
+
+  test('allow() prints JSON with exit 0', async () => {
+    const hook = createHook().on('PreToolUse', '*', (ctx) => ctx.allow('ok'))
+    const result = await hook.dispatch(event)
+    expect(result.exitCode).toBe(0)
+    expect(JSON.parse(result.stdout).hookSpecificOutput.permissionDecision).toBe('allow')
+  })
+
+  test('handler errors and invalid JSON follow onFailure', async () => {
+    const throwing = (options?: HookOptions) => createHook(options).on('PreToolUse', '*', () => { throw new Error('boom') })
+    expect(await throwing().dispatch(event)).toEqual({ exitCode: 1, stdout: '', stderr: 'claude-hook: PreToolUse handler failed: boom\n' })
+    expect((await throwing({ onFailure: 'block' }).dispatch(event)).exitCode).toBe(2)
+    expect(await createHook().dispatch('not json')).toEqual({ exitCode: 1, stdout: '', stderr: 'claude-hook: failed to parse stdin JSON\n' })
+    expect(await createHook().dispatch('null')).toEqual({ exitCode: 1, stdout: '', stderr: 'claude-hook: stdin JSON is not a hook event (no hook_event_name)\n' })
+  })
+
+  test('plain-text events return their text on stdout', async () => {
+    const hook = createHook().on('WorktreeCreate', '*', (ctx) => ctx.provideWorktreePath('/wt/x'))
+    const result = await hook.dispatch({ session_id: 's', transcript_path: 't', cwd: '.', hook_event_name: 'WorktreeCreate', name: 'x' })
+    expect(result).toEqual({ exitCode: 0, stdout: '/wt/x', stderr: '' })
   })
 })

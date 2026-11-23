@@ -167,6 +167,20 @@ async function exit(code: number, stdout = '', stderr = ''): Promise<never> {
   process.exit(code)
 }
 
+/** What a hook run produces: the exit code and the text written to stdout and stderr. */
+export interface HookResult {
+  /** 0 = success, 1 = non-blocking error, 2 = block. */
+  exitCode: 0 | 1 | 2
+  /** JSON output, plain text on events that read it (PreCompact, WorktreeCreate), or ''. */
+  stdout: string
+  /** The block reason or failure message, or ''. */
+  stderr: string
+}
+
+function result(exitCode: 0 | 1 | 2, stdout = '', stderr = ''): HookResult {
+  return { exitCode, stdout, stderr }
+}
+
 export interface HookOptions {
   /**
    * What happens when a handler throws or stdin isn't valid JSON.
@@ -186,8 +200,8 @@ export class HookHandler {
 
   // Never prints accumulated output: with exit 1, valid JSON on stdout still applies
   // (an earlier handler's allow() would win), so failure must leave stdout empty
-  private fail(message: string): Promise<never> {
-    return exit(this.onFailure === 'block' ? 2 : 1, '', `claude-hook: ${message}\n`)
+  private fail(message: string): HookResult {
+    return result(this.onFailure === 'block' ? 2 : 1, '', `claude-hook: ${message}\n`)
   }
 
   // A matcher naming exactly one tool (a key of ToolInputMap) types ctx.input for that tool
@@ -235,19 +249,24 @@ export class HookHandler {
     return this
   }
 
-  async run(): Promise<void> {
-    let raw: string
-    try {
-      raw = fs.readFileSync(0, 'utf8')
-    } catch {
-      process.exit(0)
-    }
-
+  /**
+   * Runs the matching handlers for one event and returns what `run()` would print and exit with,
+   * without touching stdin, stdout or the process — for unit-testing a hook.
+   * Accepts the event object or its raw JSON text.
+   */
+  async dispatch(input: AnyEvent | string): Promise<HookResult> {
     let event: AnyEvent
-    try {
-      event = JSON.parse(raw) as AnyEvent
-    } catch {
-      return this.fail('failed to parse stdin JSON')
+    if (typeof input === 'string') {
+      try {
+        event = JSON.parse(input) as AnyEvent
+      } catch {
+        return this.fail('failed to parse stdin JSON')
+      }
+    } else {
+      event = input
+    }
+    if (typeof event !== 'object' || event === null || typeof event.hook_event_name !== 'string') {
+      return this.fail('stdin JSON is not a hook event (no hook_event_name)')
     }
 
     const matcherValue = getMatcherValue(event as unknown as Record<string, unknown>)
@@ -262,9 +281,7 @@ export class HookHandler {
           matchMatcher(matcherValue, r.matcher, event.hook_event_name)),
     )
 
-    if (matching.length === 0) {
-      process.exit(0)
-    }
+    if (matching.length === 0) return result(0)
 
     const ctx = createContext(event)
 
@@ -282,14 +299,24 @@ export class HookHandler {
 
     // Claude Code still reads JSON stdout on exit 2 (suppressOriginalPrompt, continue: false,
     // systemMessage...), though no field can turn the block into an allow
-    if (ctx._isBlocked()) {
-      return exit(2, json, ctx._getBlockReason() + '\n')
-    }
+    if (ctx._isBlocked()) return result(2, json, ctx._getBlockReason() + '\n')
 
     const plain = ctx._getPlainOutput()
-    if (plain !== undefined) return exit(0, plain)
+    if (plain !== undefined) return result(0, plain)
 
-    return exit(0, json)
+    return result(0, json)
+  }
+
+  /** Reads the event from stdin, dispatches it, prints the output and exits. Call once at the end of your script. */
+  async run(): Promise<void> {
+    let raw: string
+    try {
+      raw = fs.readFileSync(0, 'utf8')
+    } catch {
+      process.exit(0)
+    }
+    const { exitCode, stdout, stderr } = await this.dispatch(raw)
+    return exit(exitCode, stdout, stderr)
   }
 }
 
