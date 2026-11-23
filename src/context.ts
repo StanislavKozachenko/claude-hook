@@ -774,12 +774,13 @@ export class WorktreeCreateContext extends BaseContext {
     this._blockReason = reason
   }
 
+  /**
+   * Reports the worktree you created. Printed as plain-text stdout — a command hook can't return
+   * JSON here, Claude Code reads stdout as the path. When set, JSON output such as
+   * `setSystemMessage()` is not printed. Relative paths resolve against the hook's cwd.
+   */
   provideWorktreePath(path: string): void {
-    this._output.hookSpecificOutput = {
-      ...this._output.hookSpecificOutput,
-      hookEventName: 'WorktreeCreate',
-      worktreePath: path,
-    }
+    this._plainOutput = path
   }
 }
 
