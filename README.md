@@ -152,6 +152,30 @@ Every handler that matches an event runs in registration order on one shared `ct
 
 Conflicting decisions resolve the way Claude Code resolves them across separate hooks, so a later handler can't loosen an earlier one's verdict: `defer()` > `ask()` > `allow()` on `PreToolUse` (and `ask()` > `allow()` on `PreModelSwitch`), and on `Elicitation` a `decline()` overrides `accept()`/`cancel()`.
 
+### `hook.dispatch(event)`
+
+Runs the matching handlers for one event and resolves to what `run()` would exit with and print — `{ exitCode, stdout, stderr }` — without reading stdin, writing output or exiting. Use it to unit-test a hook: export the hook from one module and call `run()` from the script Claude Code starts.
+
+```ts
+// hook.ts
+export const hook = createHook().on('PreToolUse', 'Bash', (ctx) => {
+  if (ctx.input.command.includes('rm -rf')) ctx.block('blocked by policy')
+})
+
+// main.ts — the script in settings.json
+import { hook } from './hook'
+hook.run()
+
+// hook.test.ts
+const result = await hook.dispatch({
+  session_id: 's', transcript_path: 't', cwd: '/repo',
+  hook_event_name: 'PreToolUse', tool_name: 'Bash', tool_input: { command: 'rm -rf /' }, tool_use_id: 'tu1',
+})
+expect(result).toEqual({ exitCode: 2, stdout: '', stderr: 'blocked by policy\n' })
+```
+
+`event` can also be the raw JSON text. A handler error or invalid JSON resolves to the same exit code and message `run()` would use (see `onFailure`), never a rejected promise. `setEnv()` still appends to `CLAUDE_ENV_FILE` when that variable is set.
+
 ## Context API
 
 All contexts expose:
