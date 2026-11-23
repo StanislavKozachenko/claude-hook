@@ -6,6 +6,27 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ---
 
+## [1.2.0] - 2026-11-23
+
+### Added
+
+- add dispatch() to run handlers in-process for unit tests (#251)
+- add addContext() (#243)
+
+### Fixed
+
+- point ESM consumers at index.d.mts (#249)
+- deprecate setTitle(), which Claude Code ignores (#245)
+- print provideWorktreePath() as plain stdout, not JSON (#241)
+
+### Changed
+
+- bump actions/checkout and actions/setup-node to v7 (#253)
+- fix README claims that contradict the hooks docs (#247)
+
+---
+
+
 ## [1.1.0] - 2026-11-20
 
 ### Added
